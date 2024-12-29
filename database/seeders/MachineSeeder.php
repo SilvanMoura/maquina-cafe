@@ -2,16 +2,17 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use App\Models\Machine;
 
 class MachineSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
-    public function run(): void
+    public function run()
     {
-        //
+        Machine::create([
+            'name' => 'Máquina 1',
+            'description' => 'Máquina de Café - Recepção',
+            'pix_key' => 'maq001@meunegocio.com',
+        ]);
     }
 }
