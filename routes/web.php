@@ -2,6 +2,8 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\QrCodeController;
+use App\Http\Controllers\NotificationController;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -19,4 +21,4 @@ Route::get('/', function () {
 });
 
 Route::post('/qrcode', [QrCodeController::class, 'generate']);
-
+Route::post('/notifications', [NotificationController::class, 'handle']);
