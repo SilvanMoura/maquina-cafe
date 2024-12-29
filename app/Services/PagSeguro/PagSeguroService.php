@@ -1,35 +1,34 @@
-<?php
+namespace App\Services;
 
-namespace App\Services\PagSeguro;
-
-use Illuminate\Support\Facades\Http;
+use GuzzleHttp\Client;
 
 class PagSeguroService
 {
-    protected $baseUrl;
-    protected $token;
+    private $baseUrl;
+    private $token;
 
     public function __construct()
     {
-        $this->baseUrl = config('services.pagseguro.base_url');
-        $this->token = config('services.pagseguro.token');
+        $this->baseUrl = env('PAGSEGURO_API_URL');
+        $this->token = env('PAGSEGURO_TOKEN');
     }
 
-    public function createCharge($referenceId, $amount, $pixKey)
+    public function generateQrCode($referenceId)
     {
-        $response = Http::withToken($this->token)->post("{$this->baseUrl}/instant-payments/qrcodes", [
-            'reference_id' => $referenceId,
-            'amount' => ['value' => $amount],
-            'key' => $pixKey,
+        $client = new Client();
+        $response = $client->post("{$this->baseUrl}/instant-payments/qrcodes", [
+            'headers' => [
+                'Authorization' => "Bearer {$this->token}",
+                'Content-Type' => 'application/json',
+            ],
+            'json' => [
+                'reference_id' => $referenceId,
+                'amount' => [
+                    'value' => 0,
+                ],
+            ],
         ]);
 
-        return $response->json();
-    }
-
-    public function getPaymentStatus($chargeId)
-    {
-        $response = Http::withToken($this->token)->get("{$this->baseUrl}/instant-payments/charges/{$chargeId}");
-
-        return $response->json();
+        return json_decode($response->getBody(), true);
     }
 }
