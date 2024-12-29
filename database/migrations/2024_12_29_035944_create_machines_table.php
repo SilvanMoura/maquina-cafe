@@ -13,12 +13,13 @@ return new class extends Migration
     {
         Schema::create('machines', function (Blueprint $table) {
             $table->id();
+            $table->string('reference_id')->unique();
             $table->string('name');
-            $table->string('description');
-            $table->string('pix_key')->unique(); // Chave Pix associada
+            $table->integer('credits')->default(0);
             $table->timestamps();
         });
     }
+
 
 
     /**
