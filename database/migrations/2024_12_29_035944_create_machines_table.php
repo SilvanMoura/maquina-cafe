@@ -9,13 +9,17 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
-    public function up(): void
+    public function up()
     {
         Schema::create('machines', function (Blueprint $table) {
             $table->id();
+            $table->string('name');
+            $table->string('description');
+            $table->string('pix_key')->unique(); // Chave Pix associada
             $table->timestamps();
         });
     }
+
 
     /**
      * Reverse the migrations.
