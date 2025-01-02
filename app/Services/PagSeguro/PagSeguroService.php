@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Services;
 
 use GuzzleHttp\Client;
@@ -25,13 +26,17 @@ class PagSeguroService
             'json' => [
                 'reference_id' => $referenceId,
                 'amount' => [
-                    'value' => 0, // O cliente define o valor ao fazer o PIX
+                    'value' => 0, // Cliente define o valor no momento do pagamento
+                ],
+                'notification_urls' => [
+                    env('APP_URL') . '/api/notifications', // URL do webhook
                 ],
             ],
         ]);
 
         return json_decode($response->getBody(), true);
     }
+
 
     public function getTransactionDetails($transactionId)
     {
