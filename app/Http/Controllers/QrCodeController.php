@@ -22,6 +22,11 @@ class QrCodeController extends Controller
         return response()->json($qrCodeData);
     }
 
+    public function qrCodeView()
+    {
+        return view('qrCodeGenerate');
+    }
+
     public function transactionDetails(Request $request, $transactionId)
     {
         $details = $this->pagSeguroService->getTransactionDetails($transactionId);

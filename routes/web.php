@@ -20,7 +20,7 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('/generateQrCode', [QrCodeController::class, 'generate']);
+Route::get('/generateQrCode', [QrCodeController::class, 'qrCodeView']);
 
 Route::post('/qrcode', [QrCodeController::class, 'generate']);
 Route::post('/notifications', [NotificationController::class, 'handle']);
