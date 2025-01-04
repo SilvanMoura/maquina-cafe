@@ -24,7 +24,7 @@ class PagSeguroService
                 'Content-Type' => 'application/json',
             ],
             'json' => [
-                'reference_id' => $referenceId,
+                'reference_id' => "{$referenceId}",
                 'customer' => [
                     'name' => 'Silvan Moura',
                     'email' => 'silvancortes6537@gmail.com',
@@ -33,18 +33,33 @@ class PagSeguroService
                         [
                             'country' => '55',
                             'area' => '53',
-                            'number' => '991674532',
+                            'number' => '999999999',
                             'type' => 'MOBILE'
                         ]
                     ]
+                ],
+                'qr_codes' => [
+                    [
+                        'expiration_date' => '2025-06-04T23:59:59.000-03:00',
+                        'amount' => [
+                            'value' => 0
+                        ]
+                    ]
+                ],
+                'notification_urls' => [
+                    "https://0880-2804-14d-403a-8011-db78-4509-91af-c336.ngrok-free.app/notifications"
                 ]
-                        ],
-            'notification_urls' => [
-                "https://4829-2804-14d-403a-8011-1132-f2d8-3bd6-1bc2.ngrok-free.app/notifications"
             ]
         ]);
 
-        return json_decode($response->getBody(), true);
+        $responseBody = json_decode($response->getBody(), true);
+
+        // Passa o link QR code diretamente para a view
+        $qrCodeLink = $responseBody['qr_codes'][0]['links'];
+        
+
+        return $qrCodeLink;
+
     }
 
 

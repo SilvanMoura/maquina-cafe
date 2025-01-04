@@ -18,8 +18,10 @@ class QrCodeController extends Controller
     {
         $referenceId = $request->input('machine_id');
         $qrCodeData = $this->pagSeguroService->generateQrCode($referenceId);
-
-        return response()->json($qrCodeData);
+        
+        //return response()->json($qrCodeData);
+        
+        return view('viewQrCode', ['qrCodeLink' => response()->json($qrCodeData)]);
     }
 
     public function qrCodeView()
