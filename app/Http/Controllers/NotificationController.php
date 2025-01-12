@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\Transaction;
 
 class NotificationController extends Controller
 {
@@ -13,7 +14,7 @@ class NotificationController extends Controller
 
         // Define o caminho do arquivo onde os dados serão salvos
         $logFilePath = storage_path('logs/pagseguro_notifications.json');
-        
+
         $logData = [
             'hora_transacao' => now()->toDateTimeString(),
             "apelido" => $data['notification_data']['reference_id'],
@@ -26,18 +27,39 @@ class NotificationController extends Controller
             "id_comprador" => $data['notification_data']['charges'][0]['payment_method']['pix']['holder']['tax_id'],
         ];
 
-        // Lê o conteúdo existente do arquivo JSON, se existir
-        if (file_exists($logFilePath)) {
-            $existingData = json_decode(file_get_contents($logFilePath), true) ?? [];
-            $existingData[] = $logData; // Adiciona os novos dados ao array existente
-        } else {
-            $existingData = [$logData]; // Cria um novo array com os dados
+        try {
+            // Lê o conteúdo existente do arquivo JSON, se existir
+            if (file_exists($logFilePath)) {
+                $existingData = json_decode(file_get_contents($logFilePath), true) ?? [];
+                $existingData[] = $logData; // Adiciona os novos dados ao array existente
+            } else {
+                $existingData = [$logData]; // Cria um novo array com os dados
+            }
+
+            // Salva os dados atualizados no arquivo JSON
+            file_put_contents($logFilePath, json_encode($existingData, JSON_PRETTY_PRINT));
+
+            // Salva os dados no banco de dados
+            Transaction::create($logData);
+
+            // Retorna sucesso
+            return response()->json(['message' => 'Notificação processada com sucesso.'], 200);
+
+        } catch (\Exception $e) {
+            // Em caso de erro, registra no arquivo de log
+            $errorLogData = [
+                'error' => $e->getMessage(),
+                'log_data' => $logData,
+                'time' => now()->toDateTimeString(),
+            ];
+
+            // Salva o erro no arquivo de log
+            $existingErrors = file_exists($logFilePath) ? json_decode(file_get_contents($logFilePath), true) : [];
+            $existingErrors[] = $errorLogData;
+            file_put_contents($logFilePath, json_encode($existingErrors, JSON_PRETTY_PRINT));
+
+            // Retorna erro ao PagSeguro
+            return response()->json(['message' => 'Erro ao processar a notificação.'], 500);
         }
-
-        // Salva os dados atualizados no arquivo JSON
-        file_put_contents($logFilePath, json_encode($existingData, JSON_PRETTY_PRINT));
-
-        // Retorna uma resposta HTTP 200 para o PagSeguro
-        return response()->json(['message' => 'Notificação processada com sucesso.'], 200);
     }
 }
