@@ -42,12 +42,12 @@ class PagSeguroService
                     [
                         'expiration_date' => '2025-06-04T23:59:59.000-03:00',
                         'amount' => [
-                            'value' => 0
+                            'value' => 100
                         ]
                     ]
                 ],
                 'notification_urls' => [
-                    "https://0880-2804-14d-403a-8011-db78-4509-91af-c336.ngrok-free.app/notifications"
+                    "https://b708-2804-14d-403a-8011-3c49-cae8-4870-49c1.ngrok-free.app/notifications"
                 ]
             ]
         ]);
