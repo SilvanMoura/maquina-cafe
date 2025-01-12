@@ -21,7 +21,7 @@ class NotificationController extends Controller
             "nome_vendedor" => $data['notification_data']['customer']['name'],
             "id_vendedor" => $data['notification_data']['customer']['tax_id'],
             "id_transacao" => $data['notification_data']['qr_codes'][0]['id'],
-            "valor_transacao" => $data['notification_data']['qr_codes'][0]['amount']['value'],
+            "valor_transacao" => $data['notification_data']['qr_codes'][0]['amount']['value']/100,
             "status_transacao" => $data['notification_data']['charges'][0]['status'],
             "nome_comprador" => $data['notification_data']['charges'][0]['payment_method']['pix']['holder']['name'],
             "id_comprador" => $data['notification_data']['charges'][0]['payment_method']['pix']['holder']['tax_id'],
