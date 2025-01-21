@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Transaction;
+//use BeyondCode\LaravelWebSockets\Facades\WebSocketsRouter;
+use App\Events\SendCreditNotification;
 
 class NotificationController extends Controller
 {
@@ -21,7 +23,7 @@ class NotificationController extends Controller
             "nome_vendedor" => $data['notification_data']['customer']['name'],
             "id_vendedor" => $data['notification_data']['customer']['tax_id'],
             "id_transacao" => $data['notification_data']['qr_codes'][0]['id'],
-            "valor_transacao" => $data['notification_data']['qr_codes'][0]['amount']['value']/100,
+            "valor_transacao" => $data['notification_data']['qr_codes'][0]['amount']['value'] / 100,
             "status_transacao" => $data['notification_data']['charges'][0]['status'],
             "nome_comprador" => $data['notification_data']['charges'][0]['payment_method']['pix']['holder']['name'],
             "id_comprador" => $data['notification_data']['charges'][0]['payment_method']['pix']['holder']['tax_id'],
@@ -40,11 +42,25 @@ class NotificationController extends Controller
             file_put_contents($logFilePath, json_encode($existingData, JSON_PRETTY_PRINT));
 
             // Salva os dados no banco de dados
-            Transaction::create($logData);
+            //Transaction::create($logData);
 
+            // Envia os dados ao ESP8266 correspondente
+            $deviceId = "mccf-" . $data['notification_data']['reference_id']; // Ajuste conforme sua lógica de ID
+            //return $this->sendToDevice($deviceId, $logData['valor_transacao']);
+            //$response = broadcast(new SendCreditNotification($deviceId, 'pulsos de crédito', $logData['valor_transacao']))->toOthers();
             // Retorna sucesso
-            return response()->json(['message' => 'Notificação processada com sucesso.'], 200);
+            $response = broadcast(new SendCreditNotification($deviceId, 'pulsos de crédito', $logData['valor_transacao']))->toOthers();
 
+            // Retorna uma resposta clara ao cliente
+            return response()->json([
+                'success' => true,
+                'message' => 'pulsos de crédito',
+                'deviceId' => $deviceId,
+                'amount' => $logData['valor_transacao'],
+                "tets" => $response
+            ]);
+
+            return response()->json(['message' => 'Notificação processada com sucesso.'], 200);
         } catch (\Exception $e) {
             // Em caso de erro, registra no arquivo de log
             $errorLogData = [
@@ -61,5 +77,14 @@ class NotificationController extends Controller
             // Retorna erro ao PagSeguro
             return response()->json(['message' => 'Erro ao processar a notificação.'], 500);
         }
+    }
+
+    private function sendToDevice($deviceId, $pulses)
+    {
+        // Envia a mensagem para o canal 'app.{deviceID}'
+        WebSocketsRouter::channel('app.' . $deviceId)->broadcast([
+            'message' => 'pulsos de crédito',
+            'pulsos' => $pulses
+        ]);
     }
 }

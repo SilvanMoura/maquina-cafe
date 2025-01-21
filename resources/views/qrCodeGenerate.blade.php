@@ -22,7 +22,7 @@
     <div class="form-container">
         <form method="POST" action="/qrcode">
             @csrf
-            <label for="machine_id">Número de Série da Máquina:</label><br>
+            <label for="machine_id">Número de Série do módulo:</label><br>
             <input type="text" id="machine_id" name="machine_id" required><br><br>
             <button type="submit">Gerar QR Code</button>
         </form>

@@ -20,3 +20,7 @@ Broadcast::channel('App.Models.User.{id}', function ($user, $id) {
 Broadcast::channel('app.{deviceID}', function ($user, $deviceID) {
     return true; // Permite que todos se conectem a este canal
 });
+
+//Broadcast::channel('app.{deviceID}', function ($deviceID) {
+//    return true; // Permitir acesso para todos os dispositivos
+//});

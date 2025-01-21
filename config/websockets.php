@@ -48,8 +48,10 @@ return [
      * Leave this empty if you want to accept requests from all hosts.
      */
     'allowed_origins' => [
-        //
+        'https://df36-2804-14d-403a-8011-40f3-ff3c-52b5-51a3.ngrok-free.app',
+        'http://127.0.0.1:8000',
     ],
+
 
     /*
      * The maximum request size in kilobytes that is allowed for an incoming WebSocket request.
