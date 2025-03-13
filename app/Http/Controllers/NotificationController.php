@@ -4,11 +4,19 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Transaction;
-//use BeyondCode\LaravelWebSockets\Facades\WebSocketsRouter;
+use App\Services\MQTTService;
+use Illuminate\Support\Facades\Log;
 use App\Events\SendCreditNotification;
 
 class NotificationController extends Controller
 {
+    protected $mqttService;
+
+    public function __construct(MQTTService $mqttService)
+    {
+        $this->mqttService = $mqttService;
+    }
+
     public function handle(Request $request)
     {
         // Captura todos os dados enviados pelo PagSeguro
@@ -45,20 +53,34 @@ class NotificationController extends Controller
             //Transaction::create($logData);
 
             // Envia os dados ao ESP8266 correspondente
-            $deviceId = "mccf-" . $data['notification_data']['reference_id']; // Ajuste conforme sua lógica de ID
-            //return $this->sendToDevice($deviceId, $logData['valor_transacao']);
-            //$response = broadcast(new SendCreditNotification($deviceId, 'pulsos de crédito', $logData['valor_transacao']))->toOthers();
-            // Retorna sucesso
-            $response = broadcast(new SendCreditNotification($deviceId, 'pulsos de crédito', $logData['valor_transacao']))->toOthers();
+            //$deviceId = "mccf-" . $data['notification_data']['reference_id']; // Ajuste conforme sua lógica de ID
+            
+            /* $this->mqttService->connect();
+            $topic = "creditos/C4:D8:D5:2D:00:63";  // Tópico único por MAC
+            $message = json_encode(['pulsos' => $logData['valor_transacao']]);
+            $this->mqttService->publish($topic, $message);
+            $this->mqttService->disconnect(); */
 
-            // Retorna uma resposta clara ao cliente
-            return response()->json([
-                'success' => true,
-                'message' => 'pulsos de crédito',
-                'deviceId' => $deviceId,
-                'amount' => $logData['valor_transacao'],
-                "tets" => $response
+            // Envia os dados ao ESP8266 correspondente
+            // Tópico único para o ESP
+            $deviceMAC = "C4:D8:D5:2D:00:63"; // MAC do dispositivo alvo
+            $topic = "creditos/{$deviceMAC}";
+
+            // Mensagem com pulsos e deviceID
+            $message = json_encode([
+                'pulsos' => $logData['valor_transacao'],
+                'deviceID' => "mccf-1020", // Deve ser igual ao configurado no ESP
+                'message' => "pulsos de crédito"
             ]);
+
+            // Publica a mensagem no broker MQTT
+            $this->mqttService->connect();
+            Log::info("Conexão com MQTT estabelecida com sucesso.");
+            $this->mqttService->publish($topic, $message);
+            Log::info("Mensagem publicada no tópico $topic com os dados: $message");
+            $this->mqttService->disconnect();
+            Log::info("Conexão MQTT encerrada.");
+            
 
             return response()->json(['message' => 'Notificação processada com sucesso.'], 200);
         } catch (\Exception $e) {
@@ -79,12 +101,4 @@ class NotificationController extends Controller
         }
     }
 
-    private function sendToDevice($deviceId, $pulses)
-    {
-        // Envia a mensagem para o canal 'app.{deviceID}'
-        WebSocketsRouter::channel('app.' . $deviceId)->broadcast([
-            'message' => 'pulsos de crédito',
-            'pulsos' => $pulses
-        ]);
-    }
 }
