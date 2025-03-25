@@ -18,7 +18,8 @@ use App\Http\Controllers\NotificationController;
 */
 
 Route::get('/', function () {
-    return view('qrCodeGenerate');
+    //return view('qrCodeGenerate');
+    return view('dashboard');
 });
 
 Route::get('/generateQrCode', [QrCodeController::class, 'qrCodeView']);
