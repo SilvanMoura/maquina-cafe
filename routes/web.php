@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use BeyondCode\LaravelWebSockets\Facades\WebSocket;
 use App\Http\Controllers\QrCodeController;
+use App\Http\Controllers\StoreController;
 use App\Http\Controllers\NotificationController;
 
 
@@ -22,7 +23,7 @@ Route::get('/', function () {
     return view('dashboard');
 });
 
-Route::get('/lojas', function () { return view('stores'); });
+Route::get('/lojas', [StoreController::class, 'getStoreData']);
 
 Route::get('/generateQrCode', [QrCodeController::class, 'qrCodeView']);
 Route::get('/websocket', function () {

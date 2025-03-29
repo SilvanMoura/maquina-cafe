@@ -88,45 +88,25 @@
                         <tr>
                             <th>Id</th>
                             <th>Nome</th>
-                            <th>Máquina</th>
-                            <th>Status</th>
-                            <th>Tipo</th>
-                            <th>Avaliação</th>
-                            <th>Valor</th>
-                            <th>Data Entrega</th>
-                            <th>Garantia</th>
+                            <th>Endereço</th>
                         </tr>
                     </thead>
                     <tbody>
 
 
-                        @if(1 > 0)
-                        
+                        @if($storesData->count() > 0)
+                        @foreach ($storesData as $r)
                         <tr>
 
-                            <td style="width:5%;">  </td>
-                            <td style="width:25%;"><a href=""> </a></td>
-                            <td style="width:12%;"><a href=""> </a></td>
-                            <td style="width:10%;"><a href=""> </a></td>
-                            <td style="width:6%;"><a href=""> </a></td>
-                            <td style="width:6%;"><a href=""> </a></td>
-                            <td style="width:7%;"><a href="">R$  </a></td>
+                            <td style="width:10%;">{{ $r['id'] }}</td>
+                            <td style="width:35%;"><a>{{ $r['name'] }}</a></td>
+                            <td style="width:50%;"><a>{{ $r['location']['address_line'] }}</a></td>
 
-                            <td style="width:8%;"><a href=""> </a></td>
-                            @if( 1 != null)
-                            <td style="width:9%;"><a href="">  </a></td>
-                            @else
-                            <td style="width:9%;"><a href="">sem garantia</a></td>
-                            @endif
-                            <td style="width:12%;">
-                                <a href=" '/os/visualizar/'. " class="btn-nwe" title="Ver mais detalhes"><i class="bx bx-show bx-xs"></i></a>
-                                <a href=" '/os/editar/'. " class="btn-nwe5" title="Editar"><i class="bx bx-edit bx-xs"></i></a>
-                                
-                                <a href=" '/os/imprimirOs/'. " class="btn-nwe3" title="Imprimir OS"><i class="bx bx-printer bx-xs"></i></a>
-                                
+                            <td style="width:55%;">
+                                <a href="{{ '/os/editar/'. $r['id'] }}" class="btn-nwe5" title="Editar"><i class="bx bx-edit bx-xs"></i></a>
                             </td>
                         </tr>
-                        
+                        @endforeach
                         @else
                         <tr>
                             <td colspan="6">Nenhum OS Cadastrado</td>
