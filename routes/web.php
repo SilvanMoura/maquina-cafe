@@ -22,6 +22,8 @@ Route::get('/', function () {
     return view('dashboard');
 });
 
+Route::get('/lojas', function () { return view('stores'); });
+
 Route::get('/generateQrCode', [QrCodeController::class, 'qrCodeView']);
 Route::get('/websocket', function () {
     return view('websocket');

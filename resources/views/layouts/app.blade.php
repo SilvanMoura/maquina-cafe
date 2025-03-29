@@ -195,7 +195,7 @@
                     <li class="<?php if (isset($menuServicos)) {
                                     echo 'active';
                                 } ?>">
-                        <a class="tip-bottom" title="Serviços" href="/servicos">
+                        <a class="tip-bottom" title="Lojas" href="/lojas">
                             <i class='bx bx-wrench iconX'></i>
                             <span class="title">Lojas</span>
                             <span class="title-tooltip">Lojas</span>
