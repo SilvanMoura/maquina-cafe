@@ -22,27 +22,6 @@
             </span>
             <h5>Lojas</h5>
         </div>
-        <!-- php if ($this->permission->checkPermission($this->session->userdata('permissao'), 'aCliente')) { ?> -->
-        <!-- <div class="flexxn" style="background-color:red; display: block;">
-            <div style="background-color:blue; display: flex; justify-content:space-between;">
-
-                <div>
-                    <a href="os/adicionar" class="button btn btn-mini btn-success" style="max-width: 165px">
-                        <span class="button__icon"><i class='bx bx-plus-circle'></i></span><span class="button__text2">
-                            Ordem de Serviço
-                        </span>
-                    </a>
-                </div>
-
-                <div>
-                    <label id="search">
-                        Pesquisar
-                        <input type="search" id="searchInput" class="" placeholder="Id OS ou Nome Cliente" aria-controls="tabela">
-                    </label>
-                </div>
-
-            </div>
-        </div> -->
 
         <div class="flexxn" style="display:block;">
             <div style="display: block; flex-direction:column;">
@@ -64,21 +43,6 @@
 
             </div>
         </div>
-
-        <!-- <div class="flexxn" style="background-color:red; display: block;">
-            <a href="os/adicionar" class="button btn btn-mini btn-success" style="max-width: 165px">
-                <span class="button__icon"><i class='bx bx-plus-circle'></i></span><span class="button__text2">
-                    Ordem de Serviço
-                </span>
-            </a>
-        </div>
-        <div class="flexxn" style="background-color:red; display: block;">
-            <label id="search">
-                Pesquisar
-                <input type="search" id="searchInput" class="" placeholder="Id OS ou Nome Cliente" aria-controls="tabela">
-            </label>
-        </div> -->
-        <!-- ?php } ?> -->
 
         <div class="widget-box">
             <h5 style="padding: 3px 0"></h5>
@@ -109,7 +73,7 @@
                         @endforeach
                         @else
                         <tr>
-                            <td colspan="6">Nenhum OS Cadastrado</td>
+                            <td colspan="6">Nenhum Loja Cadastrada</td>
                         </tr>
                         @endif
 

@@ -18,8 +18,15 @@ class StoreController extends Controller
     {
         $storesData = $this->StoreService->getStores();
         
+        return view('stores', ['storesData' => collect($storesData)]);
+    }
+
+    public function getPosData()
+    {
+        $posData = $this->StoreService->getPos();
+        
         //return response()->json($storesData);
         
-        return view('stores', ['storesData' => collect($storesData)]);
+        return view('pos', ['posData' => collect($posData)]);
     }
 }

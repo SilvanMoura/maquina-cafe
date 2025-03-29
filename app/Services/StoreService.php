@@ -30,4 +30,20 @@ class StoreService
         return $responseBody['results'];
 
     }
+
+    public function getPos()
+    {
+        $client = new Client();
+        $response = $client->get("https://api.mercadopago.com/pos", [
+            'headers' => [
+                'Authorization' => "Bearer {$this->token}",
+                'Content-Type' => 'application/json',
+            ]
+        ]);
+
+        $responseBody = json_decode($response->getBody(), true);
+
+        return $responseBody['results'];
+
+    }
 }
