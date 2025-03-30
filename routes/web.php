@@ -24,7 +24,7 @@ Route::get('/', function () {
 });
 
 Route::get('/lojas', [StoreController::class, 'getStoreData']);
-Route::get('/Pos', [StoreController::class, 'getPosData']);
+Route::get('/pos', [StoreController::class, 'getPosData']);
 
 Route::get('/generateQrCode', [QrCodeController::class, 'qrCodeView']);
 Route::get('/websocket', function () {

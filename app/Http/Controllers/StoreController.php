@@ -25,7 +25,7 @@ class StoreController extends Controller
     {
         $posData = $this->StoreService->getPos();
         
-        //return response()->json($storesData);
+        //return response()->json($posData);
         
         return view('pos', ['posData' => collect($posData)]);
     }
