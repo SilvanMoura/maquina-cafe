@@ -24,9 +24,18 @@ class StoreController extends Controller
     public function getPosData()
     {
         $posData = $this->StoreService->getPos();
-        
+        $storeIdName = $this->StoreService->getStoresById($posData['0']['store_id']);
+        $posData['0']['store_name'] =  $storeIdName;
+
         //return response()->json($posData);
-        
+        return view('pos', ['posData' => collect($posData)]);
+    }
+
+    public function consultOrderinPerson()
+    {
+        $posData = $this->StoreService->consultOrderinPerson(2321161890, 'mccf1030');
+
+        return response()->json($posData);
         return view('pos', ['posData' => collect($posData)]);
     }
 }

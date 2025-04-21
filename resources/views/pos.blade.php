@@ -65,7 +65,7 @@
 
                             <td style="width:10%;">{{ $r['id'] }}</td>
                             <td style="width:10%;"><a>{{ $r['name'] }}</a></td>
-                            <td style="width:10%;"><a>{{ $r['store_id'] }}</a></td>
+                            <td style="width:10%;"><a>{{ $r['store_name'] }}</a></td>
                             <td style="width:10%;"><a>{{ $r['external_id'] }}</a></td>
 
                             <td style="width:55%;">
