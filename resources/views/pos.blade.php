@@ -50,7 +50,7 @@
                 <table id="tabela" class="table table-bordered ">
                     <thead>
                         <tr>
-                            <th>Id</th>
+                            <th>Id POS</th>
                             <th>Nome do Ponto</th>
                             <th>Nome da Loja</th>
                             <th>Cód. Módulo</th>
@@ -65,7 +65,7 @@
 
                             <td style="width:10%;">{{ $r['id'] }}</td>
                             <td style="width:10%;"><a>{{ $r['name'] }}</a></td>
-                            <td style="width:10%;"><a>{{ $r['store_name'] }}</a></td>
+                            
                             <td style="width:10%;"><a>{{ $r['external_id'] }}</a></td>
 
                             <td style="width:55%;">

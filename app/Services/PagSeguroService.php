@@ -47,7 +47,7 @@ class PagSeguroService
                     ]
                 ],
                 'notification_urls' => [
-                    "https://0ed8-2804-14d-403a-8011-40f3-ff3c-52b5-51a3.ngrok-free.app/notifications"
+                    "https://24c7-181-220-110-25.ngrok-free.app/notifications"
                 ]
             ]
         ]);
