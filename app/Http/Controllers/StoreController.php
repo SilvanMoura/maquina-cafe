@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Services\StoreService;
+use App\Models\Store;
 use Illuminate\Http\Request;
 
 class StoreController extends Controller
@@ -45,6 +46,7 @@ class StoreController extends Controller
     }
 
     public function newStore(Request $request){
+
         $request->validate([
             'cpfCnpjStore' => 'nullable|string',
             'nameStore' => 'nullable|string',
@@ -54,13 +56,31 @@ class StoreController extends Controller
             'cidade' => 'nullable|string'
         ]);
 
+        $newStore = new StoreService();
+        
+        $responseBody = $newStore->newStore(
+            $request->input('nameStore'),
+            $request->input('endereco'),
+            $request->input('complemento'),
+            $request->input('cidade')
+        );
+
+        $addressLine = $responseBody['location']['address_line']; // Ex: "Rua Lázaro Zamenhof 56, Pelotas, Rio Grande do Sul, Brasil"
+
+        // Separar os dados do endereço
+        preg_match('/^(.*\d*)\,\s*(.*)\,\s*(.*)\,\s*Brasil$/', $addressLine, $matches);
+        $endereco = $matches[1] ?? null;
+        $cidade   = $matches[2] ?? null;
+        $estado   = $matches[3] ?? null;
+
         $store = Store::create([
-            'nameStore' => $request->input('nome'),
-            'cpfcnpj' => $cpf,
-            'endereco' => $request->input('endereco'),
-            'complemento' => $request->input('complemento'),
-            'cep' => $request->input('cep'),
-            'cidade' => $request->input('cidade'),
+            'idStore'   => $responseBody['id'] ?? null,
+            'nameStore' => $responseBody['name'] ?? null,
+            'cpfcnpj'   => $request->input('cpfCnpjStore'),
+            'endereco'  => $endereco,
+            'cep'       => $request->input('cep'),
+            'cidade'    => $cidade,
+            'estado'    => $estado,
         ]);
 
         return response()->json(['message' => 'Loja criada com sucesso', 'registro' => $store], 201);

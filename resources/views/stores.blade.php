@@ -27,7 +27,7 @@
             <div style="display: block; flex-direction:column;">
 
                 <div>
-                    <a href="os/adicionar" class="button btn btn-mini btn-success" style="max-width: 165px">
+                    <a href="lojas/adicionar" class="button btn btn-mini btn-success" style="max-width: 165px">
                         <span class="button__icon"><i class='bx bx-plus-circle'></i></span><span class="button__text2">
                             Nova Loja
                         </span>

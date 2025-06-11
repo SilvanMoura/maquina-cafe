@@ -210,7 +210,7 @@
                                 title: 'Cadastro Concluído',
                                 text: 'Loja criada com sucesso!',
                             }).then(() => {
-                                window.location.href = "http://127.0.0.1:8000/dashboard";
+                                window.location.href = "http://127.0.0.1:8000/";
                             });
                         } else {
                             $('#error-message').text(data.message || 'Erro no cadastro. Por favor, tente novamente.');

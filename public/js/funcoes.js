@@ -148,7 +148,7 @@ $(document).ready(function () {
 
     $('#buscar_info_cnpj').on('click', function () {
         //Nova variável "ndocumento" somente com dígitos.
-        var ndocumento = $('#documento').val().replace(/\D/g, '');
+        var ndocumento = $('#cpfCnpjStore').val().replace(/\D/g, '');
 
         if (validarCNPJ(ndocumento)) {
             //Preenche os campos com "..." enquanto consulta webservice.
@@ -171,27 +171,25 @@ $(document).ready(function () {
                 success: function (dados) {
                     if (dados.status == "OK") {
                         //Atualiza os campos com os valores da consulta.
-                        if ($("#nomeCliente").val() != null) {
-                            $("#nomeCliente").val(capital_letter(dados.nome));
+                        if ($("#nameStore").val() != null) {
+                            $("#nameStore").val(capital_letter(dados.fantasia));
                         }
-                        if ($("#nomeEmitente").val() != null) {
-                            $("#nomeEmitente").val(capital_letter(dados.nome));
+                        if ($("#nameStore").val() != null) {
+                            $("#nameStore").val(capital_letter(dados.fantasia));
                         }
                         $("#cep").val(dados.cep.replace(/\./g, ''));
                         $("#email").val(dados.email.toLocaleLowerCase());
                         $("#telefone").val(dados.telefone.split("/")[0].replace(/\ /g, ''));
                         $("#endereco").val(capital_letter(dados.logradouro));
-                        $("#numero").val(dados.numero);
+                        $("#complemento").val(dados.numero);
                         $("#bairro").val(capital_letter(dados.bairro));
                         $("#cidade").val(capital_letter(dados.municipio));
                         $("#estado").val(dados.uf);
                         if (dados.complemento != "") {
                             $("#complemento").val(capital_letter(dados.complemento));
-                        } else {
-                            $("#complemento").val("");
                         }
 
-                        document.getElementById('Jurídica').checked = true;
+                        //document.getElementById('Jurídica').checked = true;
 
                         // Força uma atualizacao do endereco via cep
                         //document.getElementById("cep").focus();
