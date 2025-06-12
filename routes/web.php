@@ -31,7 +31,7 @@ Route::post('/lojas/adicionar', [StoreController::class, 'newStore']);
 Route::get('/pos', [StoreController::class, 'getPosData']); //obtem todos os pontos de venda/caixa (pos)
 
 Route::get('/modulos', [ModuleController::class, 'modulesView']); 
-Route::get('/modulos/adicionar', [StoreController::class, 'newModuleView']);
+Route::get('/modulos/adicionar', [ModuleController::class, 'newModuleView']);
 
 Route::get('/generateQrCode', [QrCodeController::class, 'qrCodeView']);
 Route::get('/websocket', function () {
