@@ -20,14 +20,14 @@
             <span class="icon">
                 <i class="fas fa-user"></i>
             </span>
-            <h5>Lojas</h5>
+            <h5>Módulos</h5>
         </div>
 
         <div class="flexxn" style="display:block;">
             <div style="display: block; flex-direction:column;">
 
                 <div>
-                    <a href="lojas/adicionar" class="button btn btn-mini btn-success" style="max-width: 165px">
+                    <a href="modulos/adicionar" class="button btn btn-mini btn-success" style="max-width: 165px">
                         <span class="button__icon"><i class='bx bx-plus-circle'></i></span><span class="button__text2">
                             Novo Módulo
                         </span>
@@ -80,7 +80,7 @@
 
 <script type="text/javascript">
     $(document).ready(function() {
-        
+
         $('#searchInput').on('keydown', function(e) {
             if (e.key === 'Enter') {
                 performSearch();
