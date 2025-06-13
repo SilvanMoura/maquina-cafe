@@ -32,6 +32,7 @@ Route::get('/pos', [StoreController::class, 'getPosData']); //obtem todos os pon
 
 Route::get('/modulos', [ModuleController::class, 'modulesView']); 
 Route::get('/modulos/adicionar', [ModuleController::class, 'newModuleView']);
+Route::post('/modulos/adicionar', [ModuleController::class, 'newModule']);
 
 Route::get('/generateQrCode', [QrCodeController::class, 'qrCodeView']);
 Route::get('/websocket', function () {

@@ -474,7 +474,7 @@ hr {
 /* Botoes */
 .cardBox {
   position: relative;
-  width: 91%;
+  width: 84%;
   margin-left: 8%;
   padding: 0px;
   display: grid;
@@ -1791,7 +1791,7 @@ section .profile .profile-img {
   position: relative;
   border-radius: 12px;
   height: 100%, 0, 0.1;
-  width: 90vw;
+  width: 84vw;
 }
 
 .widget-box0,

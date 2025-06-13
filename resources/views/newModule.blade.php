@@ -170,7 +170,7 @@
                 // Requisição AJAX
                 $.ajax({
                     type: "POST",
-                    url: "https://24c7-181-220-110-25.ngrok-free.app/lojas/adicionar",
+                    url: "https://24c7-181-220-110-25.ngrok-free.app/modulos/adicionar",
                     data: dados,
                     dataType: 'json',
                     headers: {
