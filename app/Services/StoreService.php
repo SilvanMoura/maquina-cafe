@@ -111,4 +111,29 @@ class StoreService
         return $responseBody;
 
     }
+
+    public function newPos($idStore, $nameStore, $moduloValue)
+    {
+
+        $client = new Client();
+
+        $response = $client->post("https://api.mercadopago.com/pos", [
+            'headers' => [
+                'Authorization' => "Bearer {$this->token}",
+                'Content-Type' => 'application/json',
+            ],
+            'json' => [
+                'store_id' => $idStore,
+                'external_id' => "mccf{$moduloValue}",
+                'name' => "$nameStore - Caixa",
+                'fixed_amount' => false,
+                'category' => 5611203
+            ],
+        ]);
+
+        $responseBody = json_decode($response->getBody(), true);
+
+        return $responseBody;
+
+    }
 }

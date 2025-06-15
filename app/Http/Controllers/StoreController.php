@@ -91,9 +91,19 @@ class StoreController extends Controller
         ]);
 
         $data = json_decode($store, true);
-        $responseBody = $newModule->registerStoreModule(
+        $newModule->registerStoreModule(
             $request->input('modulo'),
             $data['idStore']
+        );
+
+        $moduloValue = $newModule->getModuloById(
+            $request->input('modulo'),
+        );
+        
+        $dataPos = $newStore->newPos(
+            $responseBody['id'],
+            $responseBody['name'],
+            $moduloValue
         );
 
         return response()->json(['message' => 'Loja criada com sucesso', 'registro' => $store], 201);

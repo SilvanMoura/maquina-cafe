@@ -21,7 +21,10 @@ class ModuleService
         })->get();
     }
 
-
+    public function getModuloById($id)
+    {
+        return Module::where('id', $id)->value('modulo');
+    }
 
     public function newModule($module)
     {
