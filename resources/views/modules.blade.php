@@ -13,8 +13,16 @@
         overflow-y: auto;
         /* Adiciona rolagem vertical quando necessário */
     }
+    @media (min-width: 1366px) {
+        .ajuste-container {
+            margin-left: 7% !important;
+            max-width: 93% !important;
+            max-height: 85vh !important;
+            margin-top:-46%
+        }
+    }
 </style>
-<div style="height: 90vh; width: 99vw;">
+<div class="ajuste-container" style="height: 90vh; width: 99vw;">
     <div class="new122" style="margin: 1% 1% 0 7%;">
         <div class="widget-title" style="margin: -20px 0 0">
             <span class="icon">
@@ -56,18 +64,23 @@
                     </thead>
                     <tbody>
 
+                        @if($modules->count() > 0)
+                        @foreach ($modules as $r)
                         <tr>
 
-                            <td style="width:10%;">00</td>
-                            <td style="width:35%;"><a>aa</a></td>
+                            <td style="width:10%;">{{ $r->id }}</td>
+                            <td style="width:35%;"><a>MCCF - {{ $r->codigo }}</a></td>
 
                             <td style="width:55%;">
                                 <a href="" class="btn-nwe5" title="Editar"><i class="bx bx-edit bx-xs"></i></a>
                             </td>
                         </tr>
+                        @endforeach
+                        @else
                         <tr>
                             <td colspan="6">Nenhum Módulo Cadastrado</td>
                         </tr>
+                        @endif
 
 
                     </tbody>

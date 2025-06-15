@@ -62,7 +62,18 @@
             cursor: pointer;
             outline: none;
         }
-        
+        @media (min-width: 1366px) {
+        .ajuste-container {
+            margin-left: 65% !important;
+            max-width: 75vw !important;
+        }
+        #sidebar{
+            width: 180px;
+        }
+        #breadcrumb{
+            margin-left: 12%;
+        }
+    }
     </style>
 
 </head>
@@ -292,6 +303,7 @@
     </nav>
     <!--End sidebar-menu-->
 
+    
     <div id="content">
         <!--start-top-serch-->
         <div id="content-header">

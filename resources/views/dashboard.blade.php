@@ -1,6 +1,21 @@
 @extends('layouts/app')
 
 @section('content')
+<style>
+    @media (min-width: 1366px) {
+        .ajuste-cardbox {
+            margin-top: -45% !important;
+            min-height: 85vh !important;
+        }
+        .ajuste-statisc{
+            margin-left:14vw;
+        }
+        .ajuste-status{
+            margin-left: 14%; 
+            width:84vw;
+        }
+    }
+</style>
 <!-- New Bem-vindos -->
 <div id="content-bemv">
     <div class="bemv">Dashboard</div>
@@ -8,7 +23,7 @@
 </div>
 
 <!--Action boxes-->
-    <div style="margin-top:-45%; min-height: 85vh;">
+    <div class="ajuste-cardbox">
         <ul class="cardBox" style="margin-left: 14%;">
             <li class="card">
                 <div class="grid-blak">
@@ -90,108 +105,100 @@
 
         </ul>
         <!--End-Action boxes-->
-        <div style="margin-left: 14%; width: 90%; max-width: 100vw; overflow-x: auto;">
-            <div class="row-fluid" >
-                <div class="Sspan12">
-
-                    <!-- New widget right -->
-                    
+        
+        <!-- Fim new widget right -->
+        <div class="new-statisc ajuste-statisc">
+            <div class="widget-box-new widbox-blak" style="height:100%">
+                <div>
+                    <h5 class="cardHeader">Dados Rápidos</h5>
                 </div>
+
+                <div class="new-bottons">
+
+                    <!-- <a href="/clientes/adicionar" class="card tip-top" title="Add Clientes e Fornecedores">
+                        <div><i class='bx bxs-group iconBx'></i></div>
+                        <div>
+                            <div class="cardName2">0</div>
+                            <div class="cardName">Módulos</div>
+                        </div>
+                    </a> -->
+
+                    <a href="/produtos/adicionar" class="card tip-top" title="Adicionar Produtos">
+                        <div><i class='bx bxs-package iconBx2'></i></div>
+                        <div>
+                            <div class="cardName2">0</div>
+                            <div class="cardName">Vendas</div>
+                        </div>
+                    </a>
+                    <a href="/produtos/adicionar" class="card tip-top" title="Adicionar Produtos">
+                        <div><i class='bx bxs-package iconBx2'></i></div>
+                        <div>
+                            <div class="cardName2">0</div>
+                            <div class="cardName">Vendas</div>
+                        </div>
+                    </a>
+
+                    <a href="/os/adicionar" class="card tip-top" title="Adicionar serviços">
+                        <div><i class='bx bxs-stopwatch iconBx3'></i></div>
+                        <div>
+                            <div class="cardName2">0</div>
+                            <div class="cardName">Módulos Ativos</div>
+                        </div>
+                    </a>
+
+                    <a href="/os/adicionar" class="card tip-top" title="Adicionar serviços">
+                        <div><i class='bx bx-file iconBx3'></i></div>
+                        <div>
+                            <div class="cardName2">0</div>
+                            <div class="cardName">Módulos Total</div>
+                        </div>
+                    </a>
+
+                    <a href="/os/adicionar" class="card tip-top" title="Adicionar OS">
+                        <div><i class='bx bxs-spreadsheet iconBx4'></i></div>
+                        <div>
+                            <div class="cardName2">0</div>
+                            <div class="cardName">Cupons</div>
+                        </div>
+                    </a>
+
+                    <a href="/maquinas-adicionar" class="card tip-top" title="Adicionar Máquina">
+                        <div><i class='bx bxs-cart-alt iconBx5'></i></div>
+                        <div>
+                            <div class="cardName2">0</div>
+                            <div class="cardName">Lojas</div>
+                        </div>
+                    </a>
+
+
+                    <a href="/maquinas-adicionar" class="card tip-top" title="Adicionar Máquina">
+                        <div><i class='bx bxs-cart-alt iconBx5'></i></div>
+                        <div>
+                            <div class="cardName2">0</div>
+                            <div class="cardName">Lojas</div>
+                        </div>
+                    </a>
+
+                    
+
+                    <!-- <a href="/garantias" class="card tip-top" title="Adicionar garantia">
+                        <div><i class='bx bxs-receipt iconBx6'></i></div>
+                        <div>
+                            <div class="cardName2">0</div>
+                            <div class="cardName">Garantias</div>
+                        </div>
+                    </a> -->
+                    <?php $diaRec = "VALOR_" . date('m') . "_REC";
+                    $diaDes = "VALOR_" . date('m') . "_DES"; ?>
+
+                </div>
+
             </div>
         </div>
-        <!-- Fim new widget right -->
-                    <div class="new-statisc" style="margin-left:14vw;" >
-                        <div class="widget-box-new widbox-blak" style="height:100%">
-                            <div>
-                                <h5 class="cardHeader">Dados Rápidos</h5>
-                            </div>
-
-                            <div class="new-bottons">
-
-                                <!-- <a href="/clientes/adicionar" class="card tip-top" title="Add Clientes e Fornecedores">
-                                    <div><i class='bx bxs-group iconBx'></i></div>
-                                    <div>
-                                        <div class="cardName2">0</div>
-                                        <div class="cardName">Módulos</div>
-                                    </div>
-                                </a> -->
-
-                                <a href="/produtos/adicionar" class="card tip-top" title="Adicionar Produtos">
-                                    <div><i class='bx bxs-package iconBx2'></i></div>
-                                    <div>
-                                        <div class="cardName2">0</div>
-                                        <div class="cardName">Vendas</div>
-                                    </div>
-                                </a>
-                                <a href="/produtos/adicionar" class="card tip-top" title="Adicionar Produtos">
-                                    <div><i class='bx bxs-package iconBx2'></i></div>
-                                    <div>
-                                        <div class="cardName2">0</div>
-                                        <div class="cardName">Vendas</div>
-                                    </div>
-                                </a>
-
-                                <a href="/os/adicionar" class="card tip-top" title="Adicionar serviços">
-                                    <div><i class='bx bxs-stopwatch iconBx3'></i></div>
-                                    <div>
-                                        <div class="cardName2">0</div>
-                                        <div class="cardName">Módulos Ativos</div>
-                                    </div>
-                                </a>
-
-                                <a href="/os/adicionar" class="card tip-top" title="Adicionar serviços">
-                                    <div><i class='bx bx-file iconBx3'></i></div>
-                                    <div>
-                                        <div class="cardName2">0</div>
-                                        <div class="cardName">Módulos Total</div>
-                                    </div>
-                                </a>
-
-                                <a href="/os/adicionar" class="card tip-top" title="Adicionar OS">
-                                    <div><i class='bx bxs-spreadsheet iconBx4'></i></div>
-                                    <div>
-                                        <div class="cardName2">0</div>
-                                        <div class="cardName">Cupons</div>
-                                    </div>
-                                </a>
-
-                                <a href="/maquinas-adicionar" class="card tip-top" title="Adicionar Máquina">
-                                    <div><i class='bx bxs-cart-alt iconBx5'></i></div>
-                                    <div>
-                                        <div class="cardName2">0</div>
-                                        <div class="cardName">Lojas</div>
-                                    </div>
-                                </a>
-
-
-                                <a href="/maquinas-adicionar" class="card tip-top" title="Adicionar Máquina">
-                                    <div><i class='bx bxs-cart-alt iconBx5'></i></div>
-                                    <div>
-                                        <div class="cardName2">0</div>
-                                        <div class="cardName">Lojas</div>
-                                    </div>
-                                </a>
-
-                                
-
-                                <!-- <a href="/garantias" class="card tip-top" title="Adicionar garantia">
-                                    <div><i class='bx bxs-receipt iconBx6'></i></div>
-                                    <div>
-                                        <div class="cardName2">0</div>
-                                        <div class="cardName">Garantias</div>
-                                    </div>
-                                </a> -->
-                                <?php $diaRec = "VALOR_" . date('m') . "_REC";
-                                $diaDes = "VALOR_" . date('m') . "_DES"; ?>
-
-                            </div>
-
-                        </div>
-                    </div>
         <div>
 
             <!-- Start Staus OS -->
-            <div class="span12A" style="margin-left: 14%; width:84vw">
+            <div class="span12A ajuste-status">
                 <div class="AAA">
                     <div class="widget-box0 widbox-blak">
                         <div>

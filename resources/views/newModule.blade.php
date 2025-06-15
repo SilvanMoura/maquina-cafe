@@ -79,9 +79,22 @@
             position: initial !important;
         }
     }
+    @media (min-width: 1366px) {
+        .ajuste-container {
+            margin-left: 7% !important;
+            max-width: 85% !important;
+            max-height: 85vh !important;
+            margin-top:-46%
+        }
+    }
+    @media (max-width: 1365px) {
+        .ajuste-container {
+            width: 91vw;
+        }
+    }
 </style>
-<div style="height: 92vh;">
-    <div class="row-fluid" style="margin: 0% 0% 0 7%; width: 91vw;">
+<div class="ajuste-container" style="height: 92vh;">
+    <div class="row-fluid" style="margin: 0% 0% 0 7%; ">
         <div class="span12">
             <div class="widget-box">
                 <div class="widget-title" style="margin: -20px 0 0">
