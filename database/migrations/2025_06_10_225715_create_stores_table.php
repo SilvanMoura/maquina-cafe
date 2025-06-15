@@ -20,6 +20,7 @@ return new class extends Migration
             $table->string('estado')->nullable();
             $table->string('cep')->nullable();
             $table->string('cidade')->nullable();
+            $table->string('modulo')->nullable();
             $table->timestamps();
         });
     }

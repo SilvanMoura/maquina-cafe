@@ -13,7 +13,8 @@ return new class extends Migration
     {
         Schema::create('modules', function (Blueprint $table) {
             $table->id(); // campo id
-            $table->string('codigo'); // campo codigo
+            $table->string('modulo'); // campo codigo
+            $table->string('idStore');
             $table->timestamps();
         });
     }

@@ -16,6 +16,7 @@ class Store extends Model
         'endereco',
         'estado',
         'cep',
-        'cidade'
+        'cidade',
+        'modulo'
     ];
 }

@@ -15,19 +15,35 @@ class ModuleService
 
     public function getModules()
     {
-        return Module::all();
+        return Module::where(function($query) {
+            $query->whereNull('idStore')
+                ->orWhere('idStore', '');
+        })->get();
     }
+
+
 
     public function newModule($module)
     {
 
         $response = Module::create([
-            'codigo'   => $module
+            'modulo'   => $module,
+            'idStore'  => ''
         ]); 
+
+        //$responseBody = json_decode($response, true);
+
+        return $response;
+
+    }
+
+    public function registerStoreModule($module, $idStore){
+        $response = Module::where('id', $module)->update([
+            'idStore' => $idStore
+        ]);
 
         $responseBody = json_decode($response, true);
 
-        return $responseBody;
-
+        return $response;
     }
 }

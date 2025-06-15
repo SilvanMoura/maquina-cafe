@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Services\StoreService;
 use App\Models\Store;
+use App\Services\ModuleService;
 use Illuminate\Http\Request;
 
 class StoreController extends Controller
@@ -42,7 +43,10 @@ class StoreController extends Controller
     }
 
     public function newStoreView(){
-        return view('newStore');
+        $moduleService = new ModuleService();
+        $modulesData = $moduleService->getModules();
+        
+        return view('newStore', ['modules' => $modulesData]);
     }
 
     public function newStore(Request $request){
@@ -53,11 +57,13 @@ class StoreController extends Controller
             'endereco' => 'nullable|string',
             'bairro' => 'nullable|string',
             'cep' => 'nullable|string',
-            'cidade' => 'nullable|string'
+            'cidade' => 'nullable|string',
+            'modulo' => 'nullable|string'
         ]);
 
         $newStore = new StoreService();
-        
+        $newModule = new ModuleService();
+
         $responseBody = $newStore->newStore(
             $request->input('nameStore'),
             $request->input('endereco'),
@@ -81,7 +87,14 @@ class StoreController extends Controller
             'cep'       => $request->input('cep'),
             'cidade'    => $cidade,
             'estado'    => $estado,
+            'modulo'    => $request->input('modulo')
         ]);
+
+        $data = json_decode($store, true);
+        $responseBody = $newModule->registerStoreModule(
+            $request->input('modulo'),
+            $data['idStore']
+        );
 
         return response()->json(['message' => 'Loja criada com sucesso', 'registro' => $store], 201);
     }

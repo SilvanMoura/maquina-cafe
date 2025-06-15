@@ -75,9 +75,25 @@
             position: initial !important;
         }
     }
+    @media (min-width: 1366px) {
+        .ajuste {
+            max-height: 85vh !important;
+            margin-top:-50%;
+        }
+        .ajuste-container {
+            margin-left: 13% !important;
+            max-width: 85% !important;
+           
+        }
+    }
+    @media (max-width: 1365px) {
+        .ajuste-container {
+            width: 91vw;
+        }
+    }
 </style>
-<div style="height: 92vh;">
-    <div class="row-fluid" style="margin: 0% 0% 0 7%; width: 91vw;">
+<div class="ajuste" style="height: 92vh;">
+    <div class="row-fluid ajuste-container" style="margin: 0% 0% 0 7%; width: 91vw;">
         <div class="span12">
             <div class="widget-box">
                 <div class="widget-title" style="margin: -20px 0 0">
@@ -106,16 +122,26 @@
                                     <input id="nameStore" type="text" name="nameStore" value="" />
                                 </div>
                             </div>
+                            
+                            <div class="control-group">
+                                <label for="modulo" class="control-label">Modulo MCCF - </label>
+                                <div class="controls">
+                                    <select id="modulo" name="modulo" class="form-control">
+                                        @foreach($modules as $f)
+                                        <option value="{{ $f->id }}">{{ $f->modulo }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="span6">
                             <div class="control-group" class="control-label">
                                 <label for="cep" class="control-label">CEP</label>
                                 <div class="controls">
                                     <input id="cep" type="text" name="cep" value="" />
                                 </div>
                             </div>
-                            
-                        </div>
-
-                        <div class="span6">
                             <div class="control-group" class="control-label">
                                 <label for="endereco" class="control-label">Rua</label>
                                 <div class="controls">
@@ -197,7 +223,7 @@
                 // Requisição AJAX
                 $.ajax({
                     type: "POST",
-                    url: "https://24c7-181-220-110-25.ngrok-free.app/lojas/adicionar",
+                    url: "http://127.0.0.1:8000/lojas/adicionar",
                     data: dados,
                     dataType: 'json',
                     headers: {

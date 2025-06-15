@@ -183,18 +183,18 @@
                 // Requisição AJAX
                 $.ajax({
                     type: "POST",
-                    url: "https://24c7-181-220-110-25.ngrok-free.app/modulos/adicionar",
+                    url: "http://127.0.0.1:8000/modulos/adicionar",
                     data: dados,
                     dataType: 'json',
                     headers: {
                         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                     },
                     success: function(data) {
-                        if (data.message === "Loja criada com sucesso") {
+                        if (data.message === "Módulo criado com sucesso") {
                             Swal.fire({
                                 icon: 'success',
                                 title: 'Cadastro Concluído',
-                                text: 'Loja criada com sucesso!',
+                                text: 'Módulo criado com sucesso!',
                             }).then(() => {
                                 window.location.href = "http://127.0.0.1:8000/";
                             });

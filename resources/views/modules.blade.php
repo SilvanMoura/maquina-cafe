@@ -69,7 +69,7 @@
                         <tr>
 
                             <td style="width:10%;">{{ $r->id }}</td>
-                            <td style="width:35%;"><a>MCCF - {{ $r->codigo }}</a></td>
+                            <td style="width:35%;"><a>MCCF - {{ $r->modulo }}</a></td>
 
                             <td style="width:55%;">
                                 <a href="" class="btn-nwe5" title="Editar"><i class="bx bx-edit bx-xs"></i></a>
