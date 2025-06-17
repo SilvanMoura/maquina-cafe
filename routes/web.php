@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use BeyondCode\LaravelWebSockets\Facades\WebSocket;
 use App\Http\Controllers\QrCodeController;
 use App\Http\Controllers\StoreController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ModuleController;
 use App\Http\Controllers\NotificationController;
 
@@ -19,10 +20,7 @@ use App\Http\Controllers\NotificationController;
 |
 */
 
-Route::get('/', function () {
-    //return view('qrCodeGenerate');
-    return view('dashboard');
-});
+Route::get('/dashboard', [DashboardController::class, 'dashboardView']);
 
 Route::get('/lojas', [StoreController::class, 'getStoreData']); //obtem todas as lojas
 Route::get('/lojas/adicionar', [StoreController::class, 'newStoreView']);

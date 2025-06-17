@@ -126,15 +126,15 @@
                     <a href="/produtos/adicionar" class="card tip-top" title="Adicionar Produtos">
                         <div><i class='bx bxs-package iconBx2'></i></div>
                         <div>
-                            <div class="cardName2">0</div>
-                            <div class="cardName">Vendas</div>
+                            <div class="cardName2">{{ $storesCount }}</div>
+                            <div class="cardName">Lojas</div>
                         </div>
                     </a>
                     <a href="/produtos/adicionar" class="card tip-top" title="Adicionar Produtos">
                         <div><i class='bx bxs-package iconBx2'></i></div>
                         <div>
-                            <div class="cardName2">0</div>
-                            <div class="cardName">Vendas</div>
+                            <div class="cardName2">{{ $posCount }}</div>
+                            <div class="cardName">Pontos de Venda</div>
                         </div>
                     </a>
 
@@ -161,25 +161,6 @@
                             <div class="cardName">Cupons</div>
                         </div>
                     </a>
-
-                    <a href="/maquinas-adicionar" class="card tip-top" title="Adicionar Máquina">
-                        <div><i class='bx bxs-cart-alt iconBx5'></i></div>
-                        <div>
-                            <div class="cardName2">0</div>
-                            <div class="cardName">Lojas</div>
-                        </div>
-                    </a>
-
-
-                    <a href="/maquinas-adicionar" class="card tip-top" title="Adicionar Máquina">
-                        <div><i class='bx bxs-cart-alt iconBx5'></i></div>
-                        <div>
-                            <div class="cardName2">0</div>
-                            <div class="cardName">Lojas</div>
-                        </div>
-                    </a>
-
-                    
 
                     <!-- <a href="/garantias" class="card tip-top" title="Adicionar garantia">
                         <div><i class='bx bxs-receipt iconBx6'></i></div>

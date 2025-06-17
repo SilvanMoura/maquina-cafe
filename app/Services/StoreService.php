@@ -10,6 +10,7 @@ class StoreService
 {
     private $baseUrl;
     private $token;
+    private $idUser;
 
     public function __construct()
     {
