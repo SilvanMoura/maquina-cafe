@@ -136,4 +136,34 @@ class StoreService
         return $responseBody;
 
     }
+
+    public function physicalOrder($idStore, $nameStore, $moduloValue){
+         $client = new Client();
+
+        $response = $client->post("https://api.mercadopago.com/instore/qr/seller/collectors/{$this->idUser}/stores/{$idStore}/pos/mccf{$moduloValue}/orders", [
+            'headers' => [
+                'Authorization' => "Bearer {$this->token}",
+                'Content-Type' => 'application/json',
+            ],
+            'json' => [
+              'title' => "Pedido do Cliente",
+              'description' => "Produto ou serviço escolhido pelo cliente",
+              'notification_url' => "https://6ba0-2804-14d-403a-8011-af78-ee01-9e8-935a.ngrok-free.app/notifications",
+              'external_reference' => "mccf{$moduloValue}",
+              'total_amount' => 0,
+              'items' => [
+                    'id' => "item1",
+                    'title' => "Produto X",
+                    'unit_measure' => "unit",
+                    'unit_price' => 0.00,
+                    'quantity' => 1,
+                    'total_amount' => 0
+                ]
+            ],
+        ]);
+
+        $responseBody = json_decode($response->getBody(), true);
+
+        return $responseBody;
+    }
 }

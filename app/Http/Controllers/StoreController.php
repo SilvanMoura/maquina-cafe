@@ -106,6 +106,12 @@ class StoreController extends Controller
             $moduloValue
         );
 
+        $physicalOrder = $newStore->physicalOrder(
+            $responseBody['id'],
+            $responseBody['name'],
+            $moduloValue
+        );
+
         return response()->json(['message' => 'Loja criada com sucesso', 'registro' => $store], 201);
     }
 }
