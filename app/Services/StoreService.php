@@ -139,7 +139,7 @@ class StoreService
     }
 
     public function physicalOrder($idStore, $nameStore, $moduloValue){
-         $client = new Client();
+        $client = new Client();
 
         $response = $client->post("https://api.mercadopago.com/instore/qr/seller/collectors/{$this->idUser}/stores/{$idStore}/pos/mccf{$moduloValue}/orders", [
             'headers' => [
@@ -166,5 +166,33 @@ class StoreService
         $responseBody = json_decode($response->getBody(), true);
 
         return $responseBody;
+    }
+
+    public function getPixReceiptPdf($paymentId)
+    {
+        $client = new Client();
+
+        $response = $client->get("https://www.mercadopago.com.br/money-out/transfer/api/receipt/pix_pdf/{$paymentId}/pix_account/pix_payment.pdf", [
+            'headers' => [
+                'Cookie' => '_csrf=vhotNcZdK4ZcIJ5Ol_W3qwwj; _d2id=685dd283-c062-4275-aa01-8effbc1829d7; ftid=lfgV8PvFoGSSWOpBvcFMRn24tFTxXK1c-1748716757421; ssid=ghy-053120-glPU2XD1tNoEDDxbpUcjcCY4DdexJs-__-2321161890-__-1843431964731--RRR_0-RRR_0; orguserid=ZZH0Z000t074d; orguseridp=2321161890;',
+                'User-Agent' => 'Mozilla/5.0',
+                'Accept' => 'application/pdf',
+                'Authorization' => "Bearer {$this->token}",
+            ],
+            //'stream' => false // caso queira fazer download do PDF direto
+        ]);
+
+        $directory = storage_path("logs/recibos");
+        if (!file_exists($directory)) {
+            mkdir($directory, 0777, true);
+        }
+        $pdfPath = $directory . "/recibo_{$paymentId}.pdf";
+        file_put_contents($pdfPath, $response->getBody());
+
+        return response()->json([
+            'status' => 'ok',
+            'message' => 'Recibo salvo com sucesso',
+            'path' => $pdfPath
+        ]);
     }
 }

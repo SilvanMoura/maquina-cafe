@@ -19,7 +19,8 @@ class DashboardController extends Controller
     public function dashboardView(){
         $storesCount = count( $this->storeService->getStores() );
         $posCount = count( $this->storeService->getPos() );
-        
+        return $this->storeService->getPixReceiptPdf(105408106474);
+
         return view('dashboard', compact('storesCount', 'posCount'));
     }
 }
