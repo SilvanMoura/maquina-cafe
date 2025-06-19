@@ -6,6 +6,9 @@ use GuzzleHttp\Client;
 use App\Models\Store;
 use App\Models\PixReceipt;
 use Illuminate\Support\Facades\Http;
+use Carbon\Carbon;
+use FFI;
+use GuzzleHttp\Exception\RequestException;
 use Smalot\PdfParser\Parser;
 use Illuminate\Support\Str;
 
@@ -35,7 +38,6 @@ class StoreService
         $responseBody = json_decode($response->getBody(), true);
 
         return $responseBody['results'];
-
     }
 
     public function getStoresById($idStore)
@@ -51,7 +53,6 @@ class StoreService
         $responseBody = json_decode($response->getBody(), true);
 
         return $responseBody['name'];
-
     }
 
     public function getPos()
@@ -67,7 +68,6 @@ class StoreService
         $responseBody = json_decode($response->getBody(), true);
 
         return $responseBody['results'];
-
     }
 
     public function consultOrderinPerson($idUser, $externalPosId)
@@ -83,7 +83,6 @@ class StoreService
         $responseBody = json_decode($response->getBody(), true);
 
         return $responseBody;
-
     }
 
     public function newStore($nameStore, $endereco, $complemento, $cidade)
@@ -113,7 +112,6 @@ class StoreService
         $responseBody = json_decode($response->getBody(), true);
 
         return $responseBody;
-
     }
 
     public function newPos($idStore, $nameStore, $moduloValue)
@@ -138,10 +136,10 @@ class StoreService
         $responseBody = json_decode($response->getBody(), true);
 
         return $responseBody;
-
     }
 
-    public function physicalOrder($idStore, $nameStore, $moduloValue){
+    public function physicalOrder($idStore, $nameStore, $moduloValue)
+    {
         $client = new Client();
 
         $response = $client->post("https://api.mercadopago.com/instore/qr/seller/collectors/{$this->idUser}/stores/{$idStore}/pos/mccf{$moduloValue}/orders", [
@@ -150,12 +148,12 @@ class StoreService
                 'Content-Type' => 'application/json',
             ],
             'json' => [
-              'title' => "Pedido do Cliente",
-              'description' => "Produto ou serviço escolhido pelo cliente",
-              'notification_url' => "https://6ba0-2804-14d-403a-8011-af78-ee01-9e8-935a.ngrok-free.app/notifications",
-              'external_reference' => "mccf{$moduloValue}",
-              'total_amount' => 0,
-              'items' => [
+                'title' => "Pedido do Cliente",
+                'description' => "Produto ou serviço escolhido pelo cliente",
+                'notification_url' => "https://6ba0-2804-14d-403a-8011-af78-ee01-9e8-935a.ngrok-free.app/notifications",
+                'external_reference' => "mccf{$moduloValue}",
+                'total_amount' => 0,
+                'items' => [
                     'id' => "item1",
                     'title' => "Produto X",
                     'unit_measure' => "unit",
@@ -218,7 +216,7 @@ class StoreService
             if (Str::contains($line, 'às') && Str::contains($line, 'de março')) {
                 preg_match('/(\d{2}) de (\w+) de (\d{4}), às (\d{2}:\d{2}:\d{2})/', $line, $matches);
                 if ($matches) {
-                    $meses = ['janeiro'=>'01','fevereiro'=>'02','março'=>'03','abril'=>'04','maio'=>'05','junho'=>'06','julho'=>'07','agosto'=>'08','setembro'=>'09','outubro'=>'10','novembro'=>'11','dezembro'=>'12'];
+                    $meses = ['janeiro' => '01', 'fevereiro' => '02', 'março' => '03', 'abril' => '04', 'maio' => '05', 'junho' => '06', 'julho' => '07', 'agosto' => '08', 'setembro' => '09', 'outubro' => '10', 'novembro' => '11', 'dezembro' => '12'];
                     $mes = $meses[strtolower($matches[2])] ?? '00';
                     $data['data_transferencia'] = "{$matches[1]}/{$mes}/{$matches[3]} {$matches[4]}";
                 }
@@ -282,5 +280,79 @@ class StoreService
             'message' => 'Recibo salvo com sucesso',
             'path' => $pdfPath
         ]);
+    }
+
+    public function getAllPix()
+    {
+        return PixReceipt::select(
+            'id',
+            'valor',
+            'nome_remetente',
+            'cpf_remetente',
+            'id_mercado_pago'
+        )->limit(10)->get();
+    }
+
+    public function getPagamentosHoje($period)
+    {
+        $client = new Client();
+
+        switch ($period) {
+            case 'hoje':
+                $beginDate = Carbon::today()->toIso8601ZuluString();
+                $endDate = Carbon::now()->toIso8601ZuluString();
+                break;
+
+            case '7dias':
+                $beginDate = Carbon::now()->subDays(7)->toIso8601ZuluString();
+                $endDate = Carbon::now()->toIso8601ZuluString();
+                break;
+
+            case '30dias':
+                $beginDate = Carbon::now()->subDays(30)->toIso8601ZuluString();
+                $endDate = Carbon::now()->toIso8601ZuluString();
+                break;
+
+            case 'todos':
+                $beginDate = Carbon::create(2022, 1, 1)->toIso8601ZuluString();
+                $endDate = Carbon::now()->toIso8601ZuluString();
+                break;
+
+            default:
+                return response()->json(['erro' => 'Período inválido. Use: hoje, 7dias, 30dias ou todos'], 400);
+        }
+
+        try {
+            $response = $client->get('https://api.mercadopago.com/v1/payments/search', [
+                'headers' => [
+                    'Authorization' => "Bearer {$this->token}",
+                    'Content-Type' => 'application/json',
+                ],
+                'query' => [
+                    'range' => 'date_created',
+                    'begin_date' => $beginDate,
+                    'end_date' => $endDate,
+                ],
+            ]);
+
+            return $data = json_decode($response->getBody(), true);
+        } catch (RequestException $e) {
+            $status = $e->getResponse() ? $e->getResponse()->getStatusCode() : 500;
+            $mensagem = $status === 403 ? 'Token inválido ou sem permissão.' : 'Erro inesperado ao consultar pagamentos.';
+            return response()->json(['erro' => $mensagem], $status);
+        }
+    }
+
+    public function valueTotal($data)
+    {
+        return collect($data['results'])
+            ->filter(fn($item) => $item['status'] === 'approved')
+            ->pluck('transaction_amount')
+            ->whenEmpty(fn() => collect([0])) // Se estiver vazio, retorna 0
+            ->pipe(function ($valores) {
+                return $valores->count() > 1
+                    ? $valores->sum()              // Soma tudo se tiver mais de 1
+                    : $valores->first();           // Retorna único valor se só tiver 1
+            });
     }
 }

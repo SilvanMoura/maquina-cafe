@@ -149,16 +149,30 @@
                     <a href="/os/adicionar" class="card tip-top" title="Adicionar serviços">
                         <div><i class='bx bx-file iconBx3'></i></div>
                         <div>
-                            <div class="cardName2">0</div>
-                            <div class="cardName">Módulos Total</div>
+                            <div class="cardName2">R$ {{ $todaySales }} - {{ $todayCount }}</div>
+                            <div class="cardName">Vendas Hoje - Quantidade</div>
                         </div>
                     </a>
 
                     <a href="/os/adicionar" class="card tip-top" title="Adicionar OS">
                         <div><i class='bx bxs-spreadsheet iconBx4'></i></div>
                         <div>
-                            <div class="cardName2">0</div>
-                            <div class="cardName">Cupons</div>
+                            <div class="cardName2">R$ {{ $sevenDaysSales }} - {{ $sevenDaysCount }}</div>
+                            <div class="cardName">Vendas em 7 dias - Quantidade</div>
+                        </div>
+                    </a>
+                    <a href="/os/adicionar" class="card tip-top" title="Adicionar OS">
+                        <div><i class='bx bxs-spreadsheet iconBx4'></i></div>
+                        <div>
+                            <div class="cardName2">R$ {{ $thirtyDaysSales }} - {{ $thirtyDaysCount }}</div>
+                            <div class="cardName">Vendas em 30 dias - Quantidade</div>
+                        </div>
+                    </a>
+                    <a href="/os/adicionar" class="card tip-top" title="Adicionar OS">
+                        <div><i class='bx bxs-spreadsheet iconBx4'></i></div>
+                        <div>
+                            <div class="cardName2">R$ {{ $allSales }} - {{ $allCount }}</div>
+                            <div class="cardName">Todas as vendas - Quantidade</div>
                         </div>
                     </a>
 
@@ -183,45 +197,46 @@
                 <div class="AAA">
                     <div class="widget-box0 widbox-blak">
                         <div>
-                            <h5 class="cardHeader">Orçamentos</h5>
+                            <h5 class="cardHeader">Últimos Pix Recebidos</h5>
                         </div>
                         <div class="widget-content">
                             <table class="table table-bordered">
                                 <thead>
                                     <tr>
-                                        <th>Cod.</th>
+                                        <th>Id</th>
+                                        <th>Valor</th>
                                         <th>Nome</th>
-                                        <th>Data Avaliação</th>
-                                        <th>Status</th>
+                                        <th>CPF</th>
+                                        <th>Id transação</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @if(isset($dashboard['osOrcamento']))
-                                    @foreach($dashboard['osOrcamento'] as $osOrcamento)
+                                    @if(isset($allPix))
+                                    @foreach($allPix as $allPix)
                                     <tr>
                                         <td>
-                                            {{ $osOrcamento->id }}
+                                            {{ $allPix->id }}
                                         </td>
                                         <td class="cli1">
-                                            {{ $osOrcamento->cliente_id }}
+                                            {{ $allPix->valor }}
                                         </td>
                                         <td>
-                                            {{ $osOrcamento->data }}
+                                            {{ $allPix->nome_remetente }}
                                         </td>
                                         <td>
-                                            {{ $osOrcamento->status_os_id }}
+                                            {{ $allPix->cpf_remetente }}
                                         </td>
                                         <td>
-                                            <a href="{{ '/os/visualizar/'. $osOrcamento->id }}" class="btn-nwe tip-top" title="Visualizar">
+                                            {{ $allPix->id_mercado_pago }}
+                                        </td>
+                                        <td>
+                                            <a href="{{ '/os/visualizar/'. $allPix->id }}" class="btn-nwe tip-top" title="Visualizar">
                                                 <i class="bx bx-show"></i>
                                             </a>
-                                            <a href="{{ '/os/editar/'. $osOrcamento->id }}" class="btn-nwe5" title="Editar">
-                                                <i class="bx bx-edit bx-xs"></i>
-                                            </a>
-                                            @if( $osOrcamento->status_os_id != 'Finalizado' )
-                                            <a href="{{ '/os/imprimirOs/'. $osOrcamento->id }}" class="btn-nwe3" title="Imprimir OS"><i class="bx bx-printer bx-xs"></i></a>
+                                            @if( $allPix->status_os_id != 'Finalizado' )
+                                            <a href="{{ '/os/imprimirOs/'. $allPix->id }}" class="btn-nwe3" title="Imprimir OS"><i class="bx bx-printer bx-xs"></i></a>
                                             @else
-                                            <a href="{{ '/os/entregaOs/'. $osOrcamento->id }}" class="btn-nwe3" title="Imprimir OS"><i class="bx bx-exit bx-xs"></i></a>
+                                            <a href="{{ '/os/entregaOs/'. $allPix->id }}" class="btn-nwe3" title="Imprimir OS"><i class="bx bx-exit bx-xs"></i></a>
                                             @endif
                                         </td>
                                     </tr>
