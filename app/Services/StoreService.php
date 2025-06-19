@@ -4,7 +4,10 @@ namespace App\Services;
 
 use GuzzleHttp\Client;
 use App\Models\Store;
+use App\Models\PixReceipt;
 use Illuminate\Support\Facades\Http;
+use Smalot\PdfParser\Parser;
+use Illuminate\Support\Str;
 
 class StoreService
 {
@@ -188,6 +191,91 @@ class StoreService
         }
         $pdfPath = $directory . "/recibo_{$paymentId}.pdf";
         file_put_contents($pdfPath, $response->getBody());
+
+        $parser = new Parser();
+        $pdf = $parser->parseFile($pdfPath);
+
+        // Texto completo
+        $text = $pdf->getText();
+
+
+
+
+
+
+
+
+
+
+
+
+        $lines = explode("\n", $text);
+        $data = [];
+
+        foreach ($lines as $index => $line) {
+            $line = trim($line);
+
+            if (Str::contains($line, 'às') && Str::contains($line, 'de março')) {
+                preg_match('/(\d{2}) de (\w+) de (\d{4}), às (\d{2}:\d{2}:\d{2})/', $line, $matches);
+                if ($matches) {
+                    $meses = ['janeiro'=>'01','fevereiro'=>'02','março'=>'03','abril'=>'04','maio'=>'05','junho'=>'06','julho'=>'07','agosto'=>'08','setembro'=>'09','outubro'=>'10','novembro'=>'11','dezembro'=>'12'];
+                    $mes = $meses[strtolower($matches[2])] ?? '00';
+                    $data['data_transferencia'] = "{$matches[1]}/{$mes}/{$matches[3]} {$matches[4]}";
+                }
+            }
+
+            if (Str::startsWith($line, 'R$')) {
+                $valorLimpo = preg_replace('/[^\d,]/', '', $line);
+                $valor = str_replace(',', '.', $valorLimpo);
+                $data['valor'] = floatval($valor);
+            }
+
+            if ($line === 'De') {
+                $data['nome_remetente'] = $lines[$index + 1] ?? '';
+                $data['cpf_remetente'] = trim(str_replace('CPF:', '', $lines[$index + 2] ?? ''));
+            }
+
+            if (Str::startsWith($line, 'Número da transação do Mercado Pago')) {
+                $data['id_mercado_pago'] = $lines[$index + 1] ?? '';
+            }
+
+            if (Str::startsWith($line, 'ID de transação PIX')) {
+                $data['id_pix'] = $lines[$index + 1] ?? '';
+            }
+        }
+
+
+
+
+
+
+        $response = $client->get("https://api.mercadopago.com/v1/payments/{$data['id_mercado_pago']}", [
+            'headers' => [
+                'Content-Type' => 'application/json',
+                'Authorization' => "Bearer {$this->token}",
+            ]
+        ]);
+        $responseBody = json_decode($response->getBody(), true);
+        $statusNome = $responseBody['status'] === 'approved' ? 'Sucesso' : 'Pendente';
+
+
+
+
+        PixReceipt::create([
+            'valor' => $data['valor'],
+            'nome_remetente' => $data['nome_remetente'],
+            'cpf_remetente' => $data['cpf_remetente'],
+            'id_mercado_pago' => $data['id_mercado_pago'],
+            'id_pix' => $data['id_pix'],
+            'pos_id' => $responseBody['pos_id'],
+            'store_id' => $responseBody['store_id'],
+            'status' => $statusNome
+        ]);
+
+
+
+
+
 
         return response()->json([
             'status' => 'ok',
