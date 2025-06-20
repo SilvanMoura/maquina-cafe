@@ -17,6 +17,7 @@ class DashboardController extends Controller
     }
 
     public function dashboardView(){
+
         $storesCount = count( $this->storeService->getStores() );
         $posCount = count( $this->storeService->getPos() );
         $allPix = $this->storeService->getAllPix();

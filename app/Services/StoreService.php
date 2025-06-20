@@ -355,4 +355,21 @@ class StoreService
                     : $valores->first();           // Retorna único valor se só tiver 1
             });
     }
+
+    public function executeChargeback($paymentId)
+    {
+        $client = new Client();
+
+        $response = $client->post("https://api.mercadopago.com/v1/payments/{$paymentId}/refunds", [
+            'headers' => [
+                'Authorization' => "Bearer {$this->token}",
+                'Content-Type' => 'application/json',
+                'X-Idempotency-Key' => Str::uuid()->toString(),
+            ]
+        ]);
+
+        $responseBody = json_decode($response->getBody(), true);
+
+        return $responseBody;
+    }
 }
