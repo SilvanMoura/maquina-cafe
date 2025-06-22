@@ -64,8 +64,9 @@ class DashboardController extends Controller
         $mqttService->disconnect();
 
         // Armazena no cache
+        $countOnline = count($onlineDevices);
         Cache::put('online_devices', $onlineDevices, now()->addSeconds(10));
-        return response()->json($onlineDevices); // ou envie para view se quiser
+
         // --- ENVIA PARA A VIEW ---
         return view('dashboard', compact(
             'storesCount',
@@ -79,7 +80,7 @@ class DashboardController extends Controller
             'sevenDaysCount',
             'thirtyDaysCount',
             'allCount',
-            'onlineDevices'
+            'countOnline'
         ));
     }
 }

@@ -141,7 +141,7 @@
                     <a href="/os/adicionar" class="card tip-top" title="Adicionar serviços">
                         <div><i class='bx bxs-stopwatch iconBx3'></i></div>
                         <div>
-                            <div class="cardName2">0</div>
+                            <div class="cardName2">{{ $countOnline }}</div>
                             <div class="cardName">Módulos Ativos</div>
                         </div>
                     </a>
