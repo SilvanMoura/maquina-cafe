@@ -26,7 +26,6 @@ class NotificationController extends Controller
         $logFilePath = storage_path('logs/pagseguro_notifications.json');
 
         $logData = [
-            'hora_transacao' => now()->toDateTimeString(),
             'data' => $data
             /* "apelido" => $data['notification_data']['reference_id'],
             "nome_vendedor" => $data['notification_data']['customer']['name'],
@@ -54,33 +53,33 @@ class NotificationController extends Controller
             //Transaction::create($logData);
 
             // Envia os dados ao ESP8266 correspondente
-            //$deviceId = "mccf-" . $data['notification_data']['reference_id']; // Ajuste conforme sua lógica de ID
+            //$deviceId = "mccf-" . $data['reference_id'];
             
-            /* $this->mqttService->connect();
-            $topic = "creditos/C4:D8:D5:2D:00:63";  // Tópico único por MAC
-            $message = json_encode(['pulsos' => $logData['valor_transacao']]);
-            $this->mqttService->publish($topic, $message);
-            $this->mqttService->disconnect(); */
+            //$this->mqttService->connect();
+            //$topic = "creditos/";
+            //$message = json_encode(['pulsos' => 5]);
+            //$this->mqttService->publish($topic, $message);
+            //$this->mqttService->disconnect();
 
             // Envia os dados ao ESP8266 correspondente
             // Tópico único para o ESP
             //$deviceMAC = "C4:D8:D5:2D:00:63"; // MAC do dispositivo alvo
-            //$topic = "creditos/{$deviceMAC}";
+            $topic = "creditos/";
 
             // Mensagem com pulsos e deviceID
-            /* $message = json_encode([
-                'pulsos' => $logData['valor_transacao'],
+            $message = json_encode([
+                'pulsos' => 5,
                 'deviceID' => "mccf-1020", // Deve ser igual ao configurado no ESP
                 'message' => "pulsos de crédito"
-            ]); */
+            ]);
 
             // Publica a mensagem no broker MQTT
-            /* $this->mqttService->connect();
+            $this->mqttService->connect();
             Log::info("Conexão com MQTT estabelecida com sucesso.");
             $this->mqttService->publish($topic, $message);
             Log::info("Mensagem publicada no tópico $topic com os dados: $message");
             $this->mqttService->disconnect();
-            Log::info("Conexão MQTT encerrada."); */
+            Log::info("Conexão MQTT encerrada.");
             
 
             return response()->json(['message' => 'Notificação processada com sucesso.'], 200);
