@@ -34,4 +34,34 @@ class ModuleController extends Controller
 
         return response()->json(['message' => 'Módulo criado com sucesso', 'registro' => $responseBody], 201);
     }
+
+    public function couponsView(){
+        $moduleService = new ModuleService();
+        $couponsData = $moduleService->getCoupons();
+        
+        return view('coupons', ['coupons' => $couponsData]);
+    }
+
+    public function newCouponView(){
+        return view('newCoupon');
+    }
+
+    public function newCoupon(Request $request){
+
+        $request->validate([
+            'name' => 'nullable|string',
+            'value' => 'nullable|string',
+            'telefone' => 'nullable|string'
+        ]);
+
+        $newModule = new ModuleService();
+
+        $responseBody = $newModule->newCoupon(
+            $request->input('name'),
+            $request->input('value'),
+            $request->input('telefone')
+        );
+
+        return response()->json(['message' => 'Cupom Criado com sucesso', 'registro' => $responseBody], 201);
+    }
 }

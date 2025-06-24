@@ -25,12 +25,14 @@ Route::get('/dashboard', [DashboardController::class, 'dashboardView']);
 Route::get('/lojas', [StoreController::class, 'getStoreData']); //obtem todas as lojas
 Route::get('/lojas/adicionar', [StoreController::class, 'newStoreView']);
 Route::post('/lojas/adicionar', [StoreController::class, 'newStore']);
-
 Route::get('/pos', [StoreController::class, 'getPosData']); //obtem todos os pontos de venda/caixa (pos)
 
 Route::get('/modulos', [ModuleController::class, 'modulesView']); 
 Route::get('/modulos/adicionar', [ModuleController::class, 'newModuleView']);
 Route::post('/modulos/adicionar', [ModuleController::class, 'newModule']);
+Route::get('/cupons', [ModuleController::class, 'couponsView']);
+Route::get('/cupons/adicionar', [ModuleController::class, 'newCouponView']);
+Route::post('/cupons/adicionar', [ModuleController::class, 'newCoupon']);
 
 Route::get('/generateQrCode', [QrCodeController::class, 'qrCodeView']);
 Route::get('/websocket', function () {

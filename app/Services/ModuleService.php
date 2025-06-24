@@ -4,6 +4,7 @@ namespace App\Services;
 
 use GuzzleHttp\Client;
 use App\Models\Module;
+use App\Models\Coupon;
 use Illuminate\Support\Facades\Http;
 
 class ModuleService
@@ -48,5 +49,24 @@ class ModuleService
         $responseBody = json_decode($response, true);
 
         return $response;
+    }
+
+    public function newCoupon($name, $value, $telefone)
+    {
+        $response = Coupon::create([
+            'name'   => $name,
+            'value'  => $value,
+            'telefone'  => $telefone,
+            'status' => 'Ativo'
+        ]); 
+        $numeroLimpo = preg_replace('/\D/', '', $response['telefone']);
+        $linkWhatsapp = "https://wa.me/55{$numeroLimpo}?text=" . urlencode($response->name);
+        return $linkWhatsapp;
+
+    }
+
+    public function getCoupons()
+    {
+        return Coupon::get();
     }
 }
