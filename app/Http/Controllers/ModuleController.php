@@ -64,4 +64,8 @@ class ModuleController extends Controller
 
         return response()->json(['message' => 'Cupom Criado com sucesso', 'registro' => $responseBody], 201);
     }
+
+    public function readCodeView(){
+        return view('readCode');
+    }
 }

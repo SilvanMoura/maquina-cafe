@@ -35,6 +35,7 @@ Route::get('/cupons/adicionar', [ModuleController::class, 'newCouponView']);
 Route::post('/cupons/adicionar', [ModuleController::class, 'newCoupon']);
 
 Route::get('/generateQrCode', [QrCodeController::class, 'qrCodeView']);
+Route::get('/readCode', [ModuleController::class, 'readCodeView']);
 Route::get('/websocket', function () {
     return view('websocket');
 });
