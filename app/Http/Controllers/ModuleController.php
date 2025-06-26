@@ -4,24 +4,27 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Services\ModuleService;
+use App\Services\StoreService;
 use App\Models\Module;
 
 class ModuleController extends Controller
 {
-    public function modulesView(){
+    public function modulesView()
+    {
         $moduleService = new ModuleService();
         $modulesData = $moduleService->getModules();
 
         //return $modulesData;
         return view('modules', ['modules' => $modulesData]);
-        
     }
 
-    public function newModuleView(){
+    public function newModuleView()
+    {
         return view('newModule');
     }
 
-    public function newModule(Request $request){
+    public function newModule(Request $request)
+    {
         $request->validate([
             'module' => 'nullable|string'
         ]);
@@ -35,18 +38,21 @@ class ModuleController extends Controller
         return response()->json(['message' => 'Módulo criado com sucesso', 'registro' => $responseBody], 201);
     }
 
-    public function couponsView(){
+    public function couponsView()
+    {
         $moduleService = new ModuleService();
         $couponsData = $moduleService->getCoupons();
-        
+
         return view('coupons', ['coupons' => $couponsData]);
     }
 
-    public function newCouponView(){
+    public function newCouponView()
+    {
         return view('newCoupon');
     }
 
-    public function newCoupon(Request $request){
+    public function newCoupon(Request $request)
+    {
 
         $request->validate([
             'name' => 'nullable|string',
@@ -65,7 +71,27 @@ class ModuleController extends Controller
         return response()->json(['message' => 'Cupom Criado com sucesso', 'registro' => $responseBody], 201);
     }
 
-    public function readCodeView(){
-        return view('readCode');
+    public function readCodeView(Request $request)
+    {
+        $cupomId = $request->query('id');
+        return view('readCode', compact('cupomId'));
+    }
+
+    public function depositCoupon(Request $request)
+    {
+        $coupon = new ModuleService();
+        $store = new StoreService();
+
+        $couponData = $coupon->getCouponsById($request->input('cupom_id'));
+
+        $posData = $store->getPosById($request->input('pos_id'));
+        $idModulo = $posData['external_id'];
+
+        $couponStatus = $coupon->deactivatingCoupon($couponData[0]['id']);
+
+        return response()->json([
+            'status' => 'Cupom enviado com sucesso!',
+            'success' => true
+        ]);
     }
 }

@@ -1,5 +1,3 @@
-<h4 class="qr-title">Se tiver dificuldades, recarregue a página</h4>
-
 <div class="qr-container">
     <h2 class="qr-title">Escaneie o QR Code da máquina</h2>
     <h4 class="qr-title">Se tiver dificuldades, recarregue a página</h4>
@@ -29,11 +27,10 @@
         padding: 10px;
         border-radius: 10px;
         overflow: hidden;
-        box-shadow: 0 0 15px rgba(0, 0, 0, 0.3); /* Efeito visual desejado */
+        box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
         background-color: #000;
     }
 
-    /* Faz o vídeo ocupar 100% do container */
     #reader video {
         width: 100% !important;
         height: auto !important;
@@ -61,6 +58,9 @@
 {{-- Script --}}
 <script src="https://unpkg.com/html5-qrcode"></script>
 <script>
+    // Obtenha o ID do cupom passado pela URL
+    const cupomId = "{{ $cupomId }}"; // Recebe o valor do ID do cupom da URL
+
     function extrairReferenceId(emvString) {
         const match = emvString.match(/https:\/\/mpago\.la\/pos\/(\d{9})\d*/);
         return match ? match[1] : null;
@@ -75,10 +75,8 @@
             qrbox: 250
         },
         (decodedText, decodedResult) => {
-            // Após o sucesso da leitura, pare a câmera e remova a visualização da câmera
             html5QrCode.stop();
 
-            // Exibe o resultado
             const referenceId = extrairReferenceId(decodedText);
             if (referenceId) {
                 document.getElementById("resultado").innerHTML = `
@@ -86,14 +84,15 @@
                     <p>Enviando cupom para o dispositivo...</p>
                 `;
 
-                fetch("", {
+                fetch("https://74d3-2804-14d-403a-8011-4019-f63b-2c27-f3fc.ngrok-free.app/readCode", {
                         method: "POST",
                         headers: {
                             "Content-Type": "application/json",
                             "X-CSRF-TOKEN": "{{ csrf_token() }}"
                         },
                         body: JSON.stringify({
-                            pos_id: referenceId
+                            pos_id: referenceId,
+                            cupom_id: cupomId // Passando o ID do cupom para o backend
                         })
                     })
                     .then(res => res.json())
@@ -114,8 +113,7 @@
                 `;
             }
 
-            // Remover o leitor de QR Code da tela
-            document.getElementById("reader").style.display = "none"; // Esconde a câmera
+            document.getElementById("reader").style.display = "none"; // Esconde a câmera após a leitura
         },
         (errorMessage) => {
             // Leitura falhou (ignorado)

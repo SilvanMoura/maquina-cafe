@@ -70,6 +70,21 @@ class StoreService
         return $responseBody['results'];
     }
 
+    public function getPosById($posId)
+    {
+        $client = new Client();
+        $response = $client->get("https://api.mercadopago.com/pos/{$posId}", [
+            'headers' => [
+                'Authorization' => "Bearer {$this->token}",
+                'Content-Type' => 'application/json',
+            ]
+        ]);
+
+        $responseBody = json_decode($response->getBody(), true);
+
+        return $responseBody;
+    }
+
     public function consultOrderinPerson($idUser, $externalPosId)
     {
         $client = new Client();
