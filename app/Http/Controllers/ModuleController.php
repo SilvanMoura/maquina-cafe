@@ -89,6 +89,8 @@ class ModuleController extends Controller
 
         $couponStatus = $coupon->deactivatingCoupon($couponData[0]['id']);
 
+        $coupon->sendCredits($idModulo, $couponData['value']);
+        
         return response()->json([
             'status' => 'Cupom enviado com sucesso!',
             'success' => true
