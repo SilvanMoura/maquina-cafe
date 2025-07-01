@@ -96,4 +96,22 @@ class ModuleController extends Controller
             'success' => true
         ]);
     }
+
+    public function controlRemoteView()
+    {
+        $modulesUse = new ModuleService();
+        $modulesData = $modulesUse->getModulesUse();
+        return view('controlRemote', compact('modulesData'));
+    }
+
+    public function sendCommandModule(Request $request)
+    {
+        $moduloId = $request->input('modulo');
+        $button = $request->input('botao');
+
+        $moduleSend = new ModuleService();
+
+        return $moduleSend->sendCommandToButton($moduloId, $button);
+        return $request;
+    }
 }

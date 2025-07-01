@@ -35,6 +35,8 @@ Route::get('/cupons/adicionar', [ModuleController::class, 'newCouponView']);
 Route::post('/cupons/adicionar', [ModuleController::class, 'newCoupon']);
 Route::get('/readCode', [ModuleController::class, 'readCodeView']);
 Route::post('/readCode', [ModuleController::class, 'depositCoupon']);
+Route::get('/controle', [ModuleController::class, 'controlRemoteView']);
+Route::post('/sendCommand', [ModuleController::class, 'sendCommandModule']);
 //envia o credito do cupom para o modulo 
 
 Route::get('/generateQrCode', [QrCodeController::class, 'qrCodeView']);

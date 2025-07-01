@@ -110,4 +110,68 @@ class ModuleService
             'message' => "Crédito de $valor enviado para o módulo $moduloId"
         ];
     }
+
+    public function sendCommandToButton($moduloId, $button)
+    {
+        // Conecta ao MQTT
+        $mqtt = app(\App\Services\MQTTService::class);
+        $mqtt->connect();
+
+        // Define os tópicos
+        $topicComando = "comandos/botao";
+        $topicResposta = "resposta/comandos/mccf-{$moduloId}";
+
+        // Prepara o payload com ID padrão "mccf-{$moduloId}"
+        $payload = json_encode([
+            'message' => 'Acionar botão',
+            'botao' => intval($button),
+            'deviceID' => "mccf-{$moduloId}"
+        ]);
+
+        // Envia o comando
+        $mqtt->publish($topicComando, $payload);
+
+        // Variável para capturar a resposta
+        $respostaRecebida = false;
+
+        // Inscreve-se no tópico de resposta
+        $mqtt->subscribe($topicResposta, function ($topic, $message) use (&$respostaRecebida, $moduloId, $button) {
+            $dados = json_decode($message, true);
+            
+            if (
+                isset($dados['deviceID'], $dados['botao'], $dados['status']) &&
+                $dados['deviceID'] === "mccf-{$moduloId}" &&
+                intval($dados['botao']) === intval($button) &&
+                $dados['status'] === 'ok'
+            ) {
+                $respostaRecebida = true;
+            }
+        });
+
+        // Processa mensagens por 2 segundos
+        $mqtt->loopFor(2);
+        $mqtt->disconnect();
+
+        // Retorna conforme o resultado
+        if ($respostaRecebida) {
+            return [
+                'success' => true,
+                'message' => "Comando confirmado pelo módulo $moduloId no botão $button"
+            ];
+        }
+
+        return [
+            'success' => false,
+            'message' => "Nenhuma confirmação recebida do módulo $moduloId para o botão $button"
+        ];
+    }
+
+
+
+    public function getModulesUse()
+    {
+        return Module::whereNotNull('idStore')
+            ->where('idStore', '!=', '')
+            ->get();
+    }
 }
