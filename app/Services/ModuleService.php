@@ -166,12 +166,14 @@ class ModuleService
         ];
     }
 
-
-
     public function getModulesUse()
     {
         return Module::whereNotNull('idStore')
             ->where('idStore', '!=', '')
             ->get();
+    }
+
+    public function moduleUpdateAllOffline(){
+        Module::query()->update(['status_online' => 0]);
     }
 }

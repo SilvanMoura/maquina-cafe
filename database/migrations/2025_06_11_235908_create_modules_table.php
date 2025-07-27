@@ -15,6 +15,11 @@ return new class extends Migration
             $table->id(); // campo id
             $table->string('modulo'); // campo codigo
             $table->string('idStore');
+            $table->string('status');
+            $table->string('rssi');
+            $table->string('status_online');
+            $table->string('ultima_conexao');
+            $table->string('sinal_qualidade');
             $table->timestamps();
         });
     }

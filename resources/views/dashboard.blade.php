@@ -154,35 +154,6 @@
                         </div>
                     </a>
 
-                    <a href="/os/adicionar" class="card tip-top" title="Adicionar OS">
-                        <div><i class='bx bxs-spreadsheet iconBx4'></i></div>
-                        <div>
-                            <div class="cardName2">R$ {{ $sevenDaysSales }} - {{ $sevenDaysCount }}</div>
-                            <div class="cardName">Vendas em 7 dias - Quantidade</div>
-                        </div>
-                    </a>
-                    <a href="/os/adicionar" class="card tip-top" title="Adicionar OS">
-                        <div><i class='bx bxs-spreadsheet iconBx4'></i></div>
-                        <div>
-                            <div class="cardName2">R$ {{ $thirtyDaysSales }} - {{ $thirtyDaysCount }}</div>
-                            <div class="cardName">Vendas em 30 dias - Quantidade</div>
-                        </div>
-                    </a>
-                    <a href="/os/adicionar" class="card tip-top" title="Adicionar OS">
-                        <div><i class='bx bxs-spreadsheet iconBx4'></i></div>
-                        <div>
-                            <div class="cardName2">R$ {{ $allSales }} - {{ $allCount }}</div>
-                            <div class="cardName">Todas as vendas - Quantidade</div>
-                        </div>
-                    </a>
-
-                    <!-- <a href="/garantias" class="card tip-top" title="Adicionar garantia">
-                        <div><i class='bx bxs-receipt iconBx6'></i></div>
-                        <div>
-                            <div class="cardName2">0</div>
-                            <div class="cardName">Garantias</div>
-                        </div>
-                    </a> -->
                     <?php $diaRec = "VALOR_" . date('m') . "_REC";
                     $diaDes = "VALOR_" . date('m') . "_DES"; ?>
 

@@ -320,34 +320,11 @@ class StoreService
         )->limit(10)->get();
     }
 
-    public function getPagamentosHoje($period)
+    public function getPagamentosHoje()
     {
         $client = new Client();
-
-        switch ($period) {
-            case 'hoje':
-                $beginDate = Carbon::today()->toIso8601ZuluString();
+        $beginDate = Carbon::today()->toIso8601ZuluString();
                 $endDate = Carbon::now()->toIso8601ZuluString();
-                break;
-
-            case '7dias':
-                $beginDate = Carbon::now()->subDays(7)->toIso8601ZuluString();
-                $endDate = Carbon::now()->toIso8601ZuluString();
-                break;
-
-            case '30dias':
-                $beginDate = Carbon::now()->subDays(30)->toIso8601ZuluString();
-                $endDate = Carbon::now()->toIso8601ZuluString();
-                break;
-
-            case 'todos':
-                $beginDate = Carbon::create(2022, 1, 1)->toIso8601ZuluString();
-                $endDate = Carbon::now()->toIso8601ZuluString();
-                break;
-
-            default:
-                return response()->json(['erro' => 'Período inválido. Use: hoje, 7dias, 30dias ou todos'], 400);
-        }
 
         try {
             $response = $client->get('https://api.mercadopago.com/v1/payments/search', [
