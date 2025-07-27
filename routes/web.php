@@ -29,6 +29,7 @@ Route::get('/pos', [StoreController::class, 'getPosData']); //obtem todos os pon
 Route::get('/vendas', [StoreController::class, 'salesView']);
 
 Route::get('/modulos', [ModuleController::class, 'modulesView']); 
+Route::get('/modulos/online', [ModuleController::class, 'modulesOnlineView']); 
 Route::get('/modulos/adicionar', [ModuleController::class, 'newModuleView']);
 Route::post('/modulos/adicionar', [ModuleController::class, 'newModule']);
 Route::get('/cupons', [ModuleController::class, 'couponsView']);

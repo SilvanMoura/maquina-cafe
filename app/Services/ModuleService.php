@@ -176,4 +176,8 @@ class ModuleService
     public function moduleUpdateAllOffline(){
         Module::query()->update(['status_online' => 0]);
     }
+
+    public function getModulesOnline(){
+        return Module::where('status_online', 1)->get();
+    }
 }

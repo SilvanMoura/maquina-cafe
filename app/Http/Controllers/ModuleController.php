@@ -114,4 +114,13 @@ class ModuleController extends Controller
         return $moduleSend->sendCommandToButton($moduloId, $button);
         return $request;
     }
+
+    public function modulesOnlineView()
+    {
+        $moduleService = new ModuleService();
+        $modulesData = $moduleService->getModulesOnline();
+
+        //return $modulesData;
+        return view('modulesOnline', ['modules' => $modulesData]);
+    }
 }
