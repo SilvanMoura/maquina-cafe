@@ -3,102 +3,134 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\Transaction;
+use App\Models\PixReceipt;
+use App\Models\TransferPix;
 use App\Services\MQTTService;
+use App\Services\StoreService;
 use Illuminate\Support\Facades\Log;
 use App\Events\SendCreditNotification;
 
 class NotificationController extends Controller
 {
     protected $mqttService;
+    private $StoreService;
 
-    public function __construct(MQTTService $mqttService)
+    public function __construct(MQTTService $mqttService, StoreService $StoreService)
     {
         $this->mqttService = $mqttService;
+        $this->StoreService = $StoreService;
     }
 
     public function handle(Request $request)
     {
-        // Captura todos os dados enviados pelo PagSeguro
+        sleep(1);
         $data = $request->all();
 
-        // Define o caminho do arquivo onde os dados serão salvos
-        $logFilePath = storage_path('logs/pagseguro_notifications.json');
+        // Verifica se é uma notificação do tipo 'payment.created'
+        if (isset($data['action']) && $data['action'] === 'payment.created') {
 
-        $logData = [
-            'data' => $data
-            /* "apelido" => $data['notification_data']['reference_id'],
-            "nome_vendedor" => $data['notification_data']['customer']['name'],
-            "id_vendedor" => $data['notification_data']['customer']['tax_id'],
-            "id_transacao" => $data['notification_data']['qr_codes'][0]['id'],
-            "valor_transacao" => $data['notification_data']['qr_codes'][0]['amount']['value'] / 100,
-            "status_transacao" => $data['notification_data']['charges'][0]['status'],
-            "nome_comprador" => $data['notification_data']['charges'][0]['payment_method']['pix']['holder']['name'],
-            "id_comprador" => $data['notification_data']['charges'][0]['payment_method']['pix']['holder']['tax_id'],
-         */];
+            $idPagamento = $data['data']['id'];
 
-        try {
-            // Lê o conteúdo existente do arquivo JSON, se existir
-            if (file_exists($logFilePath)) {
-                $existingData = json_decode(file_get_contents($logFilePath), true) ?? [];
-                $existingData[] = $logData; // Adiciona os novos dados ao array existente
-            } else {
-                $existingData = [$logData]; // Cria um novo array com os dados
+            /* Log::info("Notificação recebida: ID do pagamento criado: " . $idPagamento);
+            Log::info("Notificação recebida: ", $data);
+            die(); */
+
+            if (!$idPagamento) {
+                Log::warning("Notificação 'payment.created' recebida sem ID.");
+                return response()->json(['message' => 'Notificação inválida.'], 400);
             }
 
-            // Salva os dados atualizados no arquivo JSON
-            file_put_contents($logFilePath, json_encode($existingData, JSON_PRETTY_PRINT));
+            Log::info("posData1: ", $data);
+            Log::info("Notificação recebida: ID do pagamento criado: " . $idPagamento);
 
-            // Salva os dados no banco de dados
-            //Transaction::create($logData);
+            // Consulta dados completos do pagamento
+            $posData = $this->StoreService->getPaymentById($idPagamento);
+            Log::info("posData2: ", $posData);
+            // Define módulo alvo
+            $deviceID = $posData['external_reference'];
+            $pulsos = $posData['transaction_amount'];
 
-            // Envia os dados ao ESP8266 correspondente
-            //$deviceId = "mccf-" . $data['reference_id'];
-            
-            //$this->mqttService->connect();
-            //$topic = "creditos/";
-            //$message = json_encode(['pulsos' => 5]);
-            //$this->mqttService->publish($topic, $message);
-            //$this->mqttService->disconnect();
+            $isOnline = $this->isDeviceOnlineViaMQTT($deviceID);
+            sleep(1);
+            if (!$isOnline) {
+                Log::warning("Módulo $deviceID está offline. Iniciando chargeback...");
+                $this->StoreService->physicalOrder($posData['store_id'], $deviceID);
+                $reembolso = $this->StoreService->executeChargeback($idPagamento);
+                Log::info("Chargeback executado: ", [$reembolso]);
+                $this->StoreService->physicalOrder($posData['store_id'], $deviceID);
 
-            // Envia os dados ao ESP8266 correspondente
-            // Tópico único para o ESP
-            //$deviceMAC = "C4:D8:D5:2D:00:63"; // MAC do dispositivo alvo
-            $topic = "creditos/";
-
-            // Mensagem com pulsos e deviceID
+                return response()->json(['message' => 'Chargeback realizado por módulo offline.'], 200);
+            }
+            $this->StoreService->physicalOrder($posData['store_id'], $deviceID);
+            // Dados a serem enviados ao dispositivo
             $message = json_encode([
-                'pulsos' => 5,
-                'deviceID' => "mccf-1020", // Deve ser igual ao configurado no ESP
+                'pulsos' => $pulsos,
+                'deviceID' => $deviceID,
                 'message' => "pulsos de crédito"
             ]);
 
-            // Publica a mensagem no broker MQTT
-            $this->mqttService->connect();
-            Log::info("Conexão com MQTT estabelecida com sucesso.");
-            $this->mqttService->publish($topic, $message);
-            Log::info("Mensagem publicada no tópico $topic com os dados: $message");
-            $this->mqttService->disconnect();
-            Log::info("Conexão MQTT encerrada.");
-            
+            try {
+                $this->mqttService->connect();
+                $this->mqttService->publish("creditos/", $message);
+                $this->mqttService->disconnect();
 
-            return response()->json(['message' => 'Notificação processada com sucesso.'], 200);
-        } catch (\Exception $e) {
-            // Em caso de erro, registra no arquivo de log
-            $errorLogData = [
-                'error' => $e->getMessage(),
-                'log_data' => $logData,
-                'time' => now()->toDateTimeString(),
-            ];
+                Log::info("Mensagem MQTT publicada para $deviceID: $message");
+                $this->StoreService->getPixReceiptPdf($idPagamento);
+                $transaction = TransferPix::create([
+                    'external_reference'  => $posData['external_reference'] ?? null,
+                    'pos_id'              => $posData['pos_id'] ?? null,
+                    'status'              => $posData['status'] ?? null,
+                    'store_id'            => $posData['store_id'] ?? null,
+                    'transaction_amount'  => isset($posData['transaction_amount']) ? floor($posData['transaction_amount']) : null,
+                    'id_payment'          => $posData['id'] ?? null,
+                    'transaction_id'      => $posData['transaction_id'],
+                    'receipt_id'          => 'recibo_' . $idPagamento . '.pdf'
+                ]);
 
-            // Salva o erro no arquivo de log
-            $existingErrors = file_exists($logFilePath) ? json_decode(file_get_contents($logFilePath), true) : [];
-            $existingErrors[] = $errorLogData;
-            file_put_contents($logFilePath, json_encode($existingErrors, JSON_PRETTY_PRINT));
+                Log::info('Transação salva com sucesso', ['transaction' => $transaction]);
+                return response()->json(['message' => 'Notificação processada com sucesso.'], 200);
+            } catch (\Exception $e) {
+                Log::error("Erro ao processar notificação: " . $e->getMessage());
+                return response()->json(['message' => 'Erro ao processar a notificação.'], 500);
+            }
+        } else {
+            /* $idPagamento = $data['data']['id'] ?? null;
+            $posData = $this->StoreService->getPaymentById($idPagamento);
+            $deviceID = $posData['external_reference'];
 
-            // Retorna erro ao PagSeguro
-            return response()->json(['message' => 'Erro ao processar a notificação.'], 500);
+            $this->StoreService->physicalOrder($posData['store_id'], $deviceID);
+            $this->StoreService->executeChargeback($idPagamento); */
+            //Log::info("Notificação recebida: ", $data);
         }
+
+        //return response()->json(['message' => 'Tipo de notificação não suportado.'], 200);
     }
 
+    public function isDeviceOnlineViaMQTT($deviceID)
+    {
+        $mqttService = app(MQTTService::class);
+
+        $respostaRecebida = false;
+
+        // Envia ping diretamente para o módulo
+        $mqttService->connect();
+        $mqttService->publish("status/ping", json_encode([
+            'ping' => true,
+            'timestamp' => now()->toDateTimeString()
+        ]));
+
+        // Escuta somente a resposta deste módulo
+        $mqttService->subscribe("status/pong/{$deviceID}", function ($topic, $message) use (&$respostaRecebida, $deviceID) {
+            $data = json_decode($message, true);
+            if (isset($data['deviceID']) && $data['deviceID'] === $deviceID) {
+                $respostaRecebida = true;
+            }
+        });
+
+        // Aguarda resposta por até 2 segundos
+        $mqttService->loopFor(2);
+        $mqttService->disconnect();
+
+        return $respostaRecebida;
+    }
 }

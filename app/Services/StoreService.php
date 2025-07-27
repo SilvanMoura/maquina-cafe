@@ -11,6 +11,7 @@ use FFI;
 use GuzzleHttp\Exception\RequestException;
 use Smalot\PdfParser\Parser;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Log;
 
 class StoreService
 {
@@ -153,11 +154,13 @@ class StoreService
         return $responseBody;
     }
 
-    public function physicalOrder($idStore, $nameStore, $moduloValue)
+    public function physicalOrder($idStore, $moduloValue)
     {
         $client = new Client();
 
-        $response = $client->post("https://api.mercadopago.com/instore/qr/seller/collectors/{$this->idUser}/stores/{$idStore}/pos/mccf{$moduloValue}/orders", [
+        $moduloValueFormated = str_replace('-', '', $moduloValue);
+
+        $response = $client->put("https://api.mercadopago.com/instore/qr/seller/collectors/{$this->idUser}/stores/{$idStore}/pos/{$moduloValueFormated}/orders", [
             'headers' => [
                 'Authorization' => "Bearer {$this->token}",
                 'Content-Type' => 'application/json',
@@ -165,24 +168,28 @@ class StoreService
             'json' => [
                 'title' => "Pedido do Cliente",
                 'description' => "Produto ou serviço escolhido pelo cliente",
-                'notification_url' => "https://6ba0-2804-14d-403a-8011-af78-ee01-9e8-935a.ngrok-free.app/notifications",
-                'external_reference' => "mccf{$moduloValue}",
+                'notification_url' => "https://74d3-2804-14d-403a-8011-4019-f63b-2c27-f3fc.ngrok-free.app/notifications",
+                'external_reference' => "$moduloValue",
                 'total_amount' => 0,
-                'items' => [
-                    'id' => "item1",
-                    'title' => "Produto X",
-                    'unit_measure' => "unit",
-                    'unit_price' => 0.00,
-                    'quantity' => 1,
-                    'total_amount' => 0
+                'items' => [ // <- agora um array de objetos
+                    [
+                        'id' => "item1",
+                        'title' => "Produto X",
+                        'unit_measure' => "unit",
+                        'unit_price' => 0.00,
+                        'quantity' => 1,
+                        'total_amount' => 0
+                    ]
                 ]
             ],
         ]);
-
+        //Log::info("posData1: ". $response);
         $responseBody = json_decode($response->getBody(), true);
-
+        Log::info("posData1: https://api.mercadopago.com/instore/qr/seller/collectors/{$this->idUser}/stores/{$idStore}/pos/{$moduloValueFormated}/orders");
+        Log::info("data1: ". $moduloValue);
         return $responseBody;
     }
+
 
     public function getPixReceiptPdf($paymentId)
     {
@@ -190,14 +197,17 @@ class StoreService
 
         $response = $client->get("https://www.mercadopago.com.br/money-out/transfer/api/receipt/pix_pdf/{$paymentId}/pix_account/pix_payment.pdf", [
             'headers' => [
-                'Cookie' => '_csrf=vhotNcZdK4ZcIJ5Ol_W3qwwj; _d2id=685dd283-c062-4275-aa01-8effbc1829d7; ftid=lfgV8PvFoGSSWOpBvcFMRn24tFTxXK1c-1748716757421; ssid=ghy-053120-glPU2XD1tNoEDDxbpUcjcCY4DdexJs-__-2321161890-__-1843431964731--RRR_0-RRR_0; orguserid=ZZH0Z000t074d; orguseridp=2321161890;',
+                'cookie' => '_csrf=vhotNcZdK4ZcIJ5Ol_W3qwwj; orguseridp=2321161890; ftid=lfgV8PvFoGSSWOpBvcFMRn24tFTxXK1c-1748716757421; orgnickp=MM20250310220410; cookiesPreferencesNotLogged=%7B%22categories%22%3A%7B%22advertising%22%3Atrue%2C%22functionality%22%3Atrue%2C%22performance%22%3Atrue%2C%22traceability%22%3Atrue%7D%7D; _ga=GA1.1.1151310564.1750027010; _d2id=685dd283-c062-4275-aa01-8effbc1829d7; p_dsid=da33d370-eecc-4d0c-bdad-d4ba939f5336-1750033492551; _hjSessionUser_492923=eyJpZCI6ImY4MmE3MmIwLWYwNzYtNWIwYy05MWQ0LWVjZGQ4NTliMjI3OCIsImNyZWF0ZWQiOjE3NTAwMzM1NzM5ODIsImV4aXN0aW5nIjp0cnVlfQ==; dxDevPanelOnboarding=true; mp_dx-dev-panel-production-product=true; dsid=0fefc014-9782-40cb-899c-87b1231598a9-1750037809126; _hjSessionUser_4992954=eyJpZCI6IjFjNDQ0NTZiLTBhMjYtNWEzMi1iZWY2LTlmZmE5ZTdlMmJkMiIsImNyZWF0ZWQiOjE3NTAwMzM5MjEzNjgsImV4aXN0aW5nIjp0cnVlfQ==; edsid=6d74e3a5-7cf6-36be-998f-1383cebf5ce5-1750041657073; c_landing__desktop=2.92.0; _gcl_au=1.1.2014684061.1751830363; _tt_enable_cookie=1; _ttp=01JZGKKZ7YCQWRDASWKDH1J19Z_.tt.2; ttcsid=1751830363395::W9hYcpxOhqo_8M8AB8f8.1.1751830363397; ttcsid_CU409KRC77U5T1OVP8KG=1751830363395::StSXEKCYzznSrXXdndHW.1.1751830364394; ttcsid_CUV1O83C77UCOV2E0PVG=1751830363395::6uLXzsd9GcsdY9GHGX8i.1.1751830364394; ttcsid_CUN021JC77U74NKAGB7G=1751830363396::3Bsvh38eBmMzgcTyeyFA.1.1751830364394; ttcsid_CUJ1CJ3C77U09FJDRBMG=1751830363396::SgtGHiWNL28jMlUO8lIV.1.1751830364394; ttcsid_CVDCTDJC77UCRE2PIO20=1751830363396::dUIjZALuDsxEEY-U5aJp.1.1751830364395; ttcsid_D04F33RC77U7UBOAPF1G=1751830363397::cMkN1xl2HklUe-Kpw8H7.1.1751830364395; orguserid=HZHZZT00t074d; ssid=ghy-070723-e1B84KPtxF4TzWk6sxXKnHbzRh6zL7-__-2321161890-__-1846638592437--RRR_0-RRR_0; mp_wsid=eyJhbGciOiJSUzI1NiIsImtpZCI6IlBNREhlSGt2WEdPZ2JmWFNXZ2VnMDRzeEVTZG1yV0N1TndKcFl1N3lGUjg9IiwidHlwIjoiSldUIn0.eyJhZG1pbl9vdHAiOmZhbHNlLCJhdXRoX2Zsb3ciOiJhY2Nlc3MiLCJjbGllbnRfaWQiOjY0OTUyMTMwOTkwNDY1NywiZXhwIjoxODQ2NjM4NTkyLCJpYXQiOjE3NTE5NDQxOTIsImlzcyI6InVybjphdXRoLXNlcnZlcjpzZXNzaW9ucyIsImp0aSI6ImU4NTdmMDcwLTU5MmQtNDUwNi05ODk5LTI0NTMzNjcyMjE0NCIsInByb2R1Y3RfaWQiOjIsInNpdGVfaWQiOiJtbGIiLCJzc2kiOiIyM2EwMTgzOS04NjM3LTQ1OTUtOTYxZi0yNDRlOWEyZTZhNmMiLCJzdWIiOiJ1cm46dXNlcnM6MjMyMTE2MTg5MCJ9.069Tcx46nAYKcjyb28K8BcUbj-blvidP_XzEIng1i6CpRY92YRCZ_vWfzV7xr9C8R8DQ4NUvn22r03o6dGAON8ta6-ZIaKlh2BO3bs8WAUs2Z3EzIQQNZUM3gk9-iTDpdGmMqsW5Cj-58VnYAbJ9znSArUjA6kf9lr2xeNepC2PfQdwBxgUy05N-5Az0LJz66sZDmyktaXyfUW1_lkkqOGXVmRICrqWeJebOUFjXkK7GU7BGCVdtUvk-Fp4_F9hidF5embDs4Ttn9sJ0F_RVSjDR6R2khSgyHQSP11hFVLpzfal-Zk3e-N6GBtdmAtTUJr5et4cfIVFmMn-oVHp81Q; cookiesPreferencesLoggedFallback=%7B%22userId%22%3A2321161890%2C%22categories%22%3A%7B%22advertising%22%3Atrue%2C%22functionality%22%3Atrue%2C%22performance%22%3Atrue%2C%22traceability%22%3Atrue%7D%7D; QSI_HistorySession=https%3A%2F%2Fwww.mercadopago.com.br%2Fhome~1750033485788%7Chttps%3A%2F%2Fwww.mercadopago.com.br%2Fhome%23from-section%3Dmenu~1750038373100%7Chttps%3A%2F%2Fwww.mercadopago.com.br%2Fhome~1750041587055%7Chttps%3A%2F%2Fwww.mercadopago.com.br%2Fhome%23from-section%3Dmenu~1750042466948%7Chttps%3A%2F%2Fwww.mercadopago.com.br%2Fhome~1750369799086%7Chttps%3A%2F%2Fwww.mercadopago.com.br%2Fhome%23from-section%3Dmenu~1750383009884%7Chttps%3A%2F%2Fwww.mercadopago.com.br%2Fhome~1751944184749; _ga_XJRJL56B0Z=GS2.1.s1753236410$o9$g1$t1753237317$j60$l0$h0; c_balance-frontend__desktop=3.54.3; nsa_rotok=eyJhbGciOiJSUzI1NiIsImtpZCI6IjIiLCJ0eXAiOiJKV1QifQ.eyJpZGVudGlmaWVyIjoiMjNhMDE4MzktODYzNy00NTk1LTk2MWYtMjQ0ZTlhMmU2YTZjIiwicm90YXRpb25faWQiOiJmY2M4NWFjMi1iZjY0LTQ1NWMtOGFmYi1hYjk0Y2FhMzdiZDkiLCJwbGF0Zm9ybSI6Ik1QIiwicm90YXRpb25fZGF0ZSI6MTc1MzMyNzc1NiwiZXhwIjoxNzU1OTE5MTU2LCJqdGkiOiI1MzkxNjJlOC0xN2E5LTQ0MmQtYWFkYS00ODgyYTFlMDEzOTQiLCJpYXQiOjE3NTMzMjcxNTYsInN1YiI6IjIzYTAxODM5LTg2MzctNDU5NS05NjFmLTI0NGU5YTJlNmE2YyJ9.hrQRfm16B-zEHvbpoTvkvAvriqaFRZXXEAq9yhEgoVgnOgX197ps8y4aktcfqJMTqsZJA3F6qdQ-K1zJDgBeWZiio1gfbBAW0WlFWyAfnjVEe4aZG0J1ACQ10s8H7V8RCoUOPmLHITRJhbzngjlM0Q8plNTokdz_5BaZnnIfMbG3aomzcDe0FTtling9DrCLAqRiA_bZ2cC3k3dnOL6_lHqDa40eHI131BAY84oAyZ6_gI7i7wR-lb49yuf7oTztB0ymNc1vjoJSnzmJ1ynByiKnj87pCeyNG1boifYE4gkY41wFkQcdlhT45dW9gH6X6sdgZ6jITXge1z-Xw7smnw; p_edsid=eb00ba21-001d-3fac-be8f-3ec51558138b-1753327159705; ttl=1753327192057; x-meli-session-id=armor.423535f7ff08890faeab4da8e03b31ae9255d4cebde93ce5dfff5f3bcb99f79deff3634f492ae8f95c3a0ceb583e6fffa82f4a3865010698597aa1461b7c347344f3f5146f72ac881935f2c26a1e9156b9e86c49e11bf362ba81990425697065.9eabc85e3a34dd597aa16946e8722708; cookiesPreferencesLogged=%7B%22userId%22%3A2321161890%2C%22categories%22%3A%7B%22advertising%22%3Atrue%2C%22functionality%22%3Atrue%2C%22performance%22%3Atrue%2C%22traceability%22%3Atrue%7D%7D',
                 'User-Agent' => 'Mozilla/5.0',
                 'Accept' => 'application/pdf',
                 'Authorization' => "Bearer {$this->token}",
             ],
             //'stream' => false // caso queira fazer download do PDF direto
         ]);
+        $content = $response->getBody()->getContents();
 
+        // 🔽 Loga os primeiros 500 caracteres da resposta para análise
+        Log::debug("Conteúdo retornado para o PDF: " . substr($content, 0, 500));
         $directory = storage_path("logs/recibos");
         if (!file_exists($directory)) {
             mkdir($directory, 0777, true);
@@ -386,5 +396,41 @@ class StoreService
         $responseBody = json_decode($response->getBody(), true);
 
         return $responseBody;
+    }
+
+    public function getPaymentById($paymentId)
+    {
+        $client = new Client();
+
+        $response = $client->get("https://api.mercadopago.com/v1/payments/{$paymentId}", [
+            'headers' => [
+                'Authorization' => "Bearer {$this->token}",
+                'Content-Type' => 'application/json'
+            ]
+        ]);
+
+        $responseBody = json_decode($response->getBody(), true);
+        $dadosPagamento = [
+            'external_reference'  => $responseBody['external_reference'] ?? null,
+            'pos_id'              => $responseBody['pos_id'] ?? null,
+            'status'              => $responseBody['status'] ?? null,
+            'store_id'            => $responseBody['store_id'] ?? null,
+            'transaction_amount'  => isset($responseBody['transaction_amount']) ? (int) floor($responseBody['transaction_amount'] / 1) : null,
+            'id'                  => $responseBody['id'] ?? null,
+            'transaction_id'      => $responseBody['transaction_details']['transaction_id'] ?? null,
+        ];
+
+        return $dadosPagamento;
+
+        // Logando os valores
+        Log::info("Dados extraídos do pagamento:", [
+            'external_reference'   => $dadosPagamento['external_reference'],
+            'pos_id'               => $dadosPagamento['pos_id'],
+            'status'               => $dadosPagamento['status'],
+            'store_id'             => $dadosPagamento['store_id'],
+            'transaction_amount'   => $dadosPagamento['transaction_amount'],
+            'id'                   => $dadosPagamento['id'],
+            'transaction_id'       => $dadosPagamento['transaction_id'],
+        ]);
     }
 }

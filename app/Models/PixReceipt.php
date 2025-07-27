@@ -21,4 +21,22 @@ class PixReceipt extends Model
         'store_id',
         'status',
     ];
+
+    //protected $table = 'payment_control';
+
+    // Campos que podem ser preenchidos em massa
+    //protected $fillable = [
+    //    'external_reference',
+    //    'pos_id',
+    //    'status',
+    //    'store_id',
+    //    'transaction_amount',
+    //    'id_payment',
+    //   'transaction_id',
+    //];
+
+    // Definindo o tipo de dados das colunas (opcional)
+    //protected $casts = [
+    //    'transaction_amount' => 'decimal:2',
+    //];
 }
