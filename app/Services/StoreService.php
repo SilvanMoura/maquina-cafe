@@ -5,6 +5,7 @@ namespace App\Services;
 use GuzzleHttp\Client;
 use App\Models\Store;
 use App\Models\PixReceipt;
+use App\Models\TransferPix;
 use Illuminate\Support\Facades\Http;
 use Carbon\Carbon;
 use FFI;
@@ -170,6 +171,7 @@ class StoreService
                 'description' => "Produto ou serviço escolhido pelo cliente",
                 'notification_url' => "https://74d3-2804-14d-403a-8011-4019-f63b-2c27-f3fc.ngrok-free.app/notifications",
                 'external_reference' => "$moduloValue",
+                "expiration_date" => "2999-12-30T01:30:00.000-03:00",
                 'total_amount' => 0,
                 'items' => [ // <- agora um array de objetos
                     [
@@ -186,7 +188,7 @@ class StoreService
         //Log::info("posData1: ". $response);
         $responseBody = json_decode($response->getBody(), true);
         Log::info("posData1: https://api.mercadopago.com/instore/qr/seller/collectors/{$this->idUser}/stores/{$idStore}/pos/{$moduloValueFormated}/orders");
-        Log::info("data1: ". $moduloValue);
+        Log::info("data1: " . $moduloValue);
         return $responseBody;
     }
 
@@ -432,5 +434,242 @@ class StoreService
             'id'                   => $dadosPagamento['id'],
             'transaction_id'       => $dadosPagamento['transaction_id'],
         ]);
+    }
+
+    public function getAllPayments()
+    {
+        $data = TransferPix::get();
+
+        // 2. Coletar store_ids e pos_ids únicos
+        $storeIds = $data->pluck('store_id')->unique();
+        $posIds = $data->pluck('pos_id')->unique();
+        $ids = $data->pluck('id_payment'); // reduzido ao escopo dos últimos 7 dias
+
+        // 3. Buscar os receipts correspondentes
+        $dataReceipt = PixReceipt::whereIn('id_mercado_pago', $ids)->get()->keyBy('id_mercado_pago');
+
+        // 4. Obter nomes das lojas e POS
+        $client = new Client();
+        $storeNames = [];
+        $posNames = [];
+
+        foreach ($storeIds as $storeId) {
+            try {
+                $response = $client->get("https://api.mercadopago.com/stores/{$storeId}", [
+                    'headers' => [
+                        'Authorization' => "Bearer {$this->token}",
+                        'Content-Type' => 'application/json',
+                    ]
+                ]);
+                $body = json_decode($response->getBody(), true);
+                $storeNames[$storeId] = $body['name'] ?? 'Loja sem nome';
+            } catch (\Exception $e) {
+                $storeNames[$storeId] = 'Erro ao buscar nome da loja';
+            }
+        }
+
+        foreach ($posIds as $posId) {
+            try {
+                $response = $client->get("https://api.mercadopago.com/pos/{$posId}", [
+                    'headers' => [
+                        'Authorization' => "Bearer {$this->token}",
+                        'Content-Type' => 'application/json',
+                    ]
+                ]);
+                $body = json_decode($response->getBody(), true);
+                $posNames[$posId] = $body['name'] ?? 'POS sem nome';
+            } catch (\Exception $e) {
+                $posNames[$posId] = 'Erro ao buscar nome do POS';
+            }
+        }
+
+        // 5. Juntar dados no resultado final
+        $result = $data->map(function ($payment) use ($storeNames, $posNames, $dataReceipt) {
+            $payment->store_name = $storeNames[$payment->store_id] ?? 'Desconhecida';
+            $payment->pos_name = $posNames[$payment->pos_id] ?? 'Desconhecido';
+            $payment->receipt = $dataReceipt[$payment->id_payment] ?? null;
+
+            return $payment;
+        });
+
+        return $result;
+    }
+
+    public function getPaymentsToday()
+    {
+        $data = TransferPix::whereDate('created_at', Carbon::today())->get();
+
+        // 2. Coletar store_ids e pos_ids únicos
+        $storeIds = $data->pluck('store_id')->unique();
+        $posIds = $data->pluck('pos_id')->unique();
+        $ids = $data->pluck('id_payment'); // reduzido ao escopo dos últimos 7 dias
+
+        // 3. Buscar os receipts correspondentes
+        $dataReceipt = PixReceipt::whereIn('id_mercado_pago', $ids)->get()->keyBy('id_mercado_pago');
+
+        // 4. Obter nomes das lojas e POS
+        $client = new Client();
+        $storeNames = [];
+        $posNames = [];
+
+        foreach ($storeIds as $storeId) {
+            try {
+                $response = $client->get("https://api.mercadopago.com/stores/{$storeId}", [
+                    'headers' => [
+                        'Authorization' => "Bearer {$this->token}",
+                        'Content-Type' => 'application/json',
+                    ]
+                ]);
+                $body = json_decode($response->getBody(), true);
+                $storeNames[$storeId] = $body['name'] ?? 'Loja sem nome';
+            } catch (\Exception $e) {
+                $storeNames[$storeId] = 'Erro ao buscar nome da loja';
+            }
+        }
+
+        foreach ($posIds as $posId) {
+            try {
+                $response = $client->get("https://api.mercadopago.com/pos/{$posId}", [
+                    'headers' => [
+                        'Authorization' => "Bearer {$this->token}",
+                        'Content-Type' => 'application/json',
+                    ]
+                ]);
+                $body = json_decode($response->getBody(), true);
+                $posNames[$posId] = $body['name'] ?? 'POS sem nome';
+            } catch (\Exception $e) {
+                $posNames[$posId] = 'Erro ao buscar nome do POS';
+            }
+        }
+
+        // 5. Juntar dados no resultado final
+        $result = $data->map(function ($payment) use ($storeNames, $posNames, $dataReceipt) {
+            $payment->store_name = $storeNames[$payment->store_id] ?? 'Desconhecida';
+            $payment->pos_name = $posNames[$payment->pos_id] ?? 'Desconhecido';
+            $payment->receipt = $dataReceipt[$payment->id_payment] ?? null;
+
+            return $payment;
+        });
+
+        return $result;
+    }
+
+    public function getPaymentsSevenDaysInternal()
+    {
+        // 1. Buscar registros dos últimos 7 dias
+        $data = TransferPix::where('created_at', '>=', Carbon::now()->subDays(7))->get();
+
+        // 2. Coletar store_ids e pos_ids únicos
+        $storeIds = $data->pluck('store_id')->unique();
+        $posIds = $data->pluck('pos_id')->unique();
+        $ids = $data->pluck('id_payment'); // reduzido ao escopo dos últimos 7 dias
+
+        // 3. Buscar os receipts correspondentes
+        $dataReceipt = PixReceipt::whereIn('id_mercado_pago', $ids)->get()->keyBy('id_mercado_pago');
+
+        // 4. Obter nomes das lojas e POS
+        $client = new Client();
+        $storeNames = [];
+        $posNames = [];
+
+        foreach ($storeIds as $storeId) {
+            try {
+                $response = $client->get("https://api.mercadopago.com/stores/{$storeId}", [
+                    'headers' => [
+                        'Authorization' => "Bearer {$this->token}",
+                        'Content-Type' => 'application/json',
+                    ]
+                ]);
+                $body = json_decode($response->getBody(), true);
+                $storeNames[$storeId] = $body['name'] ?? 'Loja sem nome';
+            } catch (\Exception $e) {
+                $storeNames[$storeId] = 'Erro ao buscar nome da loja';
+            }
+        }
+
+        foreach ($posIds as $posId) {
+            try {
+                $response = $client->get("https://api.mercadopago.com/pos/{$posId}", [
+                    'headers' => [
+                        'Authorization' => "Bearer {$this->token}",
+                        'Content-Type' => 'application/json',
+                    ]
+                ]);
+                $body = json_decode($response->getBody(), true);
+                $posNames[$posId] = $body['name'] ?? 'POS sem nome';
+            } catch (\Exception $e) {
+                $posNames[$posId] = 'Erro ao buscar nome do POS';
+            }
+        }
+
+        // 5. Juntar dados no resultado final
+        $result = $data->map(function ($payment) use ($storeNames, $posNames, $dataReceipt) {
+            $payment->store_name = $storeNames[$payment->store_id] ?? 'Desconhecida';
+            $payment->pos_name = $posNames[$payment->pos_id] ?? 'Desconhecido';
+            $payment->receipt = $dataReceipt[$payment->id_payment] ?? null;
+
+            return $payment;
+        });
+
+        return $result;
+    }
+
+    public function getPaymentsLast30Days()
+    {
+        $data = TransferPix::where('created_at', '>=', Carbon::now()->subDays(30))->get();
+
+        // 2. Coletar store_ids e pos_ids únicos
+        $storeIds = $data->pluck('store_id')->unique();
+        $posIds = $data->pluck('pos_id')->unique();
+        $ids = $data->pluck('id_payment'); // reduzido ao escopo dos últimos 7 dias
+
+        // 3. Buscar os receipts correspondentes
+        $dataReceipt = PixReceipt::whereIn('id_mercado_pago', $ids)->get()->keyBy('id_mercado_pago');
+
+        // 4. Obter nomes das lojas e POS
+        $client = new Client();
+        $storeNames = [];
+        $posNames = [];
+
+        foreach ($storeIds as $storeId) {
+            try {
+                $response = $client->get("https://api.mercadopago.com/stores/{$storeId}", [
+                    'headers' => [
+                        'Authorization' => "Bearer {$this->token}",
+                        'Content-Type' => 'application/json',
+                    ]
+                ]);
+                $body = json_decode($response->getBody(), true);
+                $storeNames[$storeId] = $body['name'] ?? 'Loja sem nome';
+            } catch (\Exception $e) {
+                $storeNames[$storeId] = 'Erro ao buscar nome da loja';
+            }
+        }
+
+        foreach ($posIds as $posId) {
+            try {
+                $response = $client->get("https://api.mercadopago.com/pos/{$posId}", [
+                    'headers' => [
+                        'Authorization' => "Bearer {$this->token}",
+                        'Content-Type' => 'application/json',
+                    ]
+                ]);
+                $body = json_decode($response->getBody(), true);
+                $posNames[$posId] = $body['name'] ?? 'POS sem nome';
+            } catch (\Exception $e) {
+                $posNames[$posId] = 'Erro ao buscar nome do POS';
+            }
+        }
+
+        // 5. Juntar dados no resultado final
+        $result = $data->map(function ($payment) use ($storeNames, $posNames, $dataReceipt) {
+            $payment->store_name = $storeNames[$payment->store_id] ?? 'Desconhecida';
+            $payment->pos_name = $posNames[$payment->pos_id] ?? 'Desconhecido';
+            $payment->receipt = $dataReceipt[$payment->id_payment] ?? null;
+
+            return $payment;
+        });
+
+        return $result;
     }
 }

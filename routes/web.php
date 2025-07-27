@@ -26,6 +26,7 @@ Route::get('/lojas', [StoreController::class, 'getStoreData']); //obtem todas as
 Route::get('/lojas/adicionar', [StoreController::class, 'newStoreView']);
 Route::post('/lojas/adicionar', [StoreController::class, 'newStore']);
 Route::get('/pos', [StoreController::class, 'getPosData']); //obtem todos os pontos de venda/caixa (pos)
+Route::get('/vendas', [StoreController::class, 'salesView']);
 
 Route::get('/modulos', [ModuleController::class, 'modulesView']); 
 Route::get('/modulos/adicionar', [ModuleController::class, 'newModuleView']);
@@ -37,6 +38,7 @@ Route::get('/readCode', [ModuleController::class, 'readCodeView']);
 Route::post('/readCode', [ModuleController::class, 'depositCoupon']);
 Route::get('/controle', [ModuleController::class, 'controlRemoteView']);
 Route::post('/sendCommand', [ModuleController::class, 'sendCommandModule']);
+
 //envia o credito do cupom para o modulo 
 
 Route::get('/generateQrCode', [QrCodeController::class, 'qrCodeView']);

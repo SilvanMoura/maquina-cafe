@@ -114,4 +114,17 @@ class StoreController extends Controller
 
         return response()->json(['message' => 'Loja criada com sucesso', 'registro' => $store], 201);
     }
+    public function salesView(){
+        $paymentsToday = $this->StoreService->getPaymentsToday();
+        $paymentsSevenDays = $this->StoreService->getPaymentsSevenDaysInternal();
+        $paymentsLast30Days = $this->StoreService->getPaymentsLast30Days();
+        $allPayments = $this->StoreService->getAllPayments();
+
+        return view('salesDetails', compact(
+            'paymentsToday',
+            'paymentsSevenDays',
+            'paymentsLast30Days',
+            'allPayments'
+        ));
+    }
 }
