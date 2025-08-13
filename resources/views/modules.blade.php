@@ -13,12 +13,13 @@
         overflow-y: auto;
         /* Adiciona rolagem vertical quando necessário */
     }
+
     @media (min-width: 1366px) {
         .ajuste-container {
             margin-left: 7% !important;
             max-width: 93% !important;
             max-height: 85vh !important;
-            margin-top:-46%
+            margin-top: -46%
         }
     }
 </style>
@@ -59,7 +60,10 @@
                     <thead>
                         <tr>
                             <th>Id</th>
-                            <th>Nome</th>
+                            <th>Modulo</th>
+                            <th>Loja</th>
+                            <th>Última Conexão</th>
+                            <th>Qualidade do Sinal</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -69,16 +73,16 @@
                         <tr>
 
                             <td style="width:10%;">{{ $r->id }}</td>
-                            <td style="width:35%;"><a>MCCF - {{ $r->modulo }}</a></td>
+                            <td style="width:15%;"><a>MCCF - {{ $r->modulo }}</a></td>
+                            <td style="width:20%;"><a>{{ $r->idStore }}</a></td>
+                            <td style="width:15%;"><a>{{ $r->ultima_conexao }}</a></td>
+                            <td style="width:15%;"><a> {{ $r->rssi }} - {{ $r->sinal_qualidade }}</a></td>
 
-                            <td style="width:55%;">
-                                <a href="" class="btn-nwe5" title="Editar"><i class="bx bx-edit bx-xs"></i></a>
-                            </td>
                         </tr>
                         @endforeach
                         @else
                         <tr>
-                            <td colspan="6">Nenhum Módulo Cadastrado</td>
+                            <td colspan="6">Nenhum Módulo Online</td>
                         </tr>
                         @endif
 
@@ -87,6 +91,9 @@
                 </table>
             </div>
         </div>
+
+
+
 
     </div>
 </div>

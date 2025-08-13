@@ -23,7 +23,7 @@ class DashboardController extends Controller
     {
         // --- PARTE PADRÃO DO DASHBOARD ---
         $storesCount = count($this->storeService->getStores());
-        $posCount = count($this->storeService->getPos());
+        //$posCount = count($this->storeService->getPos());
         $allPix = $this->storeService->getAllPix();
 
         $todaySales = $this->storeService->getPagamentosHoje();
@@ -92,15 +92,15 @@ class DashboardController extends Controller
                 'status_online' => true
             ]);
 
-            // --- ENVIA PARA A VIEW ---
+        }
+        // --- ENVIA PARA A VIEW ---
             return view('dashboard', compact(
                 'storesCount',
-                'posCount',
+                //'posCount',
                 'allPix',
                 'todaySales',
                 'todayCount',
                 'countOnline'
             ));
-        }
     }
 }

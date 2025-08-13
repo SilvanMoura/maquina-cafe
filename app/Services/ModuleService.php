@@ -168,9 +168,7 @@ class ModuleService
 
     public function getModulesUse()
     {
-        return Module::whereNotNull('idStore')
-            ->where('idStore', '!=', '')
-            ->get();
+        return Module::get();
     }
 
     public function moduleUpdateAllOffline(){

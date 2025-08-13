@@ -169,7 +169,7 @@ class StoreService
             'json' => [
                 'title' => "Pedido do Cliente",
                 'description' => "Produto ou serviço escolhido pelo cliente",
-                'notification_url' => "https://74d3-2804-14d-403a-8011-4019-f63b-2c27-f3fc.ngrok-free.app/notifications",
+                'notification_url' => "https://8a7444e0a6fd.ngrok-free.app/notifications",
                 'external_reference' => "$moduloValue",
                 "expiration_date" => "2999-12-30T01:30:00.000-03:00",
                 'total_amount' => 0,

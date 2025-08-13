@@ -13,23 +13,31 @@
         overflow-y: auto;
         /* Adiciona rolagem vertical quando necessário */
     }
+    @media (min-width: 1366px) {
+        .ajuste-container {
+            margin-left: 7% !important;
+            max-width: 93% !important;
+            max-height: 85vh !important;
+            margin-top:-46%
+        }
+    }
 </style>
-<div style="height: 90vh; width: 99vw;">
+<div class="ajuste-container" style="height: 90vh; width: 99vw;">
     <div class="new122" style="margin: 1% 1% 0 7%;">
         <div class="widget-title" style="margin: -20px 0 0">
             <span class="icon">
                 <i class="fas fa-user"></i>
             </span>
-            <h5>Lojas</h5>
+            <h5>Módulos</h5>
         </div>
 
         <div class="flexxn" style="display:block;">
             <div style="display: block; flex-direction:column;">
 
                 <div>
-                    <a href="lojas/adicionar" class="button btn btn-mini btn-success" style="max-width: 165px">
+                    <a href="modulos/adicionar" class="button btn btn-mini btn-success" style="max-width: 165px">
                         <span class="button__icon"><i class='bx bx-plus-circle'></i></span><span class="button__text2">
-                            Nova Loja
+                            Novo Módulo
                         </span>
                     </a>
                 </div>
@@ -37,7 +45,7 @@
                 <div>
                     <label id="search">
                         Pesquisar
-                        <input type="search" id="searchInput" class="" placeholder="Nome da Loja" aria-controls="tabela">
+                        <input type="search" id="searchInput" class="" placeholder="Código do Módulo" aria-controls="tabela">
                     </label>
                 </div>
 
@@ -82,16 +90,12 @@
                 </table>
             </div>
         </div>
-        <!-- <php echo $this->pagination->create_links(); ?> -->
 
     </div>
 </div>
 
 <script type="text/javascript">
     $(document).ready(function() {
-        // $('#searchInput').on('input', function() {
-        //     performSearch();
-        // });
 
         $('#searchInput').on('keydown', function(e) {
             if (e.key === 'Enter') {

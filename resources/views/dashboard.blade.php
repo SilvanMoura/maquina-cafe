@@ -8,30 +8,36 @@
             min-height: 85vh !important;
         }
         .ajuste-statisc{
-            margin-left:14vw;
+            margin-left: 7vw;
         }
         .ajuste-status{
             margin-left: 14%; 
             width:84vw;
         }
+        .atalhos{
+            margin-left: 14%;
+        }
+    }
+
+    @media (max-width: 485px) {
+        .ajuste-statisc {
+            width: 100%;
+            margin-top: 5%;
+        }
+        
     }
 </style>
-<!-- New Bem-vindos -->
-<div id="content-bemv">
-    <div class="bemv">Dashboard</div>
-    <div></div>
-</div>
 
 <!--Action boxes-->
     <div class="ajuste-cardbox">
-        <ul class="cardBox" style="margin-left: 14%;">
+        <ul class="cardBox atalhos">
             <li class="card">
                 <div class="grid-blak">
-                    <a href="/clientes">
-                        <div class="numbers">Clientes</div>
+                    <a href="/usuarios">
+                        <div class="numbers">Usuários</div>
                     </a>
                 </div>
-                <a href="/clientes">
+                <a href="/usuarios">
                     <div class="lord-icon02">
                         <i class='bx bx-user iconBx02'></i>
                     </div>
@@ -40,11 +46,11 @@
 
             <li class="card">
                 <div class="grid-blak">
-                    <a href="/produtos">
-                        <div class="numbers">Produtos</div>
+                    <a href="/lojas">
+                        <div class="numbers">Lojas</div>
                     </a>
                 </div>
-                <a href="/produtos">
+                <a href="/lojas">
                     <div class="lord-icon02">
                         <i class='bx bx-basket iconBx02'></i>
                     </div>
@@ -53,11 +59,11 @@
 
             <li class="card">
                 <div class="grid-blak">
-                    <a href="/servicos">
-                        <div class="numbers">Serviços</div>
+                    <a href="/controle">
+                        <div class="numbers">Controle Remoto</div>
                     </a>
                 </div>
-                <a href="/servicos">
+                <a href="/controle">
                     <div class="lord-icon03">
                         <i class='bx bx-wrench iconBx03'></i>
                     </div>
@@ -66,24 +72,24 @@
 
             <li class="card">
                 <div class="grid-blak">
-                    <a href="/os">
-                        <div class="numbers N-tittle">Ordens</div>
+                    <a href="/modulos">
+                        <div class="numbers N-tittle">Modulos</div>
                     </a>
                 </div>
-                <a href="/os">
+                <a href="/modulos">
                     <div class="lord-icon04">
-                        <i class='bx bx-file iconBx04'></i>
+                        <i class='bx bxs-package iconBx04'></i>
                     </div>
                 </a>
             </li>
 
             <li class="card">
                 <div class="grid-blak">
-                    <a href="/maquinas">
-                        <div class="numbers N-tittle">Máquinas</div>
+                    <a href="/vendas">
+                        <div class="numbers N-tittle">Vendas</div>
                     </a>
                 </div>
-                <a href="/maquinas">
+                <a href="/vendas">
                     <div class="lord-icon05">
                         <i class='bx bx-cart-alt iconBx05'></i></span>
                     </div>
@@ -92,11 +98,11 @@
 
             <li class="card">
                 <div class="grid-blak">
-                    <a href="/garantias">
-                        <div class="numbers">Garantias</div>
+                    <a href="/cupons">
+                        <div class="numbers">Cupons</div>
                     </a>
                 </div>
-                <a href="/garantias">
+                <a href="/cupons">
                     <div class="lord-icon06">
                         <i class="bx bx-receipt iconBx6"></i>
                     </div>
@@ -108,7 +114,7 @@
         
         <!-- Fim new widget right -->
         <div class="new-statisc ajuste-statisc">
-            <div class="widget-box-new widbox-blak" style="height:100%">
+            <div class="widget-box-new widbox-blak ajuste-statisc" style="height:100%">
                 <div>
                     <h5 class="cardHeader">Dados Rápidos</h5>
                 </div>
@@ -123,22 +129,15 @@
                         </div>
                     </a> -->
 
-                    <a href="/produtos/adicionar" class="card tip-top" title="Adicionar Produtos">
+                    <a href="/lojas" class="card tip-top" title="Ver Lojas">
                         <div><i class='bx bxs-package iconBx2'></i></div>
                         <div>
                             <div class="cardName2">{{ $storesCount }}</div>
                             <div class="cardName">Lojas</div>
                         </div>
                     </a>
-                    <a href="/produtos/adicionar" class="card tip-top" title="Adicionar Produtos">
-                        <div><i class='bx bxs-package iconBx2'></i></div>
-                        <div>
-                            <div class="cardName2">{{ $posCount }}</div>
-                            <div class="cardName">Pontos de Venda</div>
-                        </div>
-                    </a>
 
-                    <a href="/os/adicionar" class="card tip-top" title="Adicionar serviços">
+                    <a href="/modulos/online" class="card tip-top" title="Ver Modulos">
                         <div><i class='bx bxs-stopwatch iconBx3'></i></div>
                         <div>
                             <div class="cardName2">{{ $countOnline }}</div>
@@ -146,8 +145,8 @@
                         </div>
                     </a>
 
-                    <a href="/os/adicionar" class="card tip-top" title="Adicionar serviços">
-                        <div><i class='bx bx-file iconBx3'></i></div>
+                    <a href="vendas" class="card tip-top" title="Ver Vendas">
+                        <div><i class='bx bx-cart iconBx3'></i></div>
                         <div>
                             <div class="cardName2">R$ {{ $todaySales }} - {{ $todayCount }}</div>
                             <div class="cardName">Vendas Hoje - Quantidade</div>

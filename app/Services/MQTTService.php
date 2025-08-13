@@ -10,12 +10,12 @@ class MQTTService
     public function __construct()
     {
         // Aqui instanciamos o phpMQTT
-        $this->mqtt = new phpMQTT(env('MQTT_HOST', '192.168.0.113'), env('MQTT_PORT', 1883), uniqid());
+        $this->mqtt = new phpMQTT(env('MQTT_HOST', 'test.mosquitto.org'), env('MQTT_PORT', 1883), uniqid());
     }
 
     public function connect()
     {
-        if (!$this->mqtt->connect(true, null, 'username', 'password')) {
+        if (!$this->mqtt->connect(true, null)) {
             exit(1);  // Se não conseguir conectar, o script termina.
         }
     }

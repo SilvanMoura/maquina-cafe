@@ -138,9 +138,8 @@
             <button class="botao" data-id="2">2</button>
             <button class="botao" data-id="3">3</button>
             <button class="botao" data-id="4">4</button>
+            <button class="botao" data-id="5">5</button>
         </div>
-
-        <button class="botao" data-id="Programação">Programação</button>
 
         <div id="resultado" class="control-output"></div>
     </div>
@@ -169,7 +168,7 @@
                     <p id="resultado-status"><strong>Status:</strong> Enviando </p>
                 `;
 
-                fetch("http://127.0.0.1:8000/sendCommand", {
+                fetch("https://8a7444e0a6fd.ngrok-free.app/sendCommand", {
                         method: "POST",
                         headers: {
                             "Content-Type": "application/json",

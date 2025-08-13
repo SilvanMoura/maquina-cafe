@@ -12,7 +12,7 @@ class ModuleController extends Controller
     public function modulesView()
     {
         $moduleService = new ModuleService();
-        $modulesData = $moduleService->getModules();
+        $modulesData = $moduleService->getModulesUse();
 
         //return $modulesData;
         return view('modules', ['modules' => $modulesData]);
