@@ -193,7 +193,7 @@
                     <li class="<?php if (isset($menuCobrancas)) {
                                     echo 'active';
                                 }; ?>">
-                        <a class="tip-bottom" title="" href="/minhaConta"><i class='bx bx-user iconX'></i>
+                        <a class="tip-bottom" title="" href="/perfil"><i class='bx bx-user iconX'></i>
                             <span class="title">Minha Conta</span>
                             <span class="title-tooltip">Minha Conta</span>
                         </a>

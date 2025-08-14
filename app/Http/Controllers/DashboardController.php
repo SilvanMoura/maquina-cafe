@@ -10,6 +10,7 @@ use App\Models\User;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Auth;
 
 class DashboardController extends Controller
 {
@@ -142,5 +143,20 @@ class DashboardController extends Controller
         $user->delete();
 
         return response()->json(['message' => 'Usuário excluido com sucesso'], 201);
+    }
+
+    public function perfilView(){
+        $userId = Auth::id();
+        $user = User::select('*')->where('id', $userId)->first();
+
+        return view('account', ['user' => $user]);
+    }
+
+    public function newPassword(Request $request, $id){
+        $user = User::findOrFail($id);
+        $user->password = $request->input('novaSenha');
+        $user->save();
+
+        return response()->json(['message' => 'Senha atualizada com sucesso'], 201);
     }
 }
