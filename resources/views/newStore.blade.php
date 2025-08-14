@@ -78,7 +78,7 @@
     @media (min-width: 1366px) {
         .ajuste {
             max-height: 85vh !important;
-            margin-top:-50%;
+            margin-top:-45%;
         }
         .ajuste-container {
             margin-left: 13% !important;

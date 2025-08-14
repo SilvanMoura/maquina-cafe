@@ -37,7 +37,7 @@
                 ?>
             </h1>
 
-            <h2 class="h-two"> Ao Sistema de Controle de Ordens de Serviço</h2>
+            <h2 class="h-two"> Ao Sistema do Módulo de Controle</h2>
             <img src="{{ asset('images/dashboard-animate.svg') }}" class="left-login-image" alt="Map-OS - Versão: {{ config('app_version') }}">
         </div>
 

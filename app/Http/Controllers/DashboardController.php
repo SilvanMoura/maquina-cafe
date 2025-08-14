@@ -6,7 +6,10 @@ use App\Services\StoreService;
 use App\Services\ModuleService;
 use App\Services\MQTTService;
 use App\Models\Module;
+use App\Models\User;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 
 class DashboardController extends Controller
 {
@@ -102,5 +105,42 @@ class DashboardController extends Controller
                 'todayCount',
                 'countOnline'
             ));
+    }
+
+    public function usuariosView(){
+        $allUsers = $this->storeService->getUsers();
+        return view('users', compact('allUsers'));
+    }
+
+    public function createUser(Request $request)
+    {
+        User::create([
+            'name' => $request->input('name'),
+            'email' => $request->input('email'),
+            'password' => Hash::make('123456'),
+            'level' => 3,
+        ]);
+
+        return response()->json(['message' => 'Usuário registrado com sucesso'], 201);
+    }
+
+    public function updateUsers(Request $request, $id)
+    {
+        $user = User::findOrFail($id);
+
+        $user->name = $request->input('name');
+        $user->email = $request->input('email');
+        $user->level = $request->input('level');
+
+        $user->save();
+
+        return response()->json(['message' => 'Usuário alterado com sucesso'], 201);
+    }
+
+    public function deleteUsers(Request $request){
+        $user = User::findOrFail($request->input('id'));
+        $user->delete();
+
+        return response()->json(['message' => 'Usuário excluido com sucesso'], 201);
     }
 }

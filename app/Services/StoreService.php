@@ -3,7 +3,7 @@
 namespace App\Services;
 
 use GuzzleHttp\Client;
-use App\Models\Store;
+use App\Models\User;
 use App\Models\PixReceipt;
 use App\Models\TransferPix;
 use Illuminate\Support\Facades\Http;
@@ -649,4 +649,9 @@ class StoreService
 
         return $result;
     }
+
+    public function getUsers(){
+        return User::get();
+    }
+
 }

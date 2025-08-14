@@ -19,9 +19,30 @@
         }
     }
 
+    @media (max-width: 1366px) {
+        .ajuste-cardbox {
+            margin-top: -15% !important;
+            min-height: 95vh !important;
+        }
+        .ajuste-statisc{
+            margin-left: 7vw;
+            width: 88vw;
+        }
+        .display1366{
+            margin-left: -5%;
+        }
+        .ajuste-status{
+            margin-left: 13%; 
+            width:89vw;
+        }
+        .atalhos{
+            margin-left: 14vw;
+        }
+    }
+
     @media (max-width: 485px) {
         .ajuste-statisc {
-            width: 100%;
+            width: 92%;
             margin-top: 5%;
         }
         
@@ -29,8 +50,8 @@
 </style>
 
 <!--Action boxes-->
-    <div class="ajuste-cardbox">
-        <ul class="cardBox atalhos">
+    <div class="ajuste-cardbox display1366">
+        <ul class="cardBox atalhos ">
             <li class="card">
                 <div class="grid-blak">
                     <a href="/usuarios">

@@ -25,6 +25,10 @@ Route::get('/', function () {
 });
 
 Route::get('/dashboard', [DashboardController::class, 'dashboardView'])->middleware(['auth', 'verified'])->name('dashboard');
+Route::get('/usuarios', [DashboardController::class, 'usuariosView'])->middleware(['auth', 'verified'])->name('dashboard');
+Route::post('/usuarios/adicionar', [DashboardController::class, 'createUser'])->middleware(['auth', 'verified'])->name('createUser');
+Route::put('/usuarios/atualizar/{id}', [DashboardController::class, 'updateUsers'])->middleware(['auth', 'verified'])->name('updateUsers');
+Route::delete('/usuarios/delete/{id}', [DashboardController::class, 'deleteUsers'])->middleware(['auth', 'verified'])->name('deleteUsers');
 
 Route::get('/lojas', [StoreController::class, 'getStoreData'])->middleware(['auth', 'verified'])->name('lojas'); //obtem todas as lojas
 Route::get('/lojas/adicionar', [StoreController::class, 'newStoreView'])->middleware(['auth', 'verified'])->name('tela adicionar loja');
