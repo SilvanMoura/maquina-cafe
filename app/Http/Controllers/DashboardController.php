@@ -7,6 +7,7 @@ use App\Services\ModuleService;
 use App\Services\MQTTService;
 use App\Models\Module;
 use App\Models\User;
+use App\Models\Store;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -119,14 +120,25 @@ class DashboardController extends Controller
 
     public function createUser(Request $request)
     {
-        User::create([
-            'name' => $request->input('name'),
-            'email' => $request->input('email'),
+
+        $user = User::create([
+            'name' => $request->input('nameUser'),
+            'email' => $request->input('emailUser'),
             'password' => Hash::make('123456'),
             'level' => 3,
+            'cpfcnpj' => $request->input('cpfCnpjUser'),
+            'contato' => $request->input('contatoUser'),
+            'pixUser' => $request->input('pixUser'),
+            'suportUser' => $request->input('suportUser'),
+            'endereco' => $request->input('endereco'),
+            'complemento' => $request->input('complemento'),
+            'bairro' => $request->input('bairro'),
+            'estado' => $request->input('estado'),
+            'cep' => $request->input('cep'),
+            'cidade' => $request->input('cidade')
         ]);
 
-        return response()->json(['message' => 'Usuário registrado com sucesso'], 201);
+        return response()->json(['message' => 'Usuário criado com sucesso', 'registro' => $user], 201);
     }
 
     public function updateUsers(Request $request, $id)
@@ -162,5 +174,12 @@ class DashboardController extends Controller
         $user->save();
 
         return response()->json(['message' => 'Senha atualizada com sucesso'], 201);
+    }
+
+    public function newUserView(){
+
+        $moduleService = new ModuleService();
+        $modules = $moduleService->getModules();
+        return view('newUser', compact('modules'));
     }
 }

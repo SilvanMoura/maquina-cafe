@@ -22,6 +22,16 @@ class User extends Authenticatable
         'email',
         'password',
         'level',
+        'cpfcnpj',
+        'contato',
+        'pixUser',
+        'suportUser',
+        'endereco',
+        'complemento',
+        'estado',
+        'bairro',
+        'cep',
+        'cidade',
     ];
 
     /**

@@ -37,7 +37,7 @@
             <h5>Usuários</h5>
         </div>
         <!-- php if ($this->permission->checkPermission($this->session->userdata('permissao'), 'aCliente')) { ?> -->
-        <a class="button btn btn-mini btn-success open-modal-create" style="max-width: 165px">
+        <a href="/usuarios/adicionar" class="button btn btn-mini btn-success open-modal-create" style="max-width: 165px">
             <span class="button__icon"><i class='bx bx-plus-circle'></i></span><span class="button__text2">
                 Usuário
             </span>
@@ -228,11 +228,11 @@
             $('#id-delete').text(id);
         });
 
-        $('.open-modal-create').on('click', function(event) {
+        /* $('.open-modal-create').on('click', function(event) {
             var modal = document.getElementById("create-user");
             modal.classList.remove("hide", "fade");
         });
-
+ */
         $('.close-btn').on('click', function(event) {
             var modal = document.getElementById("edit-user");
             modal.classList.add("hide", "fade");

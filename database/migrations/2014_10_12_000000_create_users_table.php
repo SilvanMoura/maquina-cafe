@@ -18,11 +18,23 @@ return new class extends Migration
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
+            $table->string('cpfcnpj');
+            $table->string('contato');
+            $table->string('pixUser');
+            $table->string('suportUser');
+            $table->string('endereco');
+            $table->string('complemento');
+            $table->string('estado');
+            $table->string('bairro');
+            $table->string('cep');
+            $table->string('cidade');
+            
+            
             $table->rememberToken();
             $table->timestamps();
         });
     }
-
+    
     /**
      * Reverse the migrations.
      */
