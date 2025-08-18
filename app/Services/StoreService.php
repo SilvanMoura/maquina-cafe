@@ -5,9 +5,11 @@ namespace App\Services;
 use GuzzleHttp\Client;
 use App\Models\User;
 use App\Models\PixReceipt;
+use App\Models\Module;
 use App\Models\TransferPix;
 use Illuminate\Support\Facades\Http;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
 use FFI;
 use GuzzleHttp\Exception\RequestException;
 use Smalot\PdfParser\Parser;
@@ -317,14 +319,25 @@ class StoreService
             'nome_remetente',
             'cpf_remetente',
             'id_mercado_pago'
-        )->limit(10)->get();
+        )->where('status', 'Sucesso')->limit(10)->get();
+    }
+
+    public function getAllPixRefunded()
+    {
+        return PixReceipt::select(
+            'id',
+            'valor',
+            'nome_remetente',
+            'cpf_remetente',
+            'id_mercado_pago'
+        )->where('status', ' Estornado')->limit(10)->get();
     }
 
     public function getPagamentosHoje()
     {
         $client = new Client();
         $beginDate = Carbon::today()->toIso8601ZuluString();
-                $endDate = Carbon::now()->toIso8601ZuluString();
+        $endDate = Carbon::now()->toIso8601ZuluString();
 
         try {
             $response = $client->get('https://api.mercadopago.com/v1/payments/search', [
@@ -650,8 +663,126 @@ class StoreService
         return $result;
     }
 
-    public function getUsers(){
+    public function getUsers()
+    {
         return User::get();
     }
 
+    public function getLatestRefunds()
+    {
+        $client = new Client();
+
+        try {
+            $response = $client->get('https://api.mercadopago.com/v1/payments/search', [
+                'headers' => [
+                    'Authorization' => "Bearer {$this->token}",
+                    'Content-Type' => 'application/json',
+                ],
+                'query' => [
+                    'sort' => 'date_created',
+                    'criteria' => 'desc',
+                    'limit' => 10,
+                    'status'   => 'refunded',
+                ],
+            ]);
+
+            return json_decode($response->getBody(), true);
+        } catch (RequestException $e) {
+            $status = $e->getResponse() ? $e->getResponse()->getStatusCode() : 500;
+            $mensagem = $status === 403
+                ? 'Token inválido ou sem permissão.'
+                : 'Erro inesperado ao consultar pagamentos.';
+            return response()->json(['erro' => $mensagem], $status);
+        }
+    }
+
+    public function getPaymentInternalById($idPayment)
+    {
+        $data = TransferPix::where('id', $idPayment)->get();
+
+        $storeIds = $data->pluck('store_id')->unique();
+        $posIds = $data->pluck('pos_id')->unique();
+        $ids = $data->pluck('id_payment'); // reduzido ao escopo dos últimos 7 dias
+
+        // 3. Buscar os receipts correspondentes
+        $dataReceipt = PixReceipt::whereIn('id_mercado_pago', $ids)->get()->keyBy('id_mercado_pago');
+
+        // 4. Obter nomes das lojas e POS
+        $client = new Client();
+        $storeNames = [];
+        $posNames = [];
+
+        foreach ($storeIds as $storeId) {
+            try {
+                $response = $client->get("https://api.mercadopago.com/stores/{$storeId}", [
+                    'headers' => [
+                        'Authorization' => "Bearer {$this->token}",
+                        'Content-Type' => 'application/json',
+                    ]
+                ]);
+                $body = json_decode($response->getBody(), true);
+                $storeNames[$storeId] = $body['name'] ?? 'Loja sem nome';
+            } catch (\Exception $e) {
+                $storeNames[$storeId] = 'Erro ao buscar nome da loja';
+            }
+        }
+
+        foreach ($posIds as $posId) {
+            try {
+                $response = $client->get("https://api.mercadopago.com/pos/{$posId}", [
+                    'headers' => [
+                        'Authorization' => "Bearer {$this->token}",
+                        'Content-Type' => 'application/json',
+                    ]
+                ]);
+                $body = json_decode($response->getBody(), true);
+                $posNames[$posId] = $body['name'] ?? 'POS sem nome';
+            } catch (\Exception $e) {
+                $posNames[$posId] = 'Erro ao buscar nome do POS';
+            }
+        }
+
+        // 5. Juntar dados no resultado final
+        $result = $data->map(function ($payment) use ($storeNames, $posNames, $dataReceipt) {
+            $payment->store_name = $storeNames[$payment->store_id] ?? 'Desconhecida';
+            $payment->pos_name = $posNames[$payment->pos_id] ?? 'Desconhecido';
+            $payment->receipt = $dataReceipt[$payment->id_payment] ?? null;
+
+            return $payment;
+        });
+
+        return $result;
+    }
+
+    public function reversalAction($idPayment): bool
+    {
+        try {
+            DB::transaction(function () use ($idPayment) {
+                // Atualiza status da transferência PIX
+                $updatedTransfer = TransferPix::where('id_payment', $idPayment)->update([
+                    'status' => 'refunded',
+                ]);
+
+                // Atualiza status do recibo PIX
+                $updatedReceipt = PixReceipt::where('id_mercado_pago', $idPayment)->update([
+                    'status' => ' Estornado',
+                ]);
+
+                // Verifica se houve update em ambas as tabelas
+                if ($updatedTransfer === 0 || $updatedReceipt === 0) {
+                    throw new \Exception("Nenhum registro encontrado para o pagamento {$idPayment}");
+                }
+
+                // Executa procedimento de chargeback
+                $this->executeChargeback($idPayment);
+            });
+
+            return true;
+        } catch (\Throwable $e) {
+            // Loga erro para análise
+            Log::error("Falha ao reverter pagamento PIX {$idPayment}: " . $e->getMessage());
+
+            return false;
+        }
+    }
 }

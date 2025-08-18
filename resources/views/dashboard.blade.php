@@ -2,7 +2,7 @@
 
 @section('content')
 <style>
-    @media (min-width: 1366px) {
+    @media (min-width: 1368px) {
         .ajuste-cardbox {
             margin-top: -45% !important;
             min-height: 85vh !important;
@@ -19,10 +19,10 @@
         }
     }
 
-    @media (max-width: 1366px) {
+    @media (max-width: 1367px) {
         .ajuste-cardbox {
-            margin-top: -15% !important;
-            min-height: 95vh !important;
+            margin-top: 3% !important;
+            max-height: 70vh !important;
         }
         .ajuste-statisc{
             margin-left: 7vw;
@@ -51,7 +51,7 @@
 
 <!--Action boxes-->
     <div class="ajuste-cardbox display1366">
-        <ul class="cardBox atalhos ">
+        <ul class="cardBox atalhos">
             <li class="card">
                 <div class="grid-blak">
                     <a href="/usuarios">
@@ -167,10 +167,17 @@
                     </a>
 
                     <a href="vendas" class="card tip-top" title="Ver Vendas">
-                        <div><i class='bx bx-cart iconBx3'></i></div>
+                        <div><i class='bx bx-cart iconBx5'></i></div>
                         <div>
                             <div class="cardName2">R$ {{ $todaySales }} - {{ $todayCount }}</div>
                             <div class="cardName">Vendas Hoje - Quantidade</div>
+                        </div>
+                    </a>
+                    <a class="card tip-top" title="Todos os Reembolsos">
+                        <div><i class='bx bx-cart iconBx4'></i></div>
+                        <div>
+                            <div class="cardName2">{{ $allPixRefunded->count() }}</div>
+                            <div class="cardName">Reembolso Total</div>
                         </div>
                     </a>
 
@@ -221,20 +228,15 @@
                                             {{ $allPix->id_mercado_pago }}
                                         </td>
                                         <td>
-                                            <a href="{{ '/os/visualizar/'. $allPix->id }}" class="btn-nwe tip-top" title="Visualizar">
+                                            <a href="{{ '/pagamento/visualizar/'. $allPix->id }}" class="btn-nwe tip-top" title="Visualizar">
                                                 <i class="bx bx-show"></i>
                                             </a>
-                                            @if( $allPix->status_os_id != 'Finalizado' )
-                                            <a href="{{ '/os/imprimirOs/'. $allPix->id }}" class="btn-nwe3" title="Imprimir OS"><i class="bx bx-printer bx-xs"></i></a>
-                                            @else
-                                            <a href="{{ '/os/entregaOs/'. $allPix->id }}" class="btn-nwe3" title="Imprimir OS"><i class="bx bx-exit bx-xs"></i></a>
-                                            @endif
                                         </td>
                                     </tr>
                                     @endforeach
                                     @else
                                     <tr>
-                                        <td colspan="6">Nenhum orçamento encontrado.</td>
+                                        <td colspan="6">Nenhum pagamento encontrado.</td>
                                     </tr>
                                     @endif
                                 </tbody>
@@ -245,62 +247,47 @@
 
                 <div class="widget-box0 widbox-blak">
                     <div>
-                        <h5 class="cardHeader">Ordens de Serviço Em Aberto</h5>
+                        <h5 class="cardHeader">Últimos estornos</h5>
                     </div>
                     <div class="widget-content">
                         <table class="table table-bordered">
-                            <thead>
-                                <tr>
-                                    <th>N°</th>
-                                    <th>Cliente</th>
-                                    <th>Data Avaliação</th>
-                                    <th>Status</th>
-                                    <th>Valor</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @if(isset($dashboard['osServicos']))
-                                @foreach($dashboard['osServicos'] as $osServicos)
-                                <tr>
-                                    <td>
-                                        {{ $osServicos->id }}
-                                    </td>
-                                    <td class="cli1">
-                                        {{ $osServicos->cliente_id }}
-                                    </td>
-
-                                    <td style="width:5vw;">
-                                        {{ $osServicos->data_avaliacao }}
-                                    </td>
-
-                                    <td class="cli1">
-                                        {{ $osServicos->status_os_id }}
-                                    </td>
-                                    <td class="cli1">
-                                        R$ {{ $osServicos->valor_os }}
-                                    </td>
-                                    <td>
-                                        <a href="{{ '/os/visualizar/'. $osServicos->id }}" class="btn-nwe tip-top" title="Visualizar">
-                                            <i class="bx bx-show"></i>
-                                        </a>
-                                        <a href="{{ '/os/editar/'. $osServicos->id }}" class="btn-nwe5" title="Editar">
-                                            <i class="bx bx-edit bx-xs"></i>
-                                        </a>
-                                        @if( $osServicos->status_os_id != 'Finalizado' )
-                                        <a href="{{ '/os/imprimirOs/'. $osServicos->id }}" class="btn-nwe3" title="Imprimir OS"><i class="bx bx-printer bx-xs"></i></a>
-                                        @else
-                                        <a href="{{ '/os/entregaOs/'. $osServicos->id }}" class="btn-nwe3" title="Imprimir OS"><i class="bx bx-exit bx-xs"></i></a>
-                                        @endif
-                                    </td>
-                                </tr>
-                                @endforeach
-                                @else
-                                <tr>
-                                    <td colspan="5">Nenhuma OS em aberto.</td>
-                                </tr>
-                                @endif
-                            </tbody>
-                        </table>
+                                <thead>
+                                    <tr>
+                                        <th>Id</th>
+                                        <th>Valor</th>
+                                        <th>Nome</th>
+                                        <th>CPF</th>
+                                        <th>Id transação</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @if(isset($allPixRefunded))
+                                    @foreach($allPixRefunded as $allPixRefunded)
+                                    <tr>
+                                        <td>
+                                            {{ $allPixRefunded->id }}
+                                        </td>
+                                        <td class="cli1">
+                                            {{ $allPixRefunded->valor }}
+                                        </td>
+                                        <td>
+                                            {{ $allPixRefunded->nome_remetente }}
+                                        </td>
+                                        <td>
+                                            {{ $allPixRefunded->cpf_remetente }}
+                                        </td>
+                                        <td>
+                                            {{ $allPixRefunded->id_mercado_pago }}
+                                        </td>
+                                    </tr>
+                                    @endforeach
+                                    @else
+                                    <tr>
+                                        <td colspan="6">Nenhum pagamento encontrado.</td>
+                                    </tr>
+                                    @endif
+                                </tbody>
+                            </table>
                     </div>
                 </div>
             </div>

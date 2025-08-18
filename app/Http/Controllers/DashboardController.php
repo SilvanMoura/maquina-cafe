@@ -30,6 +30,8 @@ class DashboardController extends Controller
         //$posCount = count($this->storeService->getPos());
         $allPix = $this->storeService->getAllPix();
 
+        $allPixRefunded = $this->storeService->getAllPixRefunded();
+
         $todaySales = $this->storeService->getPagamentosHoje();
 
         $todayCount = count($todaySales['results']);
@@ -97,10 +99,12 @@ class DashboardController extends Controller
             ]);
 
         }
+        //return $this->storeService->getLatestRefunds();
         // --- ENVIA PARA A VIEW ---
             return view('dashboard', compact(
                 'storesCount',
                 //'posCount',
+                'allPixRefunded',
                 'allPix',
                 'todaySales',
                 'todayCount',

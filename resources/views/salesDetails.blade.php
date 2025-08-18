@@ -26,10 +26,10 @@
 <div class="ajuste-container" style="height: 100vh; width: 99vw; margin-bottom:10%;">
     <div class="new122" style="margin: 1% 1% 0 7%;">
         <ul class="nav nav-tabs">
-            <li><a data-toggle="tab" href="#tab1">Hoje</a></li> <!-- class="active" -->
-            <li><a data-toggle="tab" href="#tab2">7 dias</a></li>
-            <li><a data-toggle="tab" href="#tab3">30 dias</a></li>
-            <li><a data-toggle="tab" href="#tab4">Todas</a></li>
+            <li><a data-toggle="tab" href="#tab1">Hoje - {{$paymentsToday->count()}}</a></li> <!-- class="active" -->
+            <li><a data-toggle="tab" href="#tab2">7 dias - {{$paymentsSevenDays->count()}}</a></li>
+            <li><a data-toggle="tab" href="#tab3">30 dias - {{$paymentsLast30Days->count()}}</a></li>
+            <li><a data-toggle="tab" href="#tab4">Todas - {{$allPayments->count()}}</a></li>
         </ul>
     </div>
     <div class="widget-content tab-content new122" style="margin: 1% 1% 0 7%;">
@@ -61,8 +61,8 @@
                         <td style="width:15%">{{ $r->created_at }}</td>
 
                         <td>
-                            <a href="os/editar/" class="btn btn-info tip-top" title="Editar OS">
-                                <i class="fas fa-edit"></i>
+                            <a href="{{ '/pagamento/estorno/'. $r->id_payment }}" style="background-color:red;" class="btn tip-top" title="Reembolso">
+                                <i class="bx bx-wallet"></i>
                             </a>
                         </td>
                     </tr>
@@ -105,8 +105,8 @@
                         <td style="width:15%">{{ $r->created_at }}</td>
 
                         <td>
-                            <a href="os/editar/" class="btn btn-info tip-top" title="Editar OS">
-                                <i class="fas fa-edit"></i>
+                            <a href="{{ '/pagamento/estorno/'. $r->id_payment }}" style="background-color:red;" class="btn tip-top" title="Reembolso">
+                                <i class="bx bx-wallet"></i>
                             </a>
                         </td>
                     </tr>
@@ -150,8 +150,8 @@
                         <td style="width:15%">{{ $r->created_at }}</td>
 
                         <td>
-                            <a href="os/editar/" class="btn btn-info tip-top" title="Editar OS">
-                                <i class="fas fa-edit"></i>
+                            <a href="{{ '/pagamento/estorno/'. $r->id_payment }}" style="background-color:red;" class="btn tip-top" title="Reembolso">
+                                <i class="bx bx-wallet"></i>
                             </a>
                         </td>
                     </tr>
@@ -195,8 +195,8 @@
                         <td style="width:15%">{{ $r->created_at }}</td>
 
                         <td>
-                            <a href="os/editar/" class="btn btn-info tip-top" title="Editar OS">
-                                <i class="fas fa-edit"></i>
+                            <a href="{{ '/pagamento/estorno/'. $r->id_payment }}" style="background-color:red;" class="btn tip-top" title="Reembolso">
+                                <i class="bx bx-wallet"></i>
                             </a>
                         </td>
                     </tr>

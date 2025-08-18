@@ -19,7 +19,7 @@ class StoreController extends Controller
     public function getStoreData()
     {
         $storesData = $this->StoreService->getStores();
-        
+
         return view('stores', ['storesData' => collect($storesData)]);
     }
 
@@ -27,7 +27,7 @@ class StoreController extends Controller
     {
         $posData = $this->StoreService->getPos();
         $storeIdName = $this->StoreService->getStoresById($posData['0']['store_id']);
-        
+
         //$posData['0']['store_name'] =  $storeIdName;
 
         //return response()->json($posData);
@@ -42,14 +42,16 @@ class StoreController extends Controller
         return view('pos', ['posData' => collect($posData)]);
     }
 
-    public function newStoreView(){
+    public function newStoreView()
+    {
         $moduleService = new ModuleService();
         $modulesData = $moduleService->getModules();
-        
+
         return view('newStore', ['modules' => $modulesData]);
     }
 
-    public function newStore(Request $request){
+    public function newStore(Request $request)
+    {
 
         $request->validate([
             'cpfCnpjStore' => 'nullable|string',
@@ -99,7 +101,7 @@ class StoreController extends Controller
         $moduloValue = $newModule->getModuloById(
             $request->input('modulo'),
         );
-        
+
         $dataPos = $newStore->newPos(
             $responseBody['id'],
             $responseBody['name'],
@@ -114,7 +116,9 @@ class StoreController extends Controller
 
         return response()->json(['message' => 'Loja criada com sucesso', 'registro' => $store], 201);
     }
-    public function salesView(){
+
+    public function salesView()
+    {
         $paymentsToday = $this->StoreService->getPaymentsToday();
         $paymentsSevenDays = $this->StoreService->getPaymentsSevenDaysInternal();
         $paymentsLast30Days = $this->StoreService->getPaymentsLast30Days();
@@ -126,5 +130,18 @@ class StoreController extends Controller
             'paymentsLast30Days',
             'allPayments'
         ));
+    }
+
+    public function paymentView($id)
+    {
+        $paymentData = $this->StoreService->getPaymentInternalById($id);
+        return view('payment', compact('paymentData'));
+    }
+
+    public function reversalData($id)
+    {
+        $this->StoreService->reversalAction($id);
+
+        return redirect()->route('dashboard');
     }
 }

@@ -63,7 +63,7 @@
             outline: none;
         }
 
-        @media (min-width: 1366px) {
+        @media (min-width: 1367px) {
             .ajuste-container {
                 margin-left: 65% !important;
                 max-width: 75vw !important;
