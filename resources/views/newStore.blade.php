@@ -110,14 +110,7 @@
                     <div class="widget-content nopadding tab-content">
                         <div class="span6">
                             <div class="control-group">
-                                <label for="cpfCnpjStore" class="control-label">CPF/CNPJ</label>
-                                <div class="controls">
-                                    <input id="cpfCnpjStore" class="cpfcnpj" type="text" name="cpfCnpjStore" value="" />
-                                    <button id="buscar_info_cnpj" class="btn btn-xs" type="button">Buscar(CNPJ)</button>
-                                </div>
-                            </div>
-                            <div class="control-group">
-                                <label for="nameStore" class="control-label required">Nome/Razão Social</label>
+                                <label for="nameStore" class="control-label required">Nome</label>
                                 <div class="controls">
                                     <input id="nameStore" type="text" name="nameStore" value="" />
                                 </div>
@@ -136,28 +129,14 @@
                         </div>
 
                         <div class="span6">
-                            <div class="control-group" class="control-label">
-                                <label for="cep" class="control-label">CEP</label>
-                                <div class="controls">
-                                    <input id="cep" type="text" name="cep" value="" />
-                                </div>
-                            </div>
-                            <div class="control-group" class="control-label">
-                                <label for="endereco" class="control-label">Rua</label>
-                                <div class="controls">
-                                    <input id="endereco" type="text" name="endereco" value="" />
-                                </div>
-                            </div>
                             <div class="control-group">
-                                <label for="complemento" class="control-label">Número</label>
+                                <label for="user" class="control-label">Permitir acesso a:</label>
                                 <div class="controls">
-                                    <input id="complemento" type="text" name="complemento" value="" />
-                                </div>
-                            </div>
-                            <div class="control-group" class="control-label">
-                                <label for="cidade" class="control-label">Cidade</label>
-                                <div class="controls">
-                                    <input id="cidade" type="text" name="cidade" value="" />
+                                    <select id="user" name="user" class="form-control">
+                                        @foreach($modules as $f)
+                                        <option value="{{ $f->id }}">{{ $f->modulo }}</option>
+                                        @endforeach
+                                    </select>
                                 </div>
                             </div>
                         </div>

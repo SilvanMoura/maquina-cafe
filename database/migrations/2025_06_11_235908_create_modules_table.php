@@ -14,12 +14,12 @@ return new class extends Migration
         Schema::create('modules', function (Blueprint $table) {
             $table->id(); // campo id
             $table->string('modulo'); // campo codigo
-            $table->string('idStore');
-            $table->string('status');
-            $table->string('rssi');
-            $table->string('status_online');
-            $table->string('ultima_conexao');
-            $table->string('sinal_qualidade');
+            $table->string('idStore')->nullable();
+            $table->string('status')->nullable();
+            $table->string('rssi')->nullable();
+            $table->string('status_online')->nullable();
+            $table->string('ultima_conexao')->nullable();
+            $table->string('sinal_qualidade')->nullable();
             $table->timestamps();
         });
     }

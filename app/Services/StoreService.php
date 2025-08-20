@@ -24,9 +24,9 @@ class StoreService
 
     public function __construct()
     {
-        $this->baseUrl = "https://api.mercadopago.com/users/2321161890/stores/search";
-        $this->token = "APP_USR-7226859123041588-031023-d12365cba1d9c1e218e36c78ae493db2-2321161890";
-        $this->idUser = "2321161890";
+        $this->baseUrl = "https://api.mercadopago.com/users/148053896/stores/search";
+        $this->token = "APP_USR-8243769669077198-081814-9523093479b1efdab041705469d5c983-148053896";
+        $this->idUser = "148053896";
     }
 
     public function getStores()

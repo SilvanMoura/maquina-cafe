@@ -209,7 +209,7 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @if(isset($allPix))
+                                    @if($allPix->count() > 0)
                                     @foreach($allPix as $allPix)
                                     <tr>
                                         <td>
@@ -261,7 +261,7 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @if(isset($allPixRefunded))
+                                    @if($allPixRefunded->count() > 0)
                                     @foreach($allPixRefunded as $allPixRefunded)
                                     <tr>
                                         <td>
@@ -283,7 +283,7 @@
                                     @endforeach
                                     @else
                                     <tr>
-                                        <td colspan="6">Nenhum pagamento encontrado.</td>
+                                        <td colspan="6">Nenhum estorno encontrado.</td>
                                     </tr>
                                     @endif
                                 </tbody>

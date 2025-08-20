@@ -183,7 +183,7 @@
                 // Requisição AJAX
                 $.ajax({
                     type: "POST",
-                    url: "http://127.0.0.1:8000/modulos/adicionar",
+                    url: "https://8a7444e0a6fd.ngrok-free.app/modulos/adicionar",
                     data: dados,
                     dataType: 'json',
                     headers: {
@@ -196,7 +196,7 @@
                                 title: 'Cadastro Concluído',
                                 text: 'Módulo criado com sucesso!',
                             }).then(() => {
-                                window.location.href = "http://127.0.0.1:8000/";
+                                window.location.href = "https://8a7444e0a6fd.ngrok-free.app/";
                             });
                         } else {
                             $('#error-message').text(data.message || 'Erro no cadastro. Por favor, tente novamente.');
