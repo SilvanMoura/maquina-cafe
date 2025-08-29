@@ -65,7 +65,7 @@ class DashboardController extends Controller
         });
 
         // 5. Processa respostas por até 2 segundos
-        $mqttService->loopFor(2);
+        $mqttService->loopFor(5);
         $mqttService->disconnect();
         //return $onlineDevices;
         // 6. Armazena dispositivos online no cache por 10 segundos

@@ -10,6 +10,9 @@ use App\Services\StoreService;
 use Illuminate\Support\Facades\Log;
 use App\Events\SendCreditNotification;
 
+use Endroid\QrCode\Builder\Builder; // composer require endroid/qr-code
+use Endroid\QrCode\Writer\PngWriter;
+
 class NotificationController extends Controller
 {
     protected $mqttService;
@@ -75,7 +78,7 @@ class NotificationController extends Controller
                 $this->mqttService->disconnect();
 
                 Log::info("Mensagem MQTT publicada para $deviceID: $message");
-                $this->StoreService->getPixReceiptPdf($idPagamento);
+                /* $this->StoreService->getPixReceiptPdf($idPagamento);
                 $transaction = TransferPix::create([
                     'external_reference'  => $posData['external_reference'] ?? null,
                     'pos_id'              => $posData['pos_id'] ?? null,
@@ -85,9 +88,9 @@ class NotificationController extends Controller
                     'id_payment'          => $posData['id'] ?? null,
                     'transaction_id'      => $posData['transaction_id'],
                     'receipt_id'          => 'recibo_' . $idPagamento . '.pdf'
-                ]);
+                ]); */
 
-                Log::info('Transação salva com sucesso', ['transaction' => $transaction]);
+                //                                                                                                                                                                                                              Log::info('Transação salva com sucesso', ['transaction' => $transaction]);
                 return response()->json(['message' => 'Notificação processada com sucesso.'], 200);
             } catch (\Exception $e) {
                 Log::error("Erro ao processar notificação: " . $e->getMessage());
@@ -128,9 +131,93 @@ class NotificationController extends Controller
         });
 
         // Aguarda resposta por até 2 segundos
-        $mqttService->loopFor(2);
+        $mqttService->loopFor(5);
         $mqttService->disconnect();
 
         return $respostaRecebida;
+    }
+
+    public function inter(Request $request)
+    {
+        Log::warning("notificação: " . $request);
+        return response()->json(['message' => 'Notificação recebida'], 200);
+    }
+
+    public function gerarQr()
+    {
+        // -------------- 1) DADOS (substitua pelos seus) ----------------
+        $pixKey      = 'c4e35d0c-8fc3-416e-832e-0b01af465640'; // sua chave Pix (CNPJ/EVP/email/tel)
+        $txid        = '1234567890abcdefghijklmccf1010'; // id da máquina (<=25 chars)
+        $merchantName = 'Comercial Colonial'; // até ~25 chars
+        $merchantCity = 'Pelotas'; // até ~15 chars
+        // ----------------------------------------------------------------
+
+        // Função helper para montar tag TT + LL + value
+        $buildTL = function ($tag, $value) {
+            $len = strlen($value);
+            return sprintf('%02s%02d%s', $tag, $len, $value);
+        };
+
+        // -------------- 2) Montar Merchant Account Info (tag 26) ----------
+        $gui  = $buildTL('00', 'BR.GOV.BCB.PIX');        // GUI
+        $key  = $buildTL('01', $pixKey);                // Chave Pix
+        // se quiser adicionar descrição fixa dentro do 26:
+        // $desc = $buildTL('02', 'MACHINE QR');
+        $merchantAccountInfo = $gui . $key; // . $desc (se usar)
+        $tag26 = $buildTL('26', $merchantAccountInfo);
+
+        // -------------- 3) Campos fixos ----------------------------------
+        $payload  = '';
+        $payload .= $buildTL('00', '01');          // Payload Format Indicator
+        // Optionally: $payload .= $buildTL('01', '11'); // point of initiation (11 static)
+        $payload .= $tag26;
+        $payload .= $buildTL('52', '0000');       // Merchant Category Code
+        $payload .= $buildTL('53', '986');        // Currency BRL
+        // omit 54 (valor) -> permite pagador digitar valor
+        $payload .= $buildTL('58', 'BR');         // Country
+        $payload .= $buildTL('59', $merchantName); // Merchant name
+        $payload .= $buildTL('60', $merchantCity); // Merchant city
+
+        // Additional Data Field Template (tag 62) -> subtag 05 = txid
+        $add05 = $buildTL('05', $txid);
+        $tag62 = $buildTL('62', $add05);
+        $payload .= $tag62;
+
+        // -------------- 4) CRC16 (tag 63 é calculada) ---------------------
+        // Para calcular, adicionamos '6304' e rodamos CRC16-CCITT (poly 0x1021, init 0xFFFF)
+        $payloadToCrc = $payload . '6304';
+        $crc = $this->crc16_ccitt($payloadToCrc);
+        // append CRC (hex uppercase)
+        $payload .= '63' . '04' . $crc;
+
+        // $payload agora é a string EMV completa (BR Code)
+        // -------------- 5) Gerar imagem QR (usando endroid/qr-code) ------
+        // composer require endroid/qr-code
+        $result = Builder::create()
+            ->writer(new PngWriter())
+            ->data($payload)
+            ->size(400)
+            ->margin(10)
+            ->build();
+
+        $data = $result->getString();
+        return response($data)->header('Content-Type', 'image/png');
+    }
+
+    public function crc16_ccitt($data)
+    {
+        $crc = 0xFFFF;
+        $len = strlen($data);
+        for ($i = 0; $i < $len; $i++) {
+            $crc ^= (ord($data[$i]) << 8);
+            for ($j = 0; $j < 8; $j++) {
+                if ($crc & 0x8000) {
+                    $crc = (($crc << 1) ^ 0x1021) & 0xFFFF;
+                } else {
+                    $crc = ($crc << 1) & 0xFFFF;
+                }
+            }
+        }
+        return strtoupper(sprintf("%04X", $crc));
     }
 }

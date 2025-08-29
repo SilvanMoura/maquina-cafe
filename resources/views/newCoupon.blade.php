@@ -177,7 +177,7 @@
                 // Requisição AJAX
                 $.ajax({
                     type: "POST",
-                    url: "http://127.0.0.1:8000/cupons/adicionar",
+                    url: "http://191.252.38.29/cupons/adicionar",
                     data: dados,
                     dataType: 'json',
                     headers: {
@@ -191,7 +191,7 @@
                                 text: 'Cupom criado com sucesso!',
                             }).then(() => {
                                 window.open(data.registro, '_blank');
-                                window.location.href = "http://127.0.0.1:8000/dashboard";
+                                window.location.href = "http://191.252.38.29/dashboard";
                             });
                         } else {
                             $('#error-message').text(data.message || 'Erro no cadastro. Por favor, tente novamente.');

@@ -66,6 +66,10 @@ Route::get('/websocket', function () {
 Route::post('/qrcode', [QrCodeController::class, 'generate']);
 Route::post('/notifications', [NotificationController::class, 'handle']);
 
+
+Route::post('/inter', [NotificationController::class, 'inter']);
+Route::get('/gerarQr', [NotificationController::class, 'gerarQr']);
+
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');

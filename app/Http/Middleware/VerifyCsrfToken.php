@@ -14,5 +14,6 @@ class VerifyCsrfToken extends Middleware
     protected $except = [
         '/qrcode', // Adicione a rota POST que está gerando o QR Code
         'notifications',
+        'inter'
     ];
 }
