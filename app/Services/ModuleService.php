@@ -61,7 +61,7 @@ class ModuleService
         ]);
         $numeroLimpo = preg_replace('/\D/', '', $response['telefone']);
 
-        $urlComId = "https://74d3-2804-14d-403a-8011-4019-f63b-2c27-f3fc.ngrok-free.app/readCode?id=" . $response->id;
+        $urlComId = "https://srv981758.hstgr.cloud/readCode?id=" . $response->id;
         $linkWhatsapp = "https://wa.me/55{$numeroLimpo}?text=" . urlencode($urlComId);
         return $linkWhatsapp;
     }

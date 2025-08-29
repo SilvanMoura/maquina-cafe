@@ -171,7 +171,7 @@ class StoreService
             'json' => [
                 'title' => "Pedido do Cliente",
                 'description' => "Produto ou serviço escolhido pelo cliente",
-                'notification_url' => "https://3756e3dd107a.ngrok-free.app/notifications",
+                'notification_url' => "https://srv981758.hstgr.cloud/notifications",
                 'external_reference' => "$moduloValue",
                 "expiration_date" => "2999-12-30T01:30:00.000-03:00",
                 'total_amount' => 0,
