@@ -14,7 +14,8 @@ return new class extends Migration
         Schema::create('modules', function (Blueprint $table) {
             $table->id(); // campo id
             $table->string('modulo'); // campo codigo
-            $table->string('idStore')->nullable();
+            $table->string('store')->nullable();
+            $table->string('user')->nullable();
             $table->string('status')->nullable();
             $table->string('rssi')->nullable();
             $table->string('status_online')->nullable();

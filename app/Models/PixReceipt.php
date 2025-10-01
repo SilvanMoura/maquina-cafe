@@ -12,14 +12,16 @@ class PixReceipt extends Model
     protected $table = 'pix_receipts';
 
     protected $fillable = [
-        'valor',
-        'nome_remetente',
-        'cpf_remetente',
-        'id_mercado_pago',
-        'id_pix',
+        'id',
+        'external_reference',
         'pos_id',
-        'store_id',
         'status',
+        'store_id',
+        'valor',
+        'id_payment',
+        'transaction_id',
+        'id_store_internal',
+        'id_user_internal'
     ];
 
     //protected $table = 'payment_control';

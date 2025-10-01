@@ -8,6 +8,7 @@ use App\Services\MQTTService;
 use App\Models\Module;
 use App\Models\User;
 use App\Models\Store;
+use App\Http\Controllers\StoreController;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -17,11 +18,13 @@ class DashboardController extends Controller
 {
     private $storeService;
     private $moduleService;
+    private $storeController;
 
-    public function __construct(StoreService $storeService, ModuleService $moduleService)
+    public function __construct(StoreService $storeService, ModuleService $moduleService, StoreController $storeController)
     {
         $this->storeService = $storeService;
         $this->moduleService = $moduleService;
+        $this->storeController = $storeController;
     }
 
     public function dashboardView()
@@ -30,7 +33,6 @@ class DashboardController extends Controller
         $storesCount = count($this->storeService->getStores());
         //$posCount = count($this->storeService->getPos());
         $allPix = $this->storeService->getAllPix();
-
         $allPixRefunded = $this->storeService->getAllPixRefunded();
 
         $todaySales = $this->storeService->getPagamentosHoje();
@@ -38,7 +40,7 @@ class DashboardController extends Controller
         $todayCount = count($todaySales['results']);
 
         $todaySales = $this->storeService->valueTotal($todaySales);
-
+        
         // --- VERIFICAÇÃO DE MÓDULOS ONLINE VIA MQTT ---
         $mqttService = app(MQTTService::class);
         Cache::forget('online_devices');
@@ -138,6 +140,20 @@ class DashboardController extends Controller
             'cidade' => $request->input('cidade')
         ]);
 
+        $storeMercadoPago = $this->storeController->newStoreMercadoPago($request->input('nameUser'), $request->input('endereco'), $request->input('complemento'), $request->input('cidade'));
+        
+        //$this->storeService->newPos($storeMercadoPago['id'], $request->input('nameUser'), $request->input('modulo'));
+
+        $store = Store::create([
+            'nameStore' => $request->input('nameUser'),
+            'user' => $user->id,
+            'modulo' => $request->input('modulo'),
+            'idStoreMercadoPago' => $storeMercadoPago['id']
+        ]);
+
+        $this->moduleService->registerStoreModule($request->input('modulo'), $store->id, $user->id);
+        
+
         return response()->json(['message' => 'Usuário criado com sucesso', 'registro' => $user], 201);
     }
 
@@ -179,7 +195,9 @@ class DashboardController extends Controller
     public function newUserView(){
 
         $moduleService = new ModuleService();
+
         $modules = $moduleService->getModules();
+
         return view('newUser', compact('modules'));
     }
 }

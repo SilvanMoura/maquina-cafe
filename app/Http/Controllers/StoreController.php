@@ -19,7 +19,7 @@ class StoreController extends Controller
     public function getStoreData()
     {
         $storesData = $this->StoreService->getStores();
-
+        //return $storesData;
         return view('stores', ['storesData' => collect($storesData)]);
     }
 
@@ -50,71 +50,14 @@ class StoreController extends Controller
         return view('newStore', ['modules' => $modulesData]);
     }
 
-    public function newStore(Request $request)
+    public function newStoreMercadoPago($nameStore, $endereco, $complemento, $cidade)
     {
-
-        $request->validate([
-            'cpfCnpjStore' => 'nullable|string',
-            'nameStore' => 'nullable|string',
-            'endereco' => 'nullable|string',
-            'bairro' => 'nullable|string',
-            'cep' => 'nullable|string',
-            'cidade' => 'nullable|string',
-            'modulo' => 'nullable|string'
-        ]);
-
-        $newStore = new StoreService();
-        $newModule = new ModuleService();
-
-        $responseBody = $newStore->newStore(
-            $request->input('nameStore'),
-            $request->input('endereco'),
-            $request->input('complemento'),
-            $request->input('cidade')
+        return $store = $this->StoreService->newStore(
+            $nameStore,
+            $endereco,
+            $complemento,
+            $cidade
         );
-
-        $addressLine = $responseBody['location']['address_line']; // Ex: "Rua Lázaro Zamenhof 56, Pelotas, Rio Grande do Sul, Brasil"
-
-        // Separar os dados do endereço
-        preg_match('/^(.*\d*)\,\s*(.*)\,\s*(.*)\,\s*Brasil$/', $addressLine, $matches);
-        $endereco = $matches[1] ?? null;
-        $cidade   = $matches[2] ?? null;
-        $estado   = $matches[3] ?? null;
-
-        $store = Store::create([
-            'idStore'   => $responseBody['id'] ?? null,
-            'nameStore' => $responseBody['name'] ?? null,
-            'cpfcnpj'   => $request->input('cpfCnpjStore'),
-            'endereco'  => $endereco,
-            'cep'       => $request->input('cep'),
-            'cidade'    => $cidade,
-            'estado'    => $estado,
-            'modulo'    => $request->input('modulo')
-        ]);
-
-        $data = json_decode($store, true);
-        $newModule->registerStoreModule(
-            $request->input('modulo'),
-            $data['idStore']
-        );
-
-        $moduloValue = $newModule->getModuloById(
-            $request->input('modulo'),
-        );
-
-        $dataPos = $newStore->newPos(
-            $responseBody['id'],
-            $responseBody['name'],
-            $moduloValue
-        );
-
-        $physicalOrder = $newStore->physicalOrder(
-            $responseBody['id'],
-            $responseBody['name'],
-            $moduloValue
-        );
-
-        return response()->json(['message' => 'Loja criada com sucesso', 'registro' => $store], 201);
     }
 
     public function salesView()
@@ -123,7 +66,7 @@ class StoreController extends Controller
         $paymentsSevenDays = $this->StoreService->getPaymentsSevenDaysInternal();
         $paymentsLast30Days = $this->StoreService->getPaymentsLast30Days();
         $allPayments = $this->StoreService->getAllPayments();
-
+        //return $paymentsToday;
         return view('salesDetails', compact(
             'paymentsToday',
             'paymentsSevenDays',

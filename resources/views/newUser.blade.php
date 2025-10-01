@@ -6,7 +6,6 @@
 <script src="{{ asset('js/sweetalert2.all.min.js') }}"></script>
 <script src="{{ asset('js/funcoes.js') }}"></script>
 <style>
-
     /* Hiding the checkbox, but allowing it to be focused */
     .badgebox {
         opacity: 0;
@@ -75,17 +74,20 @@
             position: initial !important;
         }
     }
+
     @media (min-width: 1366px) {
         .ajuste {
             max-height: 85vh !important;
-            margin-top:-45%;
+            margin-top: -45%;
         }
+
         .ajuste-container {
             margin-left: 13% !important;
             max-width: 85% !important;
-           
+
         }
     }
+
     @media (max-width: 1365px) {
         .ajuste-container {
             width: 91vw;
@@ -143,15 +145,19 @@
                             </div>
 
                             <div class="control-group">
-                                <label for="suportUser" class="control-label required">Contato para suporte</label>
+                                <label for="modulo" class="control-label">Modulo MCCF - </label>
                                 <div class="controls">
-                                    <input id="suportUser" type="text" name="suportUser" value="" />
+                                    <select id="modulo" name="modulo" class="form-control">
+                                        @foreach($modules as $f)
+                                        <option value="{{ $f->id }}">{{ $f->modulo }}</option>
+                                        @endforeach
+                                    </select>
                                 </div>
                             </div>
                         </div>
 
                         <div class="span6">
-                            
+
                             <div class="control-group" class="control-label">
                                 <label for="cep" class="control-label">CEP</label>
                                 <div class="controls">
@@ -263,7 +269,7 @@
                 // Requisição AJAX
                 $.ajax({
                     type: "POST",
-                    url: "https://8a7444e0a6fd.ngrok-free.app/usuarios/adicionar",
+                    url: "https://srv981758.hstgr.cloud/usuarios/adicionar",
                     data: dados,
                     dataType: 'json',
                     headers: {
@@ -276,7 +282,7 @@
                                 title: 'Cadastro Concluído',
                                 text: 'Usuário criado com sucesso!',
                             }).then(() => {
-                                window.location.href = "https://8a7444e0a6fd.ngrok-free.app/dashboard";
+                                window.location.href = "https://srv981758.hstgr.cloud/dashboard";
                             });
                         } else {
                             $('#error-message').text(data.message || 'Erro no cadastro. Por favor, tente novamente.');

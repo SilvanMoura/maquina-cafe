@@ -38,12 +38,9 @@
                 <thead>
                     <tr>
                         <th>Id</th>
-                        <th>Módulo</th>
+                        <th>Id Pagamento</th>
                         <th>Valor</th>
-                        <th>Nome Comprador</th>
-                        <th>Documento</th>
-                        <th>Nome Loja</th>
-                        <th>Ponto de Venda</th>
+                        <th>Status</th>
                         <th>Data da Venda</th>
                     </tr>
                 </thead>
@@ -52,19 +49,16 @@
                     @foreach ($paymentsToday as $r)
                     <tr>
                         <td style="width:5%">{{ $r->id }}</td>
-                        <td style="width:5%">{{ $r->external_reference }}</td>
-                        <td style="width:5%">{{ $r->transaction_amount }}</td>
-                        <td style="width:15%">{{ $r->receipt->nome_remetente }}</td>
-                        <td style="width:15%">{{ $r->receipt->cpf_remetente }}</td>
-                        <td style="width:15%">{{ $r->store_name }}</td>
-                        <td style="width:15%">{{ $r->pos_name }}</td>
+                        <td style="width:5%">{{ $r->id_payment}}</td>
+                        <td style="width:5%">{{ $r->valor }}</td>
+                        <td style="width:15%">{{ $r->status }}</td>
                         <td style="width:15%">{{ $r->created_at }}</td>
 
-                        <td>
+                        <!-- <td>
                             <a href="{{ '/pagamento/estorno/'. $r->id_payment }}" style="background-color:red;" class="btn tip-top" title="Reembolso">
                                 <i class="bx bx-wallet"></i>
                             </a>
-                        </td>
+                        </td> -->
                     </tr>
                     @endforeach
                     @else
@@ -77,17 +71,13 @@
         </div>
         <!--Tab 2-->
         <div id="tab2" class="tab-pane" style="max-height: auto">
-            <!-- ?php if (!$results) { ?> -->
             <table class="table table-bordered ">
                 <thead>
                     <tr>
                         <th>Id</th>
-                        <th>Módulo</th>
+                        <th>Id Pagamento</th>
                         <th>Valor</th>
-                        <th>Nome Comprador</th>
-                        <th>Documento</th>
-                        <th>Nome Loja</th>
-                        <th>Ponto de Venda</th>
+                        <th>Status</th>
                         <th>Data da Venda</th>
                     </tr>
                 </thead>
@@ -96,19 +86,16 @@
                     @foreach ($paymentsSevenDays as $r)
                     <tr>
                         <td style="width:5%">{{ $r->id }}</td>
-                        <td style="width:5%">{{ $r->external_reference }}</td>
-                        <td style="width:5%">{{ $r->transaction_amount }}</td>
-                        <td style="width:15%">{{ $r->receipt->nome_remetente }}</td>
-                        <td style="width:15%">{{ $r->receipt->cpf_remetente }}</td>
-                        <td style="width:15%">{{ $r->store_name }}</td>
-                        <td style="width:15%">{{ $r->pos_name }}</td>
+                        <td style="width:5%">{{ $r->id_payment}}</td>
+                        <td style="width:5%">{{ $r->valor }}</td>
+                        <td style="width:15%">{{ $r->status }}</td>
                         <td style="width:15%">{{ $r->created_at }}</td>
 
-                        <td>
+                        <!-- <td>
                             <a href="{{ '/pagamento/estorno/'. $r->id_payment }}" style="background-color:red;" class="btn tip-top" title="Reembolso">
                                 <i class="bx bx-wallet"></i>
                             </a>
-                        </td>
+                        </td> -->
                     </tr>
                     @endforeach
                     @else
@@ -127,12 +114,9 @@
                 <thead>
                     <tr>
                         <th>Id</th>
-                        <th>Módulo</th>
+                        <th>Id Pagamento</th>
                         <th>Valor</th>
-                        <th>Nome Comprador</th>
-                        <th>Documento</th>
-                        <th>Nome Loja</th>
-                        <th>Ponto de Venda</th>
+                        <th>Status</th>
                         <th>Data da Venda</th>
                     </tr>
                 </thead>
@@ -141,19 +125,16 @@
                     @foreach ($paymentsLast30Days as $r)
                     <tr>
                         <td style="width:5%">{{ $r->id }}</td>
-                        <td style="width:5%">{{ $r->external_reference }}</td>
-                        <td style="width:5%">{{ $r->transaction_amount }}</td>
-                        <td style="width:15%">{{ $r->receipt->nome_remetente }}</td>
-                        <td style="width:15%">{{ $r->receipt->cpf_remetente }}</td>
-                        <td style="width:15%">{{ $r->store_name }}</td>
-                        <td style="width:15%">{{ $r->pos_name }}</td>
+                        <td style="width:5%">{{ $r->id_payment}}</td>
+                        <td style="width:5%">{{ $r->valor }}</td>
+                        <td style="width:15%">{{ $r->status }}</td>
                         <td style="width:15%">{{ $r->created_at }}</td>
 
-                        <td>
+                        <!-- <td>
                             <a href="{{ '/pagamento/estorno/'. $r->id_payment }}" style="background-color:red;" class="btn tip-top" title="Reembolso">
                                 <i class="bx bx-wallet"></i>
                             </a>
-                        </td>
+                        </td> -->
                     </tr>
                     @endforeach
                     @else
@@ -172,12 +153,9 @@
                 <thead>
                     <tr>
                         <th>Id</th>
-                        <th>Módulo</th>
+                        <th>Id Pagamento</th>
                         <th>Valor</th>
-                        <th>Nome Comprador</th>
-                        <th>Documento</th>
-                        <th>Nome Loja</th>
-                        <th>Ponto de Venda</th>
+                        <th>Status</th>
                         <th>Data da Venda</th>
                     </tr>
                 </thead>
@@ -186,19 +164,16 @@
                     @foreach ($allPayments as $r)
                     <tr>
                         <td style="width:5%">{{ $r->id }}</td>
-                        <td style="width:5%">{{ $r->external_reference }}</td>
-                        <td style="width:5%">{{ $r->transaction_amount }}</td>
-                        <td style="width:15%">{{ $r->receipt->nome_remetente }}</td>
-                        <td style="width:15%">{{ $r->receipt->cpf_remetente }}</td>
-                        <td style="width:15%">{{ $r->store_name }}</td>
-                        <td style="width:15%">{{ $r->pos_name }}</td>
+                        <td style="width:5%">{{ $r->id_payment}}</td>
+                        <td style="width:5%">{{ $r->valor }}</td>
+                        <td style="width:15%">{{ $r->status }}</td>
                         <td style="width:15%">{{ $r->created_at }}</td>
 
-                        <td>
+                        <!-- <td>
                             <a href="{{ '/pagamento/estorno/'. $r->id_payment }}" style="background-color:red;" class="btn tip-top" title="Reembolso">
                                 <i class="bx bx-wallet"></i>
                             </a>
-                        </td>
+                        </td> -->
                     </tr>
                     @endforeach
                     @else

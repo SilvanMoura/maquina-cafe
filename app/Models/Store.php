@@ -10,13 +10,9 @@ class Store extends Model
     use HasFactory;
 
     protected $fillable = [
-        'idStore',
-        'cpfcnpj',
         'nameStore',
-        'endereco',
-        'estado',
-        'cep',
-        'cidade',
-        'modulo'
+        'user',
+        'modulo',
+        'idStoreMercadoPago'
     ];
 }

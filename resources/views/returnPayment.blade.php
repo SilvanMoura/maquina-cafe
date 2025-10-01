@@ -101,20 +101,20 @@
                     <span class="icon">
                         <i class="fas fa-user"></i>
                     </span>
-                    <h5>Cadastrar Novo Módulo</h5>
+                    <h5>Devolver Pix</h5>
                 </div>
 
                 <div class="alert alert-danger hide" id="error-message"></div>
 
-                <form id="formModule" class="form-horizontal">
+                <form id="formPixKey" class="form-horizontal">
                     @csrf
                     <div class="widget-content nopadding tab-content" style="display: flex; justify-content: center; align-items:center; margin: auto;">
                         <div class="span12" style="max-width: 400px; width: 100%;">
 
                             <div class="control-group">
-                                <label for="module" class="control-label">Código do módulo - MCCF:</label>
+                                <label for="pixKey" class="control-label">Chave PIX para devolução:</label>
                                 <div class="controls">
-                                    <input id="module" type="number" name="module" value="" />
+                                    <input id="pixKey" type="text" name="pixKey" value="" />
                                 </div>
                             </div>
 
@@ -124,9 +124,9 @@
                     <div class="form-actions">
                         <div class="span12">
                             <div class="span6 offset3" style="display:flex; justify-content: center">
-                                <button id="btnRegister" type="submit" class="button btn btn-mini btn-success">
+                                <button id="btnRegister" type="submit" class="button btn btn-mini btn-danger">
                                     <span class="button__icon"><i class='bx bx-save'></i></span>
-                                    <span class="button__text2">Salvar</span>
+                                    <span class="button__text2">Devolver</span>
                                 </button>
                                 <a title="Voltar" class="button btn btn-warning" href="/clientes">
                                     <span class="button__icon"><i class="bx bx-undo"></i></span>
@@ -146,15 +146,15 @@
 <script type="text/javascript">
     $(document).ready(function() {
 
-        $("#module").focus();
-        $('#formModule').validate({
+        $("#pixKey").focus();
+        $('#formPixKey').validate({
             rules: {
-                module: {
+                pixKey: {
                     required: true
                 }
             },
             messages: {
-                module: {
+                pixKey: {
                     required: 'Campo Requerido.'
                 },
             },
@@ -174,8 +174,8 @@
             e.preventDefault();
 
             // Validação do formulário usando o plugin validate
-            if ($("#formModule").valid()) {
-                var dados = $("#formModule").serialize();
+            if ($("#formPixKey").valid()) {
+                var dados = $("#formPixKey").serialize();
 
                 $(this).addClass('disabled');
                 $('#progress-acessar').removeClass('hide');
@@ -183,18 +183,18 @@
                 // Requisição AJAX
                 $.ajax({
                     type: "POST",
-                    url: "https://srv981758.hstgr.cloud/modulos/adicionar",
+                    url: "https://srv981758.hstgr.cloud/pagamento/estorno",
                     data: dados,
                     dataType: 'json',
                     headers: {
                         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                     },
                     success: function(data) {
-                        if (data.message === "Módulo criado com sucesso") {
+                        if (data.message === "Pix Estornado com sucesso") {
                             Swal.fire({
                                 icon: 'success',
-                                title: 'Cadastro Concluído',
-                                text: 'Módulo criado com sucesso!',
+                                title: 'Estorno Concluído',
+                                text: 'Estorno feito com sucesso!',
                             }).then(() => {
                                 window.location.href = "https://srv981758.hstgr.cloud/dashboard";
                             });

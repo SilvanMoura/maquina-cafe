@@ -116,19 +116,10 @@
                                 </div>
                             </div>
                             
-                            <div class="control-group">
-                                <label for="modulo" class="control-label">Modulo MCCF - </label>
-                                <div class="controls">
-                                    <select id="modulo" name="modulo" class="form-control">
-                                        @foreach($modules as $f)
-                                        <option value="{{ $f->id }}">{{ $f->modulo }}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                            </div>
+                            
                         </div>
 
-                        <div class="span6">
+                        <!-- <div class="span6">
                             <div class="control-group">
                                 <label for="user" class="control-label">Permitir acesso a:</label>
                                 <div class="controls">
@@ -139,7 +130,17 @@
                                     </select>
                                 </div>
                             </div>
-                        </div>
+                        </div> -->
+                        <div class="control-group">
+                                <label for="modulo" class="control-label">Modulo MCCF - </label>
+                                <div class="controls">
+                                    <select id="modulo" name="modulo" class="form-control">
+                                        @foreach($modules as $f)
+                                        <option value="{{ $f->id }}">{{ $f->modulo }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
                     </div>
                     <div class="form-actions">
                         <div class="span12">
@@ -202,7 +203,7 @@
                 // Requisição AJAX
                 $.ajax({
                     type: "POST",
-                    url: "http://127.0.0.1:8000/lojas/adicionar",
+                    url: "https://srv981758.hstgr.cloud/lojas/adicionar",
                     data: dados,
                     dataType: 'json',
                     headers: {
@@ -215,7 +216,7 @@
                                 title: 'Cadastro Concluído',
                                 text: 'Loja criada com sucesso!',
                             }).then(() => {
-                                window.location.href = "http://127.0.0.1:8000/";
+                                window.location.href = "https://srv981758.hstgr.cloud/dashboard";
                             });
                         } else {
                             $('#error-message').text(data.message || 'Erro no cadastro. Por favor, tente novamente.');

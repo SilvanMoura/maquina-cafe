@@ -168,7 +168,7 @@
                     <p id="resultado-status"><strong>Status:</strong> Enviando </p>
                 `;
 
-                fetch("https://8a7444e0a6fd.ngrok-free.app/sendCommand", {
+                fetch("https://srv981758.hstgr.cloud/sendCommand", {
                         method: "POST",
                         headers: {
                             "Content-Type": "application/json",

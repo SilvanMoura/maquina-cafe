@@ -12,15 +12,11 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('stores', function (Blueprint $table) {
-            $table->id();
-            $table->string('idStore')->nullable();       // ID retornado pela API do Mercado Pago
-            $table->string('cpfcnpj')->nullable();
+            $table->id(); 
             $table->string('nameStore')->nullable();
-            $table->string('endereco')->nullable();
-            $table->string('estado')->nullable();
-            $table->string('cep')->nullable();
-            $table->string('cidade')->nullable();
+            $table->string('user')->nullable();
             $table->string('modulo')->nullable();
+            $table->string('idStoreMercadoPago')->nullable();
             $table->timestamps();
         });
     }

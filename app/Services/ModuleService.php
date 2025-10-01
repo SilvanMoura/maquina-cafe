@@ -17,13 +17,14 @@ class ModuleService
     public function getModules()
     {
         return Module::where(function ($query) {
-            $query->whereNull('idStore')
-                ->orWhere('idStore', '');
+            $query->whereNull('store')
+                ->orWhere('store', '');
         })->get();
     }
 
     public function getModuloById($id)
     {
+        
         return Module::where('id', $id)->value('modulo');
     }
 
@@ -32,7 +33,8 @@ class ModuleService
 
         $response = Module::create([
             'modulo'   => $module,
-            'idStore'  => ''
+            'store'  => '',
+            'user'  => ''
         ]);
 
         //$responseBody = json_decode($response, true);
@@ -40,10 +42,11 @@ class ModuleService
         return $response;
     }
 
-    public function registerStoreModule($module, $idStore)
+    public function registerStoreModule($module, $idStore, $userId)
     {
         $response = Module::where('id', $module)->update([
-            'idStore' => $idStore
+            'store' => $idStore,
+            'user' => $userId
         ]);
 
         $responseBody = json_decode($response, true);
@@ -119,13 +122,13 @@ class ModuleService
 
         // Define os tópicos
         $topicComando = "comandos/botao";
-        $topicResposta = "resposta/comandos/mccf-{$moduloId}";
-
+        $topicResposta = "resposta/comandos/mccf{$moduloId}";
+        //return $moduloId;
         // Prepara o payload com ID padrão "mccf-{$moduloId}"
         $payload = json_encode([
             'message' => 'Acionar botão',
             'botao' => intval($button),
-            'deviceID' => "mccf-{$moduloId}"
+            'deviceID' => "mccf{$moduloId}"
         ]);
 
         // Envia o comando

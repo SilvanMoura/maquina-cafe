@@ -21,7 +21,6 @@ return new class extends Migration
             $table->string('cpfcnpj');
             $table->string('contato');
             $table->string('pixUser');
-            $table->string('suportUser');
             $table->string('endereco');
             $table->string('complemento');
             $table->string('estado');

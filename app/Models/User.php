@@ -25,7 +25,6 @@ class User extends Authenticatable
         'cpfcnpj',
         'contato',
         'pixUser',
-        'suportUser',
         'endereco',
         'complemento',
         'estado',

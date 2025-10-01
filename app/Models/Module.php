@@ -12,6 +12,7 @@ class Module extends Model
     protected $fillable = [
         'id',
         'modulo',
-        'idStore'
+        'store',
+        'user'
     ];
 }

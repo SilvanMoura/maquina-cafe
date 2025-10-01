@@ -169,17 +169,17 @@
                     <a href="vendas" class="card tip-top" title="Ver Vendas">
                         <div><i class='bx bx-cart iconBx5'></i></div>
                         <div>
-                            <div class="cardName2">R$ {{ $todaySales }} - {{ $todayCount }}</div>
+                            <div class="cardName2">R$ {{$todaySales}} - {{ $todayCount }}</div>
                             <div class="cardName">Vendas Hoje - Quantidade</div>
                         </div>
                     </a>
-                    <a class="card tip-top" title="Todos os Reembolsos">
+                    <!-- <a class="card tip-top" title="Todos os Reembolsos">
                         <div><i class='bx bx-cart iconBx4'></i></div>
                         <div>
-                            <div class="cardName2">{{ $allPixRefunded->count() }}</div>
+                            <div class="cardName2">$allPixRefunded->count()</div>
                             <div class="cardName">Reembolso Total</div>
                         </div>
-                    </a>
+                    </a> -->
 
                     <?php $diaRec = "VALOR_" . date('m') . "_REC";
                     $diaDes = "VALOR_" . date('m') . "_DES"; ?>
@@ -203,9 +203,11 @@
                                     <tr>
                                         <th>Id</th>
                                         <th>Valor</th>
-                                        <th>Nome</th>
+                                        <th>Status</th>
+                                        <th>Id Pagamento</th>
+                                        <!-- <th>Nome</th>
                                         <th>CPF</th>
-                                        <th>Id transação</th>
+                                        <th>Id transação</th> -->
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -219,19 +221,19 @@
                                             {{ $allPix->valor }}
                                         </td>
                                         <td>
-                                            {{ $allPix->nome_remetente }}
+                                            {{ $allPix->status }}
                                         </td>
                                         <td>
-                                            {{ $allPix->cpf_remetente }}
+                                            {{ $allPix->id_payment }}
                                         </td>
-                                        <td>
-                                            {{ $allPix->id_mercado_pago }}
+                                        <!-- <td>
+                                            $allPix->idTransacao
                                         </td>
                                         <td>
                                             <a href="{{ '/pagamento/visualizar/'. $allPix->id }}" class="btn-nwe tip-top" title="Visualizar">
                                                 <i class="bx bx-show"></i>
                                             </a>
-                                        </td>
+                                        </td> -->
                                     </tr>
                                     @endforeach
                                     @else
@@ -245,7 +247,7 @@
                     </div>
                 </div>
 
-                <div class="widget-box0 widbox-blak">
+                <!-- <div class="widget-box0 widbox-blak">
                     <div>
                         <h5 class="cardHeader">Últimos estornos</h5>
                     </div>
@@ -261,35 +263,35 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @if($allPixRefunded->count() > 0)
-                                    @foreach($allPixRefunded as $allPixRefunded)
+                                    if($allPixRefunded->count() > 0)
+                                    foreach($allPixRefunded as $allPixRefunded)
                                     <tr>
                                         <td>
-                                            {{ $allPixRefunded->id }}
+                                            $allPixRefunded->id
                                         </td>
                                         <td class="cli1">
-                                            {{ $allPixRefunded->valor }}
+                                            $allPixRefunded->valor
                                         </td>
                                         <td>
-                                            {{ $allPixRefunded->nome_remetente }}
+                                            $allPixRefunded->nomePagador
                                         </td>
                                         <td>
-                                            {{ $allPixRefunded->cpf_remetente }}
+                                            $allPixRefunded->cpfCnpjPagador
                                         </td>
                                         <td>
-                                            {{ $allPixRefunded->id_mercado_pago }}
+                                            $allPixRefunded->idTransacao
                                         </td>
                                     </tr>
-                                    @endforeach
-                                    @else
+                                    endforeach
+                                    else
                                     <tr>
                                         <td colspan="6">Nenhum estorno encontrado.</td>
                                     </tr>
-                                    @endif
+                                    endif
                                 </tbody>
                             </table>
                     </div>
-                </div>
+                </div> -->
             </div>
         </div>
 

@@ -7,6 +7,7 @@ use App\Models\PixReceipt;
 use App\Models\TransferPix;
 use App\Services\MQTTService;
 use App\Services\StoreService;
+use App\Services\ModuleService;
 use Illuminate\Support\Facades\Log;
 use App\Events\SendCreditNotification;
 
@@ -24,19 +25,111 @@ class NotificationController extends Controller
         $this->StoreService = $StoreService;
     }
 
+    /* public function handleAlter()
+    {
+        $responseBody = $this->StoreService->getFullExtract();
+        
+        $pixRecebido = array_filter($responseBody, function ($transacao) {
+            return isset($transacao['titulo']) && $transacao['titulo'] === 'Pix recebido';
+        });
+
+        $pixRecebido = array_values($pixRecebido);
+
+        $idTransacoes = array_map(fn($pix) => $pix['idTransacao'], $pixRecebido);
+
+        // Consulta o banco para pegar todos os que já existem
+        $registrados = PixReceipt::whereIn('idTransacao', $idTransacoes)
+            ->pluck('idTransacao')
+            ->toArray();
+
+        // Filtra apenas os que ainda não estão no banco
+        $novosPix = array_filter($pixRecebido, function ($pix) use ($registrados) {
+            return !in_array($pix['idTransacao'], $registrados);
+        });
+
+        // Resetar índices
+        $novosPix = array_values($novosPix);
+        //return $novosPix;
+        // Salvar no banco apenas os campos necessários
+        foreach ($novosPix as $pix) {
+            $deviceID = $pix['detalhes']['txId'];
+            $deviceID = preg_replace('/^(mccf)(\d+)$/', '$1$2', $deviceID);
+            
+            $pulsos = floor($pix['valor'] / 1);
+            
+            // Verifica se módulo está online
+            $isOnline = $this->isDeviceOnlineViaMQTT($deviceID);
+
+            if ($isOnline) {
+                // Monta mensagem para enviar ao módulo
+                $message = json_encode([
+                    'pulsos'   => $pulsos,
+                    'deviceID' => $deviceID,
+                    'message'  => "pulsos de crédito"
+                ]);
+
+                // Envia para o módulo via MQTT
+                $this->mqttService->connect();
+                $this->mqttService->publish("creditos/", $message);
+                $this->mqttService->disconnect();
+
+                // Cria registro normal do Pix
+                PixReceipt::create([
+                    'idTransacao'        => $pix['idTransacao'],
+                    'tipoTransacao'      => $pix['tipoTransacao'],
+                    'valor'              => $pix['valor'],
+                    'titulo'             => $pix['titulo'],
+                    'txId'               => $pix['detalhes']['txId'] ?? null,
+                    'nomePagador'        => $pix['detalhes']['nomePagador'] ?? null,
+                    'cpfCnpjPagador'     => $pix['detalhes']['cpfCnpjPagador'] ?? null,
+                    'nomeEmpresaPagador' => $pix['detalhes']['nomeEmpresaPagador'] ?? null,
+                    'numeroDocumento'    => $pix['numeroDocumento'] ?? null,
+                    'endToEndId'         => $pix['detalhes']['endToEndId'] ?? null,
+                    'status'             => 'Recebido',
+                    'dataTransacao'      => $pix['dataTransacao'],
+                ]);
+            } else{
+                PixReceipt::create([
+                    'idTransacao'        => $pix['idTransacao'],
+                    'tipoTransacao'      => $pix['tipoTransacao'],
+                    'valor'              => $pix['valor'],
+                    'titulo'             => $pix['titulo'],
+                    'txId'               => $pix['detalhes']['txId'] ?? null,
+                    'nomePagador'        => $pix['detalhes']['nomePagador'] ?? null,
+                    'cpfCnpjPagador'     => $pix['detalhes']['cpfCnpjPagador'] ?? null,
+                    'nomeEmpresaPagador' => $pix['detalhes']['nomeEmpresaPagador'] ?? null,
+                    'numeroDocumento'    => $pix['numeroDocumento'] ?? null,
+                    'endToEndId'         => $pix['detalhes']['endToEndId'] ?? null,
+                    'status'             => 'Módulo Offline',
+                    'dataTransacao'      => $pix['dataTransacao'],
+                ]);
+            }
+        }
+
+
+        // Quantos são novos
+        $qtdNovos = count($novosPix);
+
+        return [
+            'quantidade_novos' => $qtdNovos,
+            'novos_pix' => $novosPix
+        ];
+        return response()->json(['message' => 'Notificação processada com sucesso.'], 200);
+    } */
+
     public function handle(Request $request)
     {
         sleep(1);
         $data = $request->all();
-
         // Verifica se é uma notificação do tipo 'payment.created'
         if (isset($data['action']) && $data['action'] === 'payment.created') {
 
             $idPagamento = $data['data']['id'];
 
             /* Log::info("Notificação recebida: ID do pagamento criado: " . $idPagamento);
-            Log::info("Notificação recebida: ", $data);
+            
             die(); */
+            Log::info("Notificação recebida: ", $data);
 
             if (!$idPagamento) {
                 Log::warning("Notificação 'payment.created' recebida sem ID.");
@@ -50,17 +143,38 @@ class NotificationController extends Controller
             $posData = $this->StoreService->getPaymentById($idPagamento);
             Log::info("posData2: ", $posData);
             // Define módulo alvo
+
+            $module = new ModuleService();
+            $valueModule = $module->getModuloById($posData['external_reference']);
+            $storeData = $this->StoreService->getStoreInternalId($posData['pos_id']);
             $deviceID = $posData['external_reference'];
             $pulsos = $posData['transaction_amount'];
 
-            $isOnline = $this->isDeviceOnlineViaMQTT($deviceID);
-            sleep(1);
+            //Log::info("Loja encontrada: ", $storeData);
+            //Log::info("Loja encontrada: ". $storeData['id']);
+            $this->StoreService->physicalOrder($posData['store_id'], $deviceID);
+            $isOnline = $this->isDeviceOnlineViaMQTT($valueModule);
+            sleep(2);
             if (!$isOnline) {
-                Log::warning("Módulo $deviceID está offline. Iniciando chargeback...");
+                Log::warning("Módulo $valueModule está offline. Iniciando chargeback...");
                 $this->StoreService->physicalOrder($posData['store_id'], $deviceID);
                 $reembolso = $this->StoreService->executeChargeback($idPagamento);
-                Log::info("Chargeback executado: ", [$reembolso]);
-                $this->StoreService->physicalOrder($posData['store_id'], $deviceID);
+                //Log::info("Chargeback executado: ", [$reembolso]);
+                //$this->StoreService->physicalOrder($posData['store_id'], $deviceID);
+
+                $transaction = PixReceipt::create([
+                    'external_reference'  => $posData['external_reference'] ?? null,
+                    'pos_id'              => $posData['pos_id'] ?? null,
+                    'status'              => $posData['status'] ?? null,
+                    'store_id'            => $posData['store_id'] ?? null,
+                    'transaction_amount'  => isset($posData['transaction_amount']) ? floor($posData['transaction_amount']) : null,
+                    'id_payment'          => $posData['id'] ?? null,
+                    'transaction_id'      => $posData['transaction_id'],
+                    'status'          => 'Estornado - Módulo Offline',
+                    'module'            => $deviceID,
+                    'id_store_internal' => $storeData['id'],
+                    'id_user_internal' => $storeData['user'],
+                ]);
 
                 return response()->json(['message' => 'Chargeback realizado por módulo offline.'], 200);
             }
@@ -68,7 +182,7 @@ class NotificationController extends Controller
             // Dados a serem enviados ao dispositivo
             $message = json_encode([
                 'pulsos' => $pulsos,
-                'deviceID' => $deviceID,
+                'deviceID' => "mccf{$valueModule}",
                 'message' => "pulsos de crédito"
             ]);
 
@@ -78,17 +192,20 @@ class NotificationController extends Controller
                 $this->mqttService->disconnect();
 
                 Log::info("Mensagem MQTT publicada para $deviceID: $message");
-                /* $this->StoreService->getPixReceiptPdf($idPagamento);
-                $transaction = TransferPix::create([
+                //$this->StoreService->getPixReceiptPdf($idPagamento);
+                $transaction = PixReceipt::create([
                     'external_reference'  => $posData['external_reference'] ?? null,
                     'pos_id'              => $posData['pos_id'] ?? null,
-                    'status'              => $posData['status'] ?? null,
+                    //'status'              => $posData['status'] ?? null,
                     'store_id'            => $posData['store_id'] ?? null,
-                    'transaction_amount'  => isset($posData['transaction_amount']) ? floor($posData['transaction_amount']) : null,
+                    'valor'  => isset($posData['transaction_amount']) ? floor($posData['transaction_amount']) : null,
                     'id_payment'          => $posData['id'] ?? null,
                     'transaction_id'      => $posData['transaction_id'],
-                    'receipt_id'          => 'recibo_' . $idPagamento . '.pdf'
-                ]); */
+                    'status'          => 'Recebido',
+                    'module'            => $deviceID,
+                    'id_store_internal' => $storeData['id'],
+                    'id_user_internal' => $storeData['user'],
+                ]);
 
                 //                                                                                                                                                                                                              Log::info('Transação salva com sucesso', ['transaction' => $transaction]);
                 return response()->json(['message' => 'Notificação processada com sucesso.'], 200);
@@ -123,31 +240,31 @@ class NotificationController extends Controller
         ]));
 
         // Escuta somente a resposta deste módulo
-        $mqttService->subscribe("status/pong/{$deviceID}", function ($topic, $message) use (&$respostaRecebida, $deviceID) {
+        $mqttService->subscribe("status/pong/mccf0002", function ($topic, $message) use (&$respostaRecebida, $deviceID) {
             $data = json_decode($message, true);
-            if (isset($data['deviceID']) && $data['deviceID'] === $deviceID) {
+            //if (isset($data['deviceID']) && $data['deviceID'] == $deviceID) {
                 $respostaRecebida = true;
-            }
+            //}
         });
 
         // Aguarda resposta por até 2 segundos
-        $mqttService->loopFor(5);
+        $mqttService->loopFor(2);
         $mqttService->disconnect();
 
         return $respostaRecebida;
     }
-
+/* 
     public function inter(Request $request)
     {
         Log::warning("notificação: " . $request);
         return response()->json(['message' => 'Notificação recebida'], 200);
-    }
+    } */
 
-    public function gerarQr()
+    /* public function gerarQr()
     {
         // -------------- 1) DADOS (substitua pelos seus) ----------------
         $pixKey      = 'c4e35d0c-8fc3-416e-832e-0b01af465640'; // sua chave Pix (CNPJ/EVP/email/tel)
-        $txid        = '1234567890abcdefghijklmccf1010'; // id da máquina (<=25 chars)
+        $txid        = 'mccf0002'; // id da máquina (<=25 chars)
         $merchantName = 'Comercial Colonial'; // até ~25 chars
         $merchantCity = 'Pelotas'; // até ~15 chars
         // ----------------------------------------------------------------
@@ -219,5 +336,5 @@ class NotificationController extends Controller
             }
         }
         return strtoupper(sprintf("%04X", $crc));
-    }
+    } */
 }
