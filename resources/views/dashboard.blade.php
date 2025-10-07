@@ -218,9 +218,11 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @php
-                                    $allPix = $allPix->getData();
-                                @endphp
+                                @if($userLevel == '3')
+                                    @php
+                                        $allPix = $allPix->getData();
+                                    @endphp
+                                @endif
                                 @if(count($allPix) > 0)
                                 @foreach($allPix as $allPix)
                                 <tr>

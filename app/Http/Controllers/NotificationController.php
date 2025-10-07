@@ -121,38 +121,26 @@ class NotificationController extends Controller
     {
         sleep(1);
         $data = $request->all();
-        // Verifica se é uma notificação do tipo 'payment.created'
+        
         if (isset($data['action']) && $data['action'] === 'payment.created') {
 
             $idPagamento = $data['data']['id'];
-
-            /* Log::info("Notificação recebida: ID do pagamento criado: " . $idPagamento);
-            
-            die(); */
-            Log::info("Notificação recebida: ", $data);
 
             if (!$idPagamento) {
                 Log::warning("Notificação 'payment.created' recebida sem ID.");
                 return response()->json(['message' => 'Notificação inválida.'], 400);
             }
 
-            Log::info("posData1: ", $data);
-            Log::info("Notificação recebida: ID do pagamento criado: " . $idPagamento);
-
-            // Consulta dados completos do pagamento
             $posData = $this->StoreService->getPaymentById($idPagamento);
-            Log::info("posData2: ", $posData);
-            // Define módulo alvo
 
             $module = new ModuleService();
+
             $valueModule = $module->getModuloById($posData['external_reference']);
             $storeData = $this->StoreService->getStoreInternalId($posData['pos_id']);
+
             $deviceID = $posData['external_reference'];
             $pulsos = $posData['transaction_amount'];
 
-            //Log::info("Loja encontrada: ", $storeData);
-            //Log::info("Loja encontrada: ". $storeData['id']);
-            //$this->StoreService->physicalOrder($posData['store_id'], $deviceID);
             $isOnline = $this->isDeviceOnlineViaMQTT($valueModule);
             sleep(2);
             if (!$isOnline) {

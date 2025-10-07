@@ -6,6 +6,7 @@ use GuzzleHttp\Client;
 use App\Models\Module;
 use App\Models\Coupon;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 
 class ModuleService
 {
@@ -125,6 +126,8 @@ class ModuleService
         $topicResposta = "resposta/comandos/mccf0002";
         //return $moduloId;
         // Prepara o payload com ID padrão "mccf-{$moduloId}"
+        Log::warning("Notificação com intval: " . intval($button));
+        Log::warning("Notificação sem intval: " . $button);
         $payload = json_encode([
             'message' => 'Acionar botão',
             'botao' => intval($button),
@@ -143,9 +146,9 @@ class ModuleService
             
             if (
                 isset($dados['deviceID'], $dados['botao'], $dados['status']) &&
-                $dados['deviceID'] === "mccf-{$moduloId}" &&
-                intval($dados['botao']) === intval($button) &&
-                $dados['status'] === 'ok'
+                $dados['deviceID'] == "mccf{$moduloId}" &&
+                intval($dados['botao']) == intval($button) &&
+                $dados['status'] == 'ok'
             ) {
                 $respostaRecebida = true;
             }

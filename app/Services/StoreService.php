@@ -461,6 +461,19 @@ class StoreService
             });
     }
 
+    public function valueTotalMaster($data)
+    {
+        return collect($data)
+            ->filter(fn($item) => $item['status'] == 'approved')
+            ->pluck('transaction_amount')
+            ->whenEmpty(fn() => collect([0])) // Se estiver vazio, retorna 0
+            ->pipe(function ($valores) {
+                return $valores->count() > 1
+                    ? $valores->sum()              // Soma tudo se tiver mais de 1
+                    : $valores->first();           // Retorna único valor se só tiver 1
+            });
+    }
+
     public function executeChargeback($paymentId)
     {
         $client = new Client();

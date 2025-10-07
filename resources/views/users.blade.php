@@ -63,10 +63,10 @@
                             <td style="width:5%;">{{ $r->id }}</td>
                             <td style="width:20%;">{{ $r->name }}</td>
                             <td style="width:20%;">{{ $r->email }}</td>
-                            <td style="width:6%;">
+                            <!-- <td style="width:6%;">
                                 <a href="#modal-edit" role="button" data-id="{{ $r->id }}" data-nome="{{ $r->name }}" data-email="{{ $r->email }}" data-level="{{ $r->level }}" data-toggle="modal" class="btn-nwe3 open-edit-user" title="Editar Usuário"><i class="bx bx-edit bx-xs"></i></a>
                                 <a href="#modal-delete" role="button" data-id="{{ $r->id }}" data-toggle="modal" class="btn-nwe4 open-modal-delete" title="Excluir Usuário"><i class="bx bx-trash-alt bx-xs"></i></a>
-                            </td>
+                            </td> -->
                         </tr>
                         @endforeach
                         @else

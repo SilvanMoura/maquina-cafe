@@ -67,7 +67,7 @@
                         @foreach ($storesData as $r)
                         <tr>
                             <td style="width:5%;">{{ $r['id'] }}</td>
-                            <td style="width:15%;"><a>{{ $r['nameStore'] }}</a></td>
+                            <td style="width:15%;"><a>{{ $r['nameStore'] ?? $r['name'] }}</a></td>
                             <!-- <td style="width:15%;"><a>$r['user'][0]->name</a></td>
                             <td style="width:10%;"><a>$r['user'][0]->cpfcnpj</a></td>
                             <td style="width:10%;"><a>$r['user'][0]->contato</a></td>

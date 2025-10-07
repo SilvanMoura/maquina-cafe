@@ -34,7 +34,9 @@ class DashboardController extends Controller
 
         $userData = $this->storeService->getUsersById($userId);
 
-        if ($userData->level == '3') {
+        $userLevel = $userData->level;
+
+        if ($userLevel == '3') {
 
             $storesCount = count($this->storeService->getStoresByIdUser($userId));
             //return $this->storeService->getStoresByIdUser($userId);
@@ -55,10 +57,10 @@ class DashboardController extends Controller
             $allPixRefunded = $this->storeService->getAllPixRefunded();
 
             $todaySales = $this->storeService->getPagamentosHoje();
-
+            //return $todaySales;
             $todayCount = count($todaySales['results']);
 
-            $todaySales = $this->storeService->valueTotal($todaySales);
+            $todaySales = $this->storeService->valueTotalMaster($todaySales['results']);
         }
 
 
@@ -94,6 +96,13 @@ class DashboardController extends Controller
         // 5. Processa respostas por até 2 segundos
         $mqttService->loopFor(5);
         $mqttService->disconnect();
+
+
+
+        //return $onlineDevices;
+
+
+
         //return $onlineDevices;
         // 6. Armazena dispositivos online no cache por 10 segundos
         $countOnline = count($onlineDevices);
@@ -104,20 +113,21 @@ class DashboardController extends Controller
 
         // 8. Atualiza ou insere dados no banco, incluindo qualidade do sinal
         foreach ($onlineDevices as $deviceID => $info) {
-            $cleanId = str_replace('mccf-', '', $deviceID);
+            $cleanId = str_replace('mccf', '', $deviceID);
             $rssi = $info['sinal'] ?? null;
 
-            if ($rssi >= -50 && $rssi <= -30) {
+            if ($rssi >= -30) {
+                $qualidade = 'Sinal Excelente';
+            } elseif ($rssi >= -50 && $rssi < -30) {
                 $qualidade = 'Sinal Forte';
-            } elseif ($rssi > -70 && $rssi < -50) {
+            } elseif ($rssi >= -70 && $rssi < -50) {
                 $qualidade = 'Sinal Moderado';
-            } elseif ($rssi >= -80 && $rssi <= -70) {
+            } elseif ($rssi >= -80 && $rssi < -70) {
                 $qualidade = 'Sinal Fraco';
-            } elseif ($rssi < -80) {
-                $qualidade = 'Sinal Muito Fraco';
             } else {
-                $qualidade = 'Indefinido';
+                $qualidade = 'Sinal Muito Fraco';
             }
+
 
             Module::where('modulo', $cleanId)->update([
                 'rssi' => $rssi,
@@ -130,6 +140,7 @@ class DashboardController extends Controller
         // --- ENVIA PARA A VIEW ---
         return view('dashboard', compact(
             'storesCount',
+            'userLevel',
             //'posCount',
             'allPixRefunded',
             'allPix',
@@ -141,7 +152,20 @@ class DashboardController extends Controller
 
     public function usuariosView()
     {
-        $allUsers = $this->storeService->getUsers();
+
+        $userId = Auth::id();
+
+        $userData = $this->storeService->getUsersById($userId);
+
+        $userLevel = $userData->level;
+
+        if ($userLevel == '3') {
+            $allUsers = $this->storeService->getUsers();
+            $allUsers = collect([$userData]);
+        } else {
+            $allUsers = $this->storeService->getUsers();
+        }
+        
         return view('users', compact('allUsers'));
     }
 

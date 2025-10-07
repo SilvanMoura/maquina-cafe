@@ -129,7 +129,7 @@
                                 
                                 $.ajax({
                                     type: "POST",
-                                    url: "https://srv981758.hstgr.cloud/login",
+                                    url: "http://srv981758.hstgr.cloud/login",
                                     data: dados,
                                     dataType: 'json',
                                     headers: {
@@ -137,7 +137,7 @@
                                     },
                                     success: function(data) {
                                         if (data.success === true) {
-                                            window.location.href = "https://srv981758.hstgr.cloud/dashboard";
+                                            window.location.href = "http://srv981758.hstgr.cloud/dashboard";
                                         } else {
                                             $('#btn-acessar').removeClass('disabled');
                                             $('#progress-acessar').addClass('hide');
