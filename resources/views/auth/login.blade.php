@@ -129,7 +129,7 @@
                                 
                                 $.ajax({
                                     type: "POST",
-                                    url: "https://d22fb8d9d305.ngrok-free.app/login",
+                                    url: "https://srv981758.hstgr.cloud/login",
                                     data: dados,
                                     dataType: 'json',
                                     headers: {
@@ -137,7 +137,7 @@
                                     },
                                     success: function(data) {
                                         if (data.success === true) {
-                                            window.location.href = "https://d22fb8d9d305.ngrok-free.app/dashboard";
+                                            window.location.href = "https://srv981758.hstgr.cloud/dashboard";
                                         } else {
                                             $('#btn-acessar').removeClass('disabled');
                                             $('#progress-acessar').addClass('hide');

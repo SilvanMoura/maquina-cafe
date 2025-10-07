@@ -84,7 +84,7 @@
                     <p>Enviando cupom para o dispositivo...</p>
                 `;
 
-                fetch("https://74d3-2804-14d-403a-8011-4019-f63b-2c27-f3fc.ngrok-free.app/readCode", {
+                fetch("https://srv981758.hstgr.cloud/readCode", {
                         method: "POST",
                         headers: {
                             "Content-Type": "application/json",

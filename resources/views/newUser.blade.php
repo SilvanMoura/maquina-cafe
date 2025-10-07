@@ -269,7 +269,7 @@
                 // Requisição AJAX
                 $.ajax({
                     type: "POST",
-                    url: "https://d22fb8d9d305.ngrok-free.app/usuarios/adicionar",
+                    url: "https://srv981758.hstgr.cloud/usuarios/adicionar",
                     data: dados,
                     dataType: 'json',
                     headers: {
@@ -282,7 +282,7 @@
                                 title: 'Cadastro Concluído',
                                 text: 'Usuário criado com sucesso!',
                             }).then(() => {
-                                window.location.href = "https://d22fb8d9d305.ngrok-free.app/dashboard";
+                                window.location.href = "https://srv981758.hstgr.cloud/dashboard";
                             });
                         } else {
                             $('#error-message').text(data.message || 'Erro no cadastro. Por favor, tente novamente.');

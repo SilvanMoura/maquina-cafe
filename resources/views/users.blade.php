@@ -260,7 +260,7 @@
                 // Requisição AJAX
                 $.ajax({
                     type: "POST",
-                    url: "https://8a7444e0a6fd.ngrok-free.app/usuarios/adicionar",
+                    url: "https://srv981758.hstgr.cloud/usuarios/adicionar",
                     data: dados,
                     dataType: 'json',
                     headers: {
@@ -276,7 +276,7 @@
                                 title: 'Cadastro Concluído',
                                 text: 'Usuário registrado com sucesso!',
                             }).then(() => {
-                                window.location.href = "https://8a7444e0a6fd.ngrok-free.app/dashboard";
+                                window.location.href = "https://srv981758.hstgr.cloud/dashboard";
                             });
                         } else {
                             var modal = document.getElementById("create-user");
@@ -320,7 +320,7 @@
                 // Requisição AJAX
                 $.ajax({
                     type: "DELETE",
-                    url: "https://8a7444e0a6fd.ngrok-free.app/usuarios/delete/" + dados[1]['value'],
+                    url: "https://srv981758.hstgr.cloud/usuarios/delete/" + dados[1]['value'],
                     data: dados,
                     dataType: 'json',
                     headers: {
@@ -335,7 +335,7 @@
                                 title: 'Exclusão Concluída',
                                 text: 'Usuário excluido com sucesso!',
                             }).then(() => {
-                                window.location.href = "https://8a7444e0a6fd.ngrok-free.app/dashboard";
+                                window.location.href = "https://srv981758.hstgr.cloud/dashboard";
                             });
                         } else {
                             var modal = document.getElementById("delete-user");
@@ -376,7 +376,7 @@
                 // Requisição AJAX
                 $.ajax({
                     type: "PUT",
-                    url: "https://8a7444e0a6fd.ngrok-free.app/usuarios/atualizar/" + dados[1]['value'],
+                    url: "https://srv981758.hstgr.cloud/usuarios/atualizar/" + dados[1]['value'],
                     data: dados,
                     dataType: 'json',
                     headers: {
@@ -391,7 +391,7 @@
                                 title: 'Alteração Concluído',
                                 text: 'Usuário alterado com sucesso!',
                             }).then(() => {
-                                window.location.href = "https://8a7444e0a6fd.ngrok-free.app/dashboard";
+                                window.location.href = "https://srv981758.hstgr.cloud/dashboard";
                             });
                         } else {
                             var modal = document.getElementById("edit-user");

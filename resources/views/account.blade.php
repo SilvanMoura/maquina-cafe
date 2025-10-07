@@ -218,7 +218,7 @@
                 var dados = $("#formSenha").serializeArray();
                 $.ajax({
                     type: "PUT",
-                    url: "https://8a7444e0a6fd.ngrok-free.app/perfil/atualizar/" + id,
+                    url: "https://srv981758.hstgr.cloud/perfil/atualizar/" + id,
                     data: dados,
                     dataType: 'json',
                     headers: {
@@ -231,7 +231,7 @@
                                 title: 'Alteração Concluída',
                                 text: 'Senha atualizada com sucesso!',
                             }).then(() => {
-                                window.location.href = "https://8a7444e0a6fd.ngrok-free.app/dashboard";
+                                window.location.href = "https://srv981758.hstgr.cloud/dashboard";
                             });
                         } else {
                             Swal.fire({
