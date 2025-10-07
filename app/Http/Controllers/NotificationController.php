@@ -181,7 +181,7 @@ class NotificationController extends Controller
             $this->StoreService->physicalOrder($posData['store_id'], $deviceID);
             // Dados a serem enviados ao dispositivo
             $message = json_encode([
-                'pulsos' => 0,
+                'pulsos' => $pulsos,
                 'deviceID' => "mccf{$valueModule}",
                 'message' => "pulsos de crédito"
             ]);
