@@ -29,18 +29,43 @@ class DashboardController extends Controller
 
     public function dashboardView()
     {
-        // --- PARTE PADRÃO DO DASHBOARD ---
-        $storesCount = count($this->storeService->getStores());
-        //$posCount = count($this->storeService->getPos());
-        $allPix = $this->storeService->getAllPix();
-        $allPixRefunded = $this->storeService->getAllPixRefunded();
 
-        $todaySales = $this->storeService->getPagamentosHoje();
+        $userId = Auth::id();
 
-        $todayCount = count($todaySales['results']);
+        $userData = $this->storeService->getUsersById($userId);
 
-        $todaySales = $this->storeService->valueTotal($todaySales);
-        
+        if ($userData->level == '3') {
+
+            $storesCount = count($this->storeService->getStoresByIdUser($userId));
+            //return $this->storeService->getStoresByIdUser($userId);
+            $allPix = $this->storeService->getAllPixById($userId);
+
+            $allPixRefunded = $this->storeService->getAllPixRefundedById($userId);
+
+            $todaySales = $this->storeService->getPaymentsTodayByID($userId);
+            $todayCount = count($todaySales);
+            //return $todaySales;
+            $todaySales = $this->storeService->valueTotal($todaySales);
+        } else {
+
+            $storesCount = count($this->storeService->getStores());
+            //$posCount = count($this->storeService->getPos());
+            $allPix = $this->storeService->getAllPix();
+
+            $allPixRefunded = $this->storeService->getAllPixRefunded();
+
+            $todaySales = $this->storeService->getPagamentosHoje();
+
+            $todayCount = count($todaySales['results']);
+
+            $todaySales = $this->storeService->valueTotal($todaySales);
+        }
+
+
+
+
+
+
         // --- VERIFICAÇÃO DE MÓDULOS ONLINE VIA MQTT ---
         $mqttService = app(MQTTService::class);
         Cache::forget('online_devices');
@@ -100,22 +125,22 @@ class DashboardController extends Controller
                 'ultima_conexao' => now(),
                 'status_online' => true
             ]);
-
         }
         //return $this->storeService->getLatestRefunds();
         // --- ENVIA PARA A VIEW ---
-            return view('dashboard', compact(
-                'storesCount',
-                //'posCount',
-                'allPixRefunded',
-                'allPix',
-                'todaySales',
-                'todayCount',
-                'countOnline'
-            ));
+        return view('dashboard', compact(
+            'storesCount',
+            //'posCount',
+            'allPixRefunded',
+            'allPix',
+            'todaySales',
+            'todayCount',
+            'countOnline'
+        ));
     }
 
-    public function usuariosView(){
+    public function usuariosView()
+    {
         $allUsers = $this->storeService->getUsers();
         return view('users', compact('allUsers'));
     }
@@ -141,8 +166,10 @@ class DashboardController extends Controller
         ]);
 
         $storeMercadoPago = $this->storeController->newStoreMercadoPago($request->input('nameUser'), $request->input('endereco'), $request->input('complemento'), $request->input('cidade'));
-        
+
         //$this->storeService->newPos($storeMercadoPago['id'], $request->input('nameUser'), $request->input('modulo'));
+        //criar pedido presencial
+
 
         $store = Store::create([
             'nameStore' => $request->input('nameUser'),
@@ -152,7 +179,7 @@ class DashboardController extends Controller
         ]);
 
         $this->moduleService->registerStoreModule($request->input('modulo'), $store->id, $user->id);
-        
+
 
         return response()->json(['message' => 'Usuário criado com sucesso', 'registro' => $user], 201);
     }
@@ -170,21 +197,24 @@ class DashboardController extends Controller
         return response()->json(['message' => 'Usuário alterado com sucesso'], 201);
     }
 
-    public function deleteUsers(Request $request){
+    public function deleteUsers(Request $request)
+    {
         $user = User::findOrFail($request->input('id'));
         $user->delete();
 
         return response()->json(['message' => 'Usuário excluido com sucesso'], 201);
     }
 
-    public function perfilView(){
+    public function perfilView()
+    {
         $userId = Auth::id();
         $user = User::select('*')->where('id', $userId)->first();
 
         return view('account', ['user' => $user]);
     }
 
-    public function newPassword(Request $request, $id){
+    public function newPassword(Request $request, $id)
+    {
         $user = User::findOrFail($id);
         $user->password = $request->input('novaSenha');
         $user->save();
@@ -192,7 +222,8 @@ class DashboardController extends Controller
         return response()->json(['message' => 'Senha atualizada com sucesso'], 201);
     }
 
-    public function newUserView(){
+    public function newUserView()
+    {
 
         $moduleService = new ModuleService();
 

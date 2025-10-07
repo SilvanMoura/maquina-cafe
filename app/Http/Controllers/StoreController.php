@@ -6,6 +6,7 @@ use App\Services\StoreService;
 use App\Models\Store;
 use App\Services\ModuleService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class StoreController extends Controller
 {
@@ -18,7 +19,15 @@ class StoreController extends Controller
 
     public function getStoreData()
     {
-        $storesData = $this->StoreService->getStores();
+        $userId = Auth::id();
+
+        $userData = $this->StoreService->getUsersById($userId);
+
+        if ($userData->level == '3') {
+            $storesData = $this->StoreService->getStoresByIdUser($userId);
+        } else {
+            $storesData = $this->StoreService->getStores();
+        }
         //return $storesData;
         return view('stores', ['storesData' => collect($storesData)]);
     }
@@ -62,10 +71,22 @@ class StoreController extends Controller
 
     public function salesView()
     {
-        $paymentsToday = $this->StoreService->getPaymentsToday();
-        $paymentsSevenDays = $this->StoreService->getPaymentsSevenDaysInternal();
-        $paymentsLast30Days = $this->StoreService->getPaymentsLast30Days();
-        $allPayments = $this->StoreService->getAllPayments();
+        $userId = Auth::id();
+
+        $userData = $this->StoreService->getUsersById($userId);
+
+        if ($userData->level == '3') {
+            $paymentsToday = $this->StoreService->getPaymentsTodayByID($userId);
+
+            $paymentsSevenDays = $this->StoreService->getPaymentsSevenDaysInternalById($userId);
+            $paymentsLast30Days = $this->StoreService->getPaymentsLast30DaysById($userId);
+            $allPayments = $this->StoreService->getAllPaymentsById($userId);
+        } else {
+            $paymentsToday = $this->StoreService->getPaymentsToday();
+            $paymentsSevenDays = $this->StoreService->getPaymentsSevenDaysInternal();
+            $paymentsLast30Days = $this->StoreService->getPaymentsLast30Days();
+            $allPayments = $this->StoreService->getAllPayments();
+        }
         //return $paymentsToday;
         return view('salesDetails', compact(
             'paymentsToday',

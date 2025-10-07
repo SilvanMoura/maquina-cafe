@@ -24,39 +24,39 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('/dashboard', [DashboardController::class, 'dashboardView']);
+Route::get('/dashboard', [DashboardController::class, 'dashboardView'])->middleware(['auth', 'verified']);
 
 //->middleware(['auth', 'verified'])->name('dashboard')
 
-Route::get('/usuarios', [DashboardController::class, 'usuariosView']);
-Route::get('/perfil', [DashboardController::class, 'perfilView']);
-Route::put('/perfil/atualizar/{id}', [DashboardController::class, 'newPassword']);
-Route::get('/usuarios/adicionar', [DashboardController::class, 'newUserView']);
-Route::post('/usuarios/adicionar', [DashboardController::class, 'createUser']);
-Route::put('/usuarios/atualizar/{id}', [DashboardController::class, 'updateUsers']);
-Route::delete('/usuarios/delete/{id}', [DashboardController::class, 'deleteUsers']);
+Route::get('/usuarios', [DashboardController::class, 'usuariosView'])->middleware(['auth', 'verified']);
+Route::get('/perfil', [DashboardController::class, 'perfilView'])->middleware(['auth', 'verified']);
+Route::put('/perfil/atualizar/{id}', [DashboardController::class, 'newPassword'])->middleware(['auth', 'verified']);
+Route::get('/usuarios/adicionar', [DashboardController::class, 'newUserView'])->middleware(['auth', 'verified']);
+Route::post('/usuarios/adicionar', [DashboardController::class, 'createUser'])->middleware(['auth', 'verified']);
+Route::put('/usuarios/atualizar/{id}', [DashboardController::class, 'updateUsers'])->middleware(['auth', 'verified']);
+Route::delete('/usuarios/delete/{id}', [DashboardController::class, 'deleteUsers'])->middleware(['auth', 'verified']);
 
-Route::get('/lojas', [StoreController::class, 'getStoreData']); //obtem todas as lojas
-Route::get('/lojas/adicionar', [StoreController::class, 'newStoreView']);
-Route::post('/lojas/adicionar', [StoreController::class, 'newStore']);
-Route::get('/pos', [StoreController::class, 'getPosData']); //obtem todos os pontos de venda/caixa (pos)
-Route::get('/vendas', [StoreController::class, 'salesView']);
-Route::get('/pagamento/visualizar/{id}', [StoreController::class, 'paymentView']);
-//Route::get('/pagamento/estorno/{id}', [StoreController::class, 'reversalData']);
-Route::get('/pagamento/estorno', [StoreController::class, 'reversalView']);
-Route::post('/pagamento/estorno', [StoreController::class, 'reversalData']);
+Route::get('/lojas', [StoreController::class, 'getStoreData'])->middleware(['auth', 'verified']); //obtem todas as lojas
+Route::get('/lojas/adicionar', [StoreController::class, 'newStoreView'])->middleware(['auth', 'verified']);
+Route::post('/lojas/adicionar', [StoreController::class, 'newStore'])->middleware(['auth', 'verified']);
+Route::get('/pos', [StoreController::class, 'getPosData'])->middleware(['auth', 'verified']); //obtem todos os pontos de venda/caixa (pos)
+Route::get('/vendas', [StoreController::class, 'salesView'])->middleware(['auth', 'verified']);
+Route::get('/pagamento/visualizar/{id}', [StoreController::class, 'paymentView'])->middleware(['auth', 'verified']);
+//Route::get('/pagamento/estorno/{id}', [StoreController::class, 'reversalData'])->middleware(['auth', 'verified']);
+Route::get('/pagamento/estorno', [StoreController::class, 'reversalView'])->middleware(['auth', 'verified']);
+Route::post('/pagamento/estorno', [StoreController::class, 'reversalData'])->middleware(['auth', 'verified']);
 
-Route::get('/modulos', [ModuleController::class, 'modulesView']); 
-Route::get('/modulos/online', [ModuleController::class, 'modulesOnlineView']); 
-Route::get('/modulos/adicionar', [ModuleController::class, 'newModuleView']);
-Route::post('/modulos/adicionar', [ModuleController::class, 'newModule']);
-Route::get('/cupons', [ModuleController::class, 'couponsView']);
-Route::get('/cupons/adicionar', [ModuleController::class, 'newCouponView']);
-Route::post('/cupons/adicionar', [ModuleController::class, 'newCoupon']);
-Route::get('/readCode', [ModuleController::class, 'readCodeView']);
-Route::post('/readCode', [ModuleController::class, 'depositCoupon']);
-Route::get('/controle', [ModuleController::class, 'controlRemoteView']);
-Route::post('/sendCommand', [ModuleController::class, 'sendCommandModule']);
+Route::get('/modulos', [ModuleController::class, 'modulesView'])->middleware(['auth', 'verified']); 
+Route::get('/modulos/online', [ModuleController::class, 'modulesOnlineView'])->middleware(['auth', 'verified']); 
+Route::get('/modulos/adicionar', [ModuleController::class, 'newModuleView'])->middleware(['auth', 'verified']);
+Route::post('/modulos/adicionar', [ModuleController::class, 'newModule'])->middleware(['auth', 'verified']);
+Route::get('/cupons', [ModuleController::class, 'couponsView'])->middleware(['auth', 'verified']);
+Route::get('/cupons/adicionar', [ModuleController::class, 'newCouponView'])->middleware(['auth', 'verified']);
+Route::post('/cupons/adicionar', [ModuleController::class, 'newCoupon'])->middleware(['auth', 'verified']);
+Route::get('/readCode', [ModuleController::class, 'readCodeView'])->middleware(['auth', 'verified']);
+Route::post('/readCode', [ModuleController::class, 'depositCoupon'])->middleware(['auth', 'verified']);
+Route::get('/controle', [ModuleController::class, 'controlRemoteView'])->middleware(['auth', 'verified']);
+Route::post('/sendCommand', [ModuleController::class, 'sendCommandModule'])->middleware(['auth', 'verified']);
 
 //envia o credito do cupom para o modulo 
 

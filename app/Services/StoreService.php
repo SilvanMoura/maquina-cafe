@@ -60,6 +60,11 @@ class StoreService
         return $responseBody['name'];
     }
 
+    public function getStoresByIdUser($userId)
+    {
+        return Store::where('user', $userId)->get();
+    }
+
     public function getStoreInternalId($idStore)
     {
         $store = Store::where('idStoreMercadoPago', $idStore)->first(['id', 'user']);
@@ -170,7 +175,7 @@ class StoreService
         $client = new Client();
 
         //$moduloValueFormated = str_replace('-', '', $moduloValue);
-        $idStore = 74950966;
+        //$idStore = 74950966;
         $response = $client->put("https://api.mercadopago.com/instore/qr/seller/collectors/{$this->idUser}/stores/{$idStore}/pos/{$moduloValue}/orders", [
             'headers' => [
                 'Authorization' => "Bearer {$this->token}",
@@ -181,7 +186,7 @@ class StoreService
                 'description' => "Produto ou serviço escolhido pelo cliente",
                 'notification_url' => "https://srv981758.hstgr.cloud/notifications",
                 'external_reference' => "$moduloValue",
-                "expiration_date" => "2099-12-30T01:30:00.000-03:00",
+                "expiration_date" => "2026-12-30T01:30:00.000-03:00",
                 'total_amount' => 5,
                 'items' => [ // <- agora um array de objetos
                     [
@@ -189,6 +194,7 @@ class StoreService
                         'title' => "Produto X",
                         'unit_measure' => "unit",
                         'unit_price' => 5.00,
+                        'fixed_amount' => true,
                         'quantity' => 1,
                         'total_amount' => 5
                     ]
@@ -329,7 +335,93 @@ class StoreService
         )->where('status', ['Estornado', 'Estornado - Módulo Offline'])->limit(10)->get();
     }
 
+    public function getAllPixById($idUser)
+    {
+        try {
+            // Define o intervalo do dia atual
+            $beginDate = Carbon::now()->startOfDay(); // 00:00:00 de hoje
+            $endDate = Carbon::now()->endOfDay();     // 23:59:59 de hoje
+
+            $data = PixReceipt::select(
+                'id',
+                'valor',
+                'id_payment',
+                'status'
+            )
+                ->where('id_user_internal', $idUser)
+                //->whereBetween('created_at', [$beginDate, $endDate])
+                ->limit(10)
+                ->get();
+
+            return response()->json($data, 200);
+        } catch (\Exception $e) {
+            $mensagem = 'Erro ao buscar registros locais: ' . $e->getMessage();
+            return response()->json(['erro' => $mensagem], 500);
+        }
+    }
+
+    public function getPaymentsTodayByID($idUser)
+    {
+        try {
+            // Define o intervalo do dia atual
+            $beginDate = Carbon::now()->startOfDay(); // 00:00:00 de hoje
+            $endDate = Carbon::now()->endOfDay();     // 23:59:59 de hoje
+
+            $data = PixReceipt::select('*')
+                ->where('id_user_internal', $idUser)
+                ->whereBetween('created_at', [$beginDate, $endDate])
+                ->limit(10)
+                ->get();
+
+            return $data;
+        } catch (\Exception $e) {
+            $mensagem = 'Erro ao buscar registros locais: ' . $e->getMessage();
+            return response()->json(['erro' => $mensagem], 500);
+        }
+    }
+
+    public function getAllPixRefundedById($idUser)
+    {
+        return PixReceipt::select(
+            'id',
+            'valor',
+            'id_payment',
+            'status'
+        )
+            ->where('status', ['Estornado', 'Estornado - Módulo Offline'])
+            ->where('id_user_internal', $idUser)
+            ->limit(10)
+            ->get();
+    }
+
     public function getPagamentosHoje()
+    {
+        $client = new Client();
+        $beginDate = Carbon::today()->toIso8601ZuluString();
+        $endDate = Carbon::now()->toIso8601ZuluString();
+
+        try {
+            $response = $client->get('https://api.mercadopago.com/v1/payments/search', [
+                'headers' => [
+                    'Authorization' => "Bearer {$this->token}",
+                    'Content-Type' => 'application/json',
+                ],
+                'query' => [
+                    'range' => 'date_created',
+                    'begin_date' => $beginDate,
+                    'end_date' => $endDate,
+                ],
+            ]);
+
+            return $data = json_decode($response->getBody(), true);
+        } catch (RequestException $e) {
+            $status = $e->getResponse() ? $e->getResponse()->getStatusCode() : 500;
+            $mensagem = $status === 403 ? 'Token inválido ou sem permissão.' : 'Erro inesperado ao consultar pagamentos.';
+            return response()->json(['erro' => $mensagem], $status);
+        }
+    }
+
+    public function getPagamentosHojeById()
     {
         $client = new Client();
         $beginDate = Carbon::today()->toIso8601ZuluString();
@@ -358,9 +450,9 @@ class StoreService
 
     public function valueTotal($data)
     {
-        return collect($data['results'])
-            ->filter(fn($item) => $item['status'] === 'approved')
-            ->pluck('transaction_amount')
+        return collect($data)
+            ->filter(fn($item) => $item['status'] == 'Recebido')
+            ->pluck('valor')
             ->whenEmpty(fn() => collect([0])) // Se estiver vazio, retorna 0
             ->pipe(function ($valores) {
                 return $valores->count() > 1
@@ -449,10 +541,62 @@ class StoreService
         return $data;
     }
 
+
+
+
+    public function getAllPaymentsById($userId)
+    {
+        $data = PixReceipt::where('id_user_internal', $userId)->get();
+
+        return $data;
+    }
+
+    public function getPaymentsSevenDaysInternalById($userId)
+    {
+        // 1. Buscar registros dos últimos 7 dias
+        $data = PixReceipt::where('created_at', '>=', Carbon::now()->subDays(7))->where('id_user_internal', $userId)->get();;
+        return $data;
+    }
+
+    public function getPaymentsLast30DaysById($userId)
+    {
+        $data = PixReceipt::where('created_at', '>=', Carbon::now()->subDays(30))->where('id_user_internal', $userId)->get();;
+        return $data;
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     public function getUsers()
     {
         return User::get();
     }
+
+    public function getUsersById($idUser)
+    {
+        return User::where('id', $idUser)->first();
+    }
+
 
     public function getLatestRefunds()
     {

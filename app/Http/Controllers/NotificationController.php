@@ -152,7 +152,7 @@ class NotificationController extends Controller
 
             //Log::info("Loja encontrada: ", $storeData);
             //Log::info("Loja encontrada: ". $storeData['id']);
-            $this->StoreService->physicalOrder($posData['store_id'], $deviceID);
+            //$this->StoreService->physicalOrder($posData['store_id'], $deviceID);
             $isOnline = $this->isDeviceOnlineViaMQTT($valueModule);
             sleep(2);
             if (!$isOnline) {
@@ -165,15 +165,15 @@ class NotificationController extends Controller
                 $transaction = PixReceipt::create([
                     'external_reference'  => $posData['external_reference'] ?? null,
                     'pos_id'              => $posData['pos_id'] ?? null,
-                    'status'              => $posData['status'] ?? null,
+                    //'status'              => $posData['status'] ?? null,
                     'store_id'            => $posData['store_id'] ?? null,
                     'transaction_amount'  => isset($posData['transaction_amount']) ? floor($posData['transaction_amount']) : null,
                     'id_payment'          => $posData['id'] ?? null,
                     'transaction_id'      => $posData['transaction_id'],
-                    'status'          => 'Estornado - Módulo Offline',
-                    'module'            => $deviceID,
-                    'id_store_internal' => $storeData['id'],
-                    'id_user_internal' => $storeData['user'],
+                    'status'              => 'Estornado - Módulo Offline',
+                    'module'              => $deviceID,
+                    'id_store_internal'   => $storeData['id'],
+                    'id_user_internal'    => $storeData['user'],
                 ]);
 
                 return response()->json(['message' => 'Chargeback realizado por módulo offline.'], 200);
@@ -181,7 +181,7 @@ class NotificationController extends Controller
             $this->StoreService->physicalOrder($posData['store_id'], $deviceID);
             // Dados a serem enviados ao dispositivo
             $message = json_encode([
-                'pulsos' => $pulsos,
+                'pulsos' => 0,
                 'deviceID' => "mccf{$valueModule}",
                 'message' => "pulsos de crédito"
             ]);
@@ -192,6 +192,7 @@ class NotificationController extends Controller
                 $this->mqttService->disconnect();
 
                 Log::info("Mensagem MQTT publicada para $deviceID: $message");
+                
                 //$this->StoreService->getPixReceiptPdf($idPagamento);
                 $transaction = PixReceipt::create([
                     'external_reference'  => $posData['external_reference'] ?? null,
@@ -240,11 +241,11 @@ class NotificationController extends Controller
         ]));
 
         // Escuta somente a resposta deste módulo
-        $mqttService->subscribe("status/pong/mccf0002", function ($topic, $message) use (&$respostaRecebida, $deviceID) {
+        $mqttService->subscribe("status/pong/mccf{$deviceID}", function ($topic, $message) use (&$respostaRecebida, $deviceID) {
             $data = json_decode($message, true);
-            //if (isset($data['deviceID']) && $data['deviceID'] == $deviceID) {
+            if (isset($data['deviceID']) && $data['deviceID'] == "mccf{$deviceID}") {
                 $respostaRecebida = true;
-            //}
+            }
         });
 
         // Aguarda resposta por até 2 segundos

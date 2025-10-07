@@ -122,13 +122,13 @@ class ModuleService
 
         // Define os tópicos
         $topicComando = "comandos/botao";
-        $topicResposta = "resposta/comandos/mccf{$moduloId}";
+        $topicResposta = "resposta/comandos/mccf0002";
         //return $moduloId;
         // Prepara o payload com ID padrão "mccf-{$moduloId}"
         $payload = json_encode([
             'message' => 'Acionar botão',
             'botao' => intval($button),
-            'deviceID' => "mccf{$moduloId}"
+            'deviceID' => "mccf0002"
         ]);
 
         // Envia o comando
@@ -172,6 +172,11 @@ class ModuleService
     public function getModulesUse()
     {
         return Module::get();
+    }
+
+    public function getModulesUseById($userId)
+    {
+        return Module::where('user', $userId)->get();
     }
 
     public function moduleUpdateAllOffline(){

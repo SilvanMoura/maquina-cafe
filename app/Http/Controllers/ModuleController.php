@@ -6,13 +6,30 @@ use Illuminate\Http\Request;
 use App\Services\ModuleService;
 use App\Services\StoreService;
 use App\Models\Module;
+use Illuminate\Support\Facades\Auth;
 
 class ModuleController extends Controller
 {
+    private $StoreService;
+
+    public function __construct(StoreService $StoreService)
+    {
+        $this->StoreService = $StoreService;
+    }
+
     public function modulesView()
     {
         $moduleService = new ModuleService();
-        $modulesData = $moduleService->getModulesUse();
+
+        $userId = Auth::id();
+
+        $userData = $this->StoreService->getUsersById($userId);
+
+        if ($userData->level == '3') {
+            $modulesData = $moduleService->getModulesUseById($userId);
+        }else{
+            $modulesData = $moduleService->getModulesUse();
+        }
 
         //return $modulesData;
         return view('modules', ['modules' => $modulesData]);
@@ -100,7 +117,17 @@ class ModuleController extends Controller
     public function controlRemoteView()
     {
         $modulesUse = new ModuleService();
-        $modulesData = $modulesUse->getModulesUse();
+
+        $userId = Auth::id();
+
+        $userData = $this->StoreService->getUsersById($userId);
+
+        if ($userData->level == '3') {
+            $modulesData = $modulesUse->getModulesUseById($userId);
+        }else{
+            $modulesData = $modulesUse->getModulesUse();
+        }
+        //return $modulesData;
         return view('controlRemote', compact('modulesData'));
     }
 
