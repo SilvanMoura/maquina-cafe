@@ -211,38 +211,41 @@
                                     <th>Id</th>
                                     <th>Valor</th>
                                     <th>Status</th>
-                                    <th>Id Pagamento</th>
-                                    <!-- <th>Nome</th>
-                                        <th>CPF</th>
-                                        <th>Id transação</th> -->
+                                    <th>Nome</th>
+                                    <th>CPF</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 @if($userLevel == '3')
                                     @php
-                                        $allPix = $allPix->getData();
+                                        if ($allPix instanceof \Illuminate\Http\JsonResponse) {
+                                            $allPix = $allPix->getData(true);
+                                        }
                                     @endphp
                                 @endif
-                                @if(count($allPix) > 0)
-                                @foreach($allPix as $allPix)
+                                @if(!empty($allPix))
+                                @foreach($allPix as $pix)
                                 <tr>
                                     <td>
-                                        {{ $allPix->id }}
+                                        {{ $pix['id'] }}
                                     </td>
                                     <td class="cli1">
-                                        {{ $allPix->valor }}
+                                        {{ $pix['valor'] }}
                                     </td>
                                     <td>
-                                        {{ $allPix->status }}
+                                        {{ $pix['status'] }}
                                     </td>
                                     <td>
-                                        {{ $allPix->id_payment }}
+                                        {{ $pix['transfer_pix']['nome_remetente'] }}
+                                    </td>
+                                    <td>
+                                        {{ $pix['transfer_pix']['cpf_remetente'] }}
                                     </td>
                                     <!-- <td>
-                                            $allPix->idTransacao
+                                            $pix['idTransacao']
                                         </td>
                                         <td>
-                                            <a href="{{ '/pagamento/visualizar/'. $allPix->id }}" class="btn-nwe tip-top" title="Visualizar">
+                                            <a href="{{ '/pagamento/visualizar/'. $pix['id'] }}" class="btn-nwe tip-top" title="Visualizar">
                                                 <i class="bx bx-show"></i>
                                             </a>
                                         </td> -->

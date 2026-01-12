@@ -41,7 +41,7 @@ class DashboardController extends Controller
             $storesCount = count($this->storeService->getStoresByIdUser($userId));
             //return $this->storeService->getStoresByIdUser($userId);
             $allPix = $this->storeService->getAllPixById($userId);
-
+            
             $allPixRefunded = $this->storeService->getAllPixRefundedById($userId);
 
             $todaySales = $this->storeService->getPaymentsTodayByID($userId);
@@ -53,7 +53,7 @@ class DashboardController extends Controller
             $storesCount = count($this->storeService->getStores());
             //$posCount = count($this->storeService->getPos());
             $allPix = $this->storeService->getAllPix();
-
+            
             $allPixRefunded = $this->storeService->getAllPixRefunded();
 
             $todaySales = $this->storeService->getPagamentosHoje();
@@ -62,11 +62,6 @@ class DashboardController extends Controller
 
             $todaySales = $this->storeService->valueTotalMaster($todaySales['results']);
         }
-
-
-
-
-
 
         // --- VERIFICAÇÃO DE MÓDULOS ONLINE VIA MQTT ---
         $mqttService = app(MQTTService::class);
@@ -97,13 +92,6 @@ class DashboardController extends Controller
         $mqttService->loopFor(5);
         $mqttService->disconnect();
 
-
-
-        //return $onlineDevices;
-
-
-
-        //return $onlineDevices;
         // 6. Armazena dispositivos online no cache por 10 segundos
         $countOnline = count($onlineDevices);
         Cache::put('online_devices', $onlineDevices, now()->addSeconds(10));
@@ -193,7 +181,6 @@ class DashboardController extends Controller
 
         //$this->storeService->newPos($storeMercadoPago['id'], $request->input('nameUser'), $request->input('modulo'));
         //criar pedido presencial
-
 
         $store = Store::create([
             'nameStore' => $request->input('nameUser'),

@@ -132,16 +132,18 @@ class NotificationController extends Controller
             }
 
             $posData = $this->StoreService->getPaymentById($idPagamento);
-
+            Log::info("chegada: ", $posData);
             $module = new ModuleService();
 
             $valueModule = $module->getModuloById($posData['external_reference']);
+            Log::info("ponto1");
             $storeData = $this->StoreService->getStoreInternalId($posData['pos_id']);
-
+            Log::info("ponto2");
             $deviceID = $posData['external_reference'];
             $pulsos = $posData['transaction_amount'];
 
             $isOnline = $this->isDeviceOnlineViaMQTT($valueModule);
+            Log::info("ponto3");
             sleep(2);
             if (!$isOnline) {
                 Log::warning("Módulo $valueModule está offline. Iniciando chargeback...");
@@ -181,7 +183,8 @@ class NotificationController extends Controller
 
                 Log::info("Mensagem MQTT publicada para $deviceID: $message");
                 
-                //$this->StoreService->getPixReceiptPdf($idPagamento);
+                $data = $this->StoreService->getPixReceiptPdf($idPagamento);
+                Log::info("Recibo: ". $data);
                 $transaction = PixReceipt::create([
                     'external_reference'  => $posData['external_reference'] ?? null,
                     'pos_id'              => $posData['pos_id'] ?? null,
@@ -220,14 +223,15 @@ class NotificationController extends Controller
         $mqttService = app(MQTTService::class);
 
         $respostaRecebida = false;
-
+        Log::info("ponto4");
         // Envia ping diretamente para o módulo
+        Log::info('modulo: ' . $deviceID);
         $mqttService->connect();
         $mqttService->publish("status/ping", json_encode([
             'ping' => true,
             'timestamp' => now()->toDateTimeString()
         ]));
-
+        
         // Escuta somente a resposta deste módulo
         $mqttService->subscribe("status/pong/mccf{$deviceID}", function ($topic, $message) use (&$respostaRecebida, $deviceID) {
             $data = json_decode($message, true);

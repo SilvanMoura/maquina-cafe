@@ -186,17 +186,17 @@ class StoreService
                 'description' => "Produto ou serviço escolhido pelo cliente",
                 'notification_url' => "https://srv981758.hstgr.cloud/notifications",
                 'external_reference' => "$moduloValue",
-                "expiration_date" => "2026-12-30T01:30:00.000-03:00",
-                'total_amount' => 5,
+                "expiration_date" => "2027-12-30T01:30:00.000-03:00",
+                'total_amount' => 0,
                 'items' => [ // <- agora um array de objetos
                     [
                         'id' => "item1",
                         'title' => "Produto X",
                         'unit_measure' => "unit",
-                        'unit_price' => 5.00,
+                        'unit_price' => 0.00,
                         'fixed_amount' => true,
                         'quantity' => 1,
-                        'total_amount' => 5
+                        'total_amount' => 0
                     ]
                 ]
             ],
@@ -215,12 +215,16 @@ class StoreService
 
         $response = $client->get("https://www.mercadopago.com.br/money-out/transfer/api/receipt/pix_pdf/{$paymentId}/pix_account/pix_payment.pdf", [
             'headers' => [
-                'cookie' => 'd2id=acfa5858-1286-45d6-b756-75fe9b7dec5b; ftid=CutcDX9u9eUx0UOmXcbOroxwWYroBOB4-1741203837782; _gcl_au=1.1.987169972.1755697440; _hjSessionUser_1798523=eyJpZCI6ImU0NjQ4Nzg4LTRkNDAtNTlhNS1hNTE3LTNlOGM4MmJhYjRhZCIsImNyZWF0ZWQiOjE3NTU2OTc0NDY0NjgsImV4aXN0aW5nIjp0cnVlfQ==; _fbp=fb.2.1755697446643.452899114492923725; _csrf=7L-3fspxedA3f-87_umKKGfT; QSI_SI_23SnzFDvtxRGSZ8_intercept=true; p_dsid=685e0644-bafc-423c-b9e1-8b96b68f3dd9-1755697758431; c_landingdesktop=3.0.0; _hjSessionUser_492923=eyJpZCI6IjEwNjgzZmQwLWMyMGYtNTUyMS05YTI3LWNkMmIxZmY3ZTRjMyIsImNyZWF0ZWQiOjE3NTU2OTc5NjExNDUsImV4aXN0aW5nIjp0cnVlfQ==; _tt_enable_cookie=1; _ttp=01K33W1PJT602KTJ681F3TPPK4.tt.2; ttcsid_CU409KRC77U5T1OVP8KG=1755697961571::p7Xr52Pc3O-qgboM92z7.1.1755697961810; orgnickp=DCFHDBGAE66835; orguseridp=275391771; cookiesPreferencesLoggedFallback=%7B%22userId%22%3A275391771%2C%22categories%22%3A%7B%22advertising%22%3Atrue%2C%22functionality%22%3Atrue%2C%22performance%22%3Atrue%2C%22traceability%22%3Atrue%7D%7D; cookiesPreferencesNotLogged=%7B%22categories%22%3A%7B%22advertising%22%3Atrue%2C%22functionality%22%3Atrue%2C%22performance%22%3Atrue%2C%22traceability%22%3Atrue%7D%7D; QSI_HistorySession=https%3A%2F%2Fwww.mercadopago.com.br%2Fhome~1755697700273%7Chttps%3A%2F%2Fwww.mercadopago.com.br%2Fhome%23from-section%3Dmenu~1755697724540%7Chttps%3A%2F%2Fwww.mercadopago.com.br%2Fhome~1755698061196; _hs_cookie_cat_pref=1:true_2:true_3:true; hubspotutk=4f9920501358db0cbc40a484580ec250; __hssrc=1; _hjSessionUser_4992954=eyJpZCI6IjUyMGRlMDdhLTcxYzMtNWI3NC05ZTZkLTdhOWY0MDJjMTIxMyIsImNyZWF0ZWQiOjE3NTU3ODM5MjkyNDUsImV4aXN0aW5nIjpmYWxzZX0=; _ml_ar-browser-check=36f9b8ab-62fe-4efe-acc4-b4744fab5bbc; dxDevPanelOnboarding=true; mp_dx-dev-panel-production-product=true; dx-test-users-onboarding-=true; c_balance-frontenddesktop=3.57.1; _ga_XJRJL56B0Z=GS2.1.s1755789291$o2$g0$t1755789291$j60$l0$h0; _ga=GA1.3.213525301.1755698503; _gid=GA1.3.1177246012.1755800686; _hjSession_492923=eyJpZCI6IjM4ZTFjNWJkLTU3YTUtNDc5ZS1iMjI4LWU0NmNhYzc5NWRlYiIsImMiOjE3NTU4MDA2ODY3NDMsInMiOjEsInIiOjAsInNiIjowLCJzciI6MCwic2UiOjAsImZzIjowLCJzcCI6MH0=; ttcsid=1755800686912::k96RP_wFt07U0M6WNFCz.2.1755800687331; cto_bundle=Nstj6V96ak9MN2FmUklpZjB5dDh1dmF4dXRGYWNzUzNEZThPc0ZWd1RKczhIdWEzTWJMUXJBbHBVM3lIM2slMkZtMjVJNld3a1BEbHZsbWJKRUN3RnFmbnRzYTMxdXk2RTF1VDRDbTlhWEslMkI4SnZwR0swYVVoWVRFa09rNHdlQzYzb0luJTJGNDJxd3hOc0pPQnNDWVZJMllVcWNmVXI5aWRBWkdobWR5MTdFM3dYODFFWHR4OXlLRnpCV04zQURjd00lMkI5TWU3JTJCOWRXdzBMT1YlMkZFcjRwJTJCbUtMSHl6d210UUp6aXU2YVdNZjZEJTJGOFlTRExoVkVmbE5KNk1sRThwM2VyWVk3ZTROODZHdkVUbXY3ZCUyRjFvcjR2U3VjeWNTQSUzRCUzRA; ttcsid_CUN021JC77U74NKAGB7G=1755800686911::wDiLMpr4fGHNcuTMd-ML.2.1755800688493; ttcsid_CUJ1CJ3C77U09FJDRBMG=1755800686913::JYqWtTtRUwT5C-4wxuh0.2.1755800688493; ttcsid_CVDCTDJC77UCRE2PIO20=1755800686914::pZVBRpoSNIBGLUvVBS_U.2.1755800688493; ttcsid_D04F33RC77U7UBOAPF1G=1755800686985::eq574vUOItR46OKwyR2A.2.1755800688493; ttcsid_CUV1O83C77UCOV2E0PVG=1755800687330::ZQgYeNidkV5e3pyeXcJU.2.1755800688494; __hstc=262728915.4f9920501358db0cbc40a484580ec250.1755697977224.1755697977224.1755800689782.2; __hssc=262728915.1.1755800689782; app-theme=yellowblue-light; _mldataSessionId=c4b33ecb-9f41-4ece-b304-a3d91f75957e; cookiesPreferencesLogged=%7B%22userId%22%3A275391771%2C%22categories%22%3A%7B%22advertising%22%3Atrue%2C%22functionality%22%3Atrue%2C%22performance%22%3Atrue%2C%22traceability%22%3Atrue%7D%7D; orguserid=ZZh79hH40hh0; ssid=ghy-082114-rMc4HNYXlHAbnV78DIRpaRWLbg6mI8--275391771--1850495293329--RRR_0-RRR_0; mp_wsid=eyJhbGciOiJSUzI1NiIsImtpZCI6IlBNREhlSGt2WEdPZ2JmWFNXZ2VnMDRzeEVTZG1yV0N1TndKcFl1N3lGUjg9IiwidHlwIjoiSldUIn0.eyJhZG1pbl9vdHAiOmZhbHNlLCJhdXRoX2Zsb3ciOiJhY2Nlc3MiLCJjbGllbnRfaWQiOjY0OTUyMTMwOTkwNDY1NywiZXhwIjoxODUwNDk1MjkzLCJpYXQiOjE3NTU4MDA4OTMsImlzcyI6InVybjphdXRoLXNlcnZlcjpzZXNzaW9ucyIsImp0aSI6IjA0MWMyMDlmLTdmYjQtNDA2NS1iZjhjLWE5NTljNTFmZjg0ZiIsInByb2R1Y3RfaWQiOjIsInNpdGVfaWQiOiJtbGIiLCJzc2kiOiIzNmEyMDk0OC1mYzkxLTQ3NmUtYWJkZC0yYWIzN2JmYjUzNTIiLCJzdWIiOiJ1cm46dXNlcnM6Mjc1MzkxNzcxIn0.XuN92SoAaLlpPT-IjnLG4QFrNfMdjVWhlgccsgzvZ7KuoKEKCejmZC_cU7nMsUNrn7Wn8GdqJ5_C3n0HbiRcJsm4idsRd083hsjnu_EUrnJmY-bVg5aEkJtDyzTPWRMrGcNlsiAtDTMoqH63okLGij2rLLFC8At6Ax3jbz3p5SuLQoFVLUh8dXf1oFvGXemDnrJKXBN6_fRgVnQ3fLlSoXyDhRPTBRsYBYMoDz9nIFMEAqdm7AxWvlz9bVIHWyEe20krJkFUuV9WKHYegEF5AhX7M-5goyj-sgMrpHPGwQQXfzxAd0AoR6Ah3mHivACxppwcn6UEJ9RuPO3Yk891KA; hide-cookie-banner=275391771-COOKIE_PREFERENCES_ALREADY_SET; ttl=1755800895263; p_edsid=f2c2c325-b604-3b56-afea-979eb0743fe4-1755800896728; x-meli-session-id=armor.5fe6d89ed86fae62caca611a948a75b49dfb10fca4985d4ce614b5aa871b1f234ae7a028cb2006f9505cc4796bb67e8fbaef66c02a7b98435a3b6eba23e2cc2686f7ca8f99d39f43dadfc8b5565182fc81cd5a8895cd83ad8de19641b11e668d.af8aa9957a2974a3c28dd061b9d74029; nsa_rotok=eyJhbGciOiJSUzI1NiIsImtpZCI6IjIiLCJ0eXAiOiJKV1QifQ.eyJpZGVudGlmaWVyIjoiMzZhMjA5NDgtZmM5MS00NzZlLWFiZGQtMmFiMzdiZmI1MzUyIiwicm90YXRpb25faWQiOiJhZWY5YjJjZS02MDk4LTRlYWUtODczMy1jMzFkY2NjN2RmNTUiLCJwbGF0Zm9ybSI6Ik1QIiwicm90YXRpb25fZGF0ZSI6MTc1NTgwMTQ5NCwiZXhwIjoxNzU4MzkyODk0LCJqdGkiOiIwMzZiYWM5Ny1mOTVlLTQ1ZDktYWYyNS0zZmFmYjBjMDBhZDMiLCJpYXQiOjE3NTU4MDA4OTQsInN1YiI6IjM2YTIwOTQ4LWZjOTEtNDc2ZS1hYmRkLTJhYjM3YmZiNTM1MiJ9.F0r5CdBZSt3N4u1CMYpXTUXgqJRItAGeM716fUgw9enQDIjrtIoW1ja_XZL0LARZzSqjw7bdiLSA6jELPWIMx5AlKMKXUNpG43ywC3SS1vSsVIBpeGyl5TuYokw-of6m95byucUO3z7z5oaKSouodfEoHvgEfxpgOjMnxLGKZdrCxCIdHl9V8xM54E8pZHlud2MBka6QofpokgbcbicpxCGvaXOlt0PUW_cZ55HODIgR_3Osjf8ssIaTGLpdc4RyBzv4zy7YtHrJMLXkezhvpL0iIYJhONC8Xft8TKm33OflvSXF_NYXM97CYsAZRVfN_sN3381_5NIQh-Xcv5-JA',
-                'User-Agent' => 'Mozilla/5.0',
+                'cookie' => 'ftid=lfgV8PvFoGSSWOpBvcFMRn24tFTxXK1c-1748716757421; cookiesPreferencesNotLogged=%7B%22categories%22%3A%7B%22advertising%22%3Atrue%2C%22functionality%22%3Atrue%2C%22performance%22%3Atrue%2C%22traceability%22%3Atrue%7D%7D; _ga=GA1.1.1151310564.1750027010; _d2id=685dd283-c062-4275-aa01-8effbc1829d7; p_dsid=da33d370-eecc-4d0c-bdad-d4ba939f5336-1750033492551; _hjSessionUser_492923=eyJpZCI6ImY4MmE3MmIwLWYwNzYtNWIwYy05MWQ0LWVjZGQ4NTliMjI3OCIsImNyZWF0ZWQiOjE3NTAwMzM1NzM5ODIsImV4aXN0aW5nIjp0cnVlfQ==; dxDevPanelOnboarding=true; mp_dx-dev-panel-production-product=true; dsid=0fefc014-9782-40cb-899c-87b1231598a9-1750037809126; _hjSessionUser_4992954=eyJpZCI6IjFjNDQ0NTZiLTBhMjYtNWEzMi1iZWY2LTlmZmE5ZTdlMmJkMiIsImNyZWF0ZWQiOjE3NTAwMzM5MjEzNjgsImV4aXN0aW5nIjp0cnVlfQ==; edsid=6d74e3a5-7cf6-36be-998f-1383cebf5ce5-1750041657073; _gcl_au=1.1.2014684061.1751830363; _tt_enable_cookie=1; _ttp=01JZGKKZ7YCQWRDASWKDH1J19Z_.tt.2; ttcsid=1751830363395::W9hYcpxOhqo_8M8AB8f8.1.1751830363397; ttcsid_CU409KRC77U5T1OVP8KG=1751830363395::StSXEKCYzznSrXXdndHW.1.1751830364394; ttcsid_CUV1O83C77UCOV2E0PVG=1751830363395::6uLXzsd9GcsdY9GHGX8i.1.1751830364394; ttcsid_CUN021JC77U74NKAGB7G=1751830363396::3Bsvh38eBmMzgcTyeyFA.1.1751830364394; ttcsid_CUJ1CJ3C77U09FJDRBMG=1751830363396::SgtGHiWNL28jMlUO8lIV.1.1751830364394; ttcsid_CVDCTDJC77UCRE2PIO20=1751830363396::dUIjZALuDsxEEY-U5aJp.1.1751830364395; ttcsid_D04F33RC77U7UBOAPF1G=1751830363397::cMkN1xl2HklUe-Kpw8H7.1.1751830364395; _csrf=_w5oqo20sO3wcEr6_rEiLEuq; orgnickp=DHGCBDEAF12717; orguserid=9Zh009d9ZHh09; ssid=ghy-092812-l86VDIgQm8Wpbdpkz05jIV0klpYRGT-__-2710523715-__-1853772058106--RRR_0-RRR_0; mp_wsid=eyJhbGciOiJSUzI1NiIsImtpZCI6IlBNREhlSGt2WEdPZ2JmWFNXZ2VnMDRzeEVTZG1yV0N1TndKcFl1N3lGUjg9IiwidHlwIjoiSldUIn0.eyJhZG1pbl9vdHAiOmZhbHNlLCJhdXRoX2Zsb3ciOiJhY2Nlc3MiLCJjbGllbnRfaWQiOjY0OTUyMTMwOTkwNDY1NywiZXhwIjoxODUzNzcyMDU4LCJpYXQiOjE3NTkwNzc2NTgsImlzcyI6InVybjphdXRoLXNlcnZlcjpzZXNzaW9ucyIsImp0aSI6IjNmMzI5ZGEyLWFiNzAtNGRkMi1hN2JhLThiNTUyNzBjODdmNiIsInByb2R1Y3RfaWQiOjIsInNpdGVfaWQiOiJtbGIiLCJzc2kiOiJlOGU2NjdjNy00OGE0LTQzOTAtYjk1Ni0xZmJhOTUzZmVhZjAiLCJzdWIiOiJ1cm46dXNlcnM6MjcxMDUyMzcxNSJ9.lG7Vn53Kji6m82m5cI_w18UHbiDKP4K_doTD2ynQf8rpo_y8r0-IsU32BT41-xGB6KQ5r8mXdhfDPp0bcPmQClp9xxjNf_fdJgTGlddTDPQbzHme27auT7t-UhpwcUhpgyjClGYpkhN3WvAUQqf0nnEdAKd66wonswrJ_JvQ2AT-w_JJwCF_Oqn0kOg9YKbuJPpydTItH9kujdELPuZeKhZZfyay_mMK2knpkWllMUtNF_d0ex9U1UmYC3bbXPxfLv4Co0CSR2v9C1OJ1PUswxaijkxz1OzxqZjcRbI2DYlQilGu3Cdem6VS-f82e-qj_bAzn8PSf3fxRRJOemwrtw; orguseridp=2710523715; cookiesPreferencesLoggedFallback=%7B%22userId%22%3A2710523715%2C%22categories%22%3A%7B%22advertising%22%3Atrue%2C%22functionality%22%3Atrue%2C%22performance%22%3Atrue%2C%22traceability%22%3Atrue%7D%7D; dxDevPanelAppCollaboratorsModal=true; QSI_HistorySession=https%3A%2F%2Fwww.mercadopago.com.br%2Fhome~1759097952080; QSI_SI_23SnzFDvtxRGSZ8_intercept=true; _mldataSessionId=f0edd1dc-8323-4e82-be2b-1531b212e7d8; QSI_SI_dgmzu5WdT6dFzHU_intercept=true; ttl=1759270926925; NSESSIONID_pampa_session=s%3AXlcK225hYo_3FvnJf5If-nGT73SU9fae.FbFQKMMlWC6qNfFVx9EXCubDamOObeA4lS%2F8KGi6faw; rtid=13a338dd-a945-4c94-99a7-10808950b660; NSESSIONID_qrtsid=s%3AwlteWzq7ap8UCVvv6ZxY5MbpbSz7TWoc.VyLjurdyT%2FTA6DEZFD%2FlxTBREhBT4r5qPQ9NqB4J7nM; _ga_XJRJL56B0Z=GS2.1.s1759270628$o35$g1$t1759271400$j60$l0$h0; p_edsid=18d53813-9f06-355b-b0e9-6fbc6188a145-1759271377552; QSI_SI_3I7KQXuLnzde3sy_intercept=true; x-meli-session-id=armor.998731cde0ee5070a4ca2c877d8037625696ddc757d4dfdeb036337996dd4a8e8ba3e8ed2b0a2857d813fabd2cf9202663b2e571190688b23fb5d17ed14813a985fa37ec751814404ad73f619f106e526efb2030b41c0791112c1d10828d4140.8f0a5e16679963313696ee4b18cb4967; nsa_rotok=eyJhbGciOiJSUzI1NiIsImtpZCI6IjMiLCJ0eXAiOiJKV1QifQ.eyJpZGVudGlmaWVyIjoiZThlNjY3YzctNDhhNC00MzkwLWI5NTYtMWZiYTk1M2ZlYWYwIiwicm90YXRpb25faWQiOiIwOTU1NjJlOS1lYjNlLTQ4ZDEtYWQ1My1hZjk1NWRjZmNkZTkiLCJwbGF0Zm9ybSI6Ik1QIiwicm90YXRpb25fZGF0ZSI6MTc1OTI3MjQ4NiwiZXhwIjoxNzYxODYzODg2LCJqdGkiOiIyYWU3MzkxNy1jYzVjLTRjYzQtYThmZC1kMWU2OWNiNzA4ODYiLCJpYXQiOjE3NTkyNzE4ODYsInN1YiI6ImU4ZTY2N2M3LTQ4YTQtNDM5MC1iOTU2LTFmYmE5NTNmZWFmMCJ9.ClzdmaTdxgeutxg9MwYRzXfJN7vwjjXUg8DDNnY5KH5UKaD4EzyjsjdV_XUinUfgS0pr4b8drbPG_K3quH_pDwS_qHpGSEl_wWDPQyLbuW1owgYzswb7Qn78Aqogjl9x9BkbZjKSDO5-e8d7LwyWeTQsvrqNo_vrobjOgU5crBIsq_2Meh-odGTOIO3xNItrJ4_jYXbUZxwo-I9Ek-rp2Pc8BHPyIlNfMaPyrH461jOLjd_hb_hGBvQxTEZvogvH6giFkjwvj5rFCynUHhgJsnqCxQsBag7ehR2asASpA7i9MKJGaV8YQBIngUx211cPQpTqnHfelU71EyYemb3Cvw',
+                'User-Agent' => 'Mozilla/5.0 (iPhone; CPU iPhone OS 16_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.6 Mobile/15E148 Safari/604.1',
                 'Accept' => 'application/pdf',
                 'Authorization' => "Bearer {$this->token}",
+                'referer' => 'https://www.mercadopago.com.br/activities/detail/qr_merchant_order-2593e625f9f575974e8524a4b86b51d372d18db6',
+                'cache-control' => 'max-age=0',
+                'accept-language' => 'pt-BR,pt;q=0.9,en-US;q=0.8,en;q=0.7',
+                'Content-Type' => 'application/json'
             ],
-            //'stream' => false // caso queira fazer download do PDF direto
+            'stream' => false // caso queira fazer download do PDF direto
         ]);
         $content = $response->getBody()->getContents();
 
@@ -289,10 +293,7 @@ class StoreService
         $responseBody = json_decode($response->getBody(), true);
         $statusNome = $responseBody['status'] === 'approved' ? 'Sucesso' : 'Pendente';
 
-
-
-
-        PixReceipt::create([
+        TransferPix::create([
             'valor' => $data['valor'],
             'nome_remetente' => $data['nome_remetente'],
             'cpf_remetente' => $data['cpf_remetente'],
@@ -303,11 +304,6 @@ class StoreService
             'status' => $statusNome
         ]);
 
-
-
-
-
-
         return response()->json([
             'status' => 'ok',
             'message' => 'Recibo salvo com sucesso',
@@ -317,13 +313,52 @@ class StoreService
 
     public function getAllPix()
     {
-        return PixReceipt::select(
-            'id',
-            'valor',
-            'id_payment',
-            'status'
-        )->where('status', 'Recebido')->limit(10)->get();
+        try {
+            $beginDate = Carbon::now()->startOfDay();
+            $endDate   = Carbon::now()->endOfDay();
+
+            $transfers = TransferPix::get()->keyBy('id_mercado_pago');
+
+            if ($transfers->isEmpty()) {
+                return collect();
+            }
+
+            $pixReceipts = PixReceipt::select(
+                'id',
+                'valor',
+                'id_payment',
+                'status',
+                'created_at'
+            )
+                ->whereBetween('created_at', [$beginDate, $endDate])
+                ->whereIn('id_payment', $transfers->keys())
+                ->get();
+
+            return $pixReceipts->map(function ($pix) use ($transfers) {
+                $transfer = $transfers->get($pix->id_payment);
+
+                return [
+                    'id'         => $pix->id,
+                    'valor'      => $pix->valor,
+                    'status'     => $pix->status,
+                    'created_at' => $pix->created_at,
+                    'id_payment' => $pix->id_payment,
+                    'transfer_pix' => [
+                        'nome_remetente'  => $transfer->nome_remetente,
+                        'cpf_remetente'   => $transfer->cpf_remetente,
+                        'id_mercado_pago' => $transfer->id_mercado_pago,
+                        'id_pix'          => $transfer->id_pix,
+                        'pos_id'          => $transfer->pos_id,
+                        'store_id'        => $transfer->store_id,
+                        'status'          => $transfer->status,
+                    ]
+                ];
+            });
+        } catch (\Exception $e) {
+            return collect();
+        }
     }
+
 
     public function getAllPixRefunded()
     {
@@ -338,27 +373,68 @@ class StoreService
     public function getAllPixById($idUser)
     {
         try {
-            // Define o intervalo do dia atual
-            $beginDate = Carbon::now()->startOfDay(); // 00:00:00 de hoje
-            $endDate = Carbon::now()->endOfDay();     // 23:59:59 de hoje
+            $beginDate = Carbon::now()->startOfDay();
+            $endDate   = Carbon::now()->endOfDay();
 
-            $data = PixReceipt::select(
+            // 1) IDs válidos em transfer_pix
+            $validPayments = TransferPix::pluck('id_mercado_pago');
+
+            // 2) Busca SOMENTE pix_receipts que existem em transfer_pix
+            $pixReceipts = PixReceipt::select(
                 'id',
                 'valor',
                 'id_payment',
-                'status'
+                'status',
+                'created_at'
             )
                 ->where('id_user_internal', $idUser)
-                //->whereBetween('created_at', [$beginDate, $endDate])
-                ->limit(10)
+                ->whereBetween('created_at', [$beginDate, $endDate])
+                ->whereIn('id_payment', $validPayments)
                 ->get();
 
-            return response()->json($data, 200);
+            if ($pixReceipts->isEmpty()) {
+                return collect();
+            }
+
+            // 3) Busca transfer_pix correspondente
+            $transfers = TransferPix::whereIn(
+                'id_mercado_pago',
+                $pixReceipts->pluck('id_payment')
+            )
+                ->get()
+                ->keyBy('id_mercado_pago');
+
+            // 4) Merge (agora 100% garantido que existe)
+            $resultado = $pixReceipts->map(function ($pix) use ($transfers) {
+                $transfer = $transfers->get($pix->id_payment);
+
+                return [
+                    'id'         => $pix->id,
+                    'valor'      => $pix->valor,
+                    'status'     => $pix->status,
+                    'created_at' => $pix->created_at,
+                    'id_payment' => $pix->id_payment,
+                    'transfer_pix' => [
+                        'nome_remetente'  => $transfer->nome_remetente,
+                        'cpf_remetente'   => $transfer->cpf_remetente,
+                        'id_mercado_pago' => $transfer->id_mercado_pago,
+                        'id_pix'          => $transfer->id_pix,
+                        'pos_id'          => $transfer->pos_id,
+                        'store_id'        => $transfer->store_id,
+                        'status'          => $transfer->status,
+                    ]
+                ];
+            });
+
+            return $resultado;
         } catch (\Exception $e) {
-            $mensagem = 'Erro ao buscar registros locais: ' . $e->getMessage();
-            return response()->json(['erro' => $mensagem], 500);
+            return response()->json([
+                'erro' => 'Erro ao buscar registros locais',
+                'detalhe' => $e->getMessage()
+            ], 500);
         }
     }
+
 
     public function getPaymentsTodayByID($idUser)
     {

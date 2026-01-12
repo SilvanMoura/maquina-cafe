@@ -10,9 +10,10 @@ class MQTTService
     public function __construct()
     {
         // Aqui instanciamos o phpMQTT
-        $this->mqtt = new phpMQTT(env('MQTT_HOST', 'test.mosquitto.org'), env('MQTT_PORT', 1883), uniqid());
+        $this->mqtt = new phpMQTT(env('MQTT_HOST', 'broker.hivemq.com'), env('MQTT_PORT', 1883), uniqid());
     }
-
+    //test.mosquitto.org - testes
+    //broker.hivemq.com - deploy
     public function connect()
     {
         if (!$this->mqtt->connect(true, null)) {
