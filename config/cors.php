@@ -15,7 +15,7 @@ return [
     |
     */
 
-    'paths' => ['api/*', 'sanctum/csrf-cookie', 'laravel-websockets/*'],
+    'paths' => ['*'],
     'allowed_methods' => ['*'],
     'allowed_origins' => ['https://connectmachines.com.br'],
     'allowed_origins_patterns' => [],
