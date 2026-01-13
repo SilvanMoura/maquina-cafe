@@ -718,13 +718,14 @@ class StoreService
     public function getPaymentInternalById($idPayment)
     {
         $data = PixReceipt::where('id', $idPayment)->get();
+        $data[0]->modulo = Module::where('id', $data[0]->external_reference)->value('modulo');
 
         $storeIds = $data->pluck('store_id')->unique();
         $posIds = $data->pluck('pos_id')->unique();
         $ids = $data->pluck('id_payment'); // reduzido ao escopo dos últimos 7 dias
 
         // 3. Buscar os receipts correspondentes
-        $dataReceipt = PixReceipt::whereIn('id_mercado_pago', $ids)->get()->keyBy('id_mercado_pago');
+        $dataReceipt = TransferPix::whereIn('id_mercado_pago', $ids)->get()->keyBy('id_mercado_pago');
 
         // 4. Obter nomes das lojas e POS
         $client = new Client();

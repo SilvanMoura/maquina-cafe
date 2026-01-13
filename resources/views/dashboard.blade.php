@@ -202,7 +202,7 @@
             <div class="AAA">
                 <div class="widget-box0 widbox-blak">
                     <div>
-                        <h5 class="cardHeader">Últimos Pix Recebidos</h5>
+                        <h5 class="cardHeader">Últimos Pix Recebidos - Hoje</h5>
                     </div>
                     <div class="widget-content">
                         <table class="table table-bordered">
@@ -223,7 +223,7 @@
                                         }
                                     @endphp
                                 @endif
-                                @if(!empty($allPix))
+                                @if(count($allPix) > 0)
                                 @foreach($allPix as $pix)
                                 <tr>
                                     <td>
@@ -241,14 +241,14 @@
                                     <td>
                                         {{ $pix['transfer_pix']['cpf_remetente'] }}
                                     </td>
-                                    <!-- <td>
-                                            $pix['idTransacao']
-                                        </td>
-                                        <td>
-                                            <a href="{{ '/pagamento/visualizar/'. $pix['id'] }}" class="btn-nwe tip-top" title="Visualizar">
-                                                <i class="bx bx-show"></i>
-                                            </a>
-                                        </td> -->
+                                    <td>
+                                        {{ $pix['id_payment'] }}
+                                    </td>
+                                    <td>
+                                        <a href="{{ '/pagamento/visualizar/'. $pix['id'] }}" class="btn-nwe tip-top" title="Visualizar">
+                                            <i class="bx bx-show"></i>
+                                        </a>
+                                    </td>
                                 </tr>
                                 @endforeach
                                 @else
@@ -264,7 +264,7 @@
 
             <!-- <div class="widget-box0 widbox-blak">
                     <div>
-                        <h5 class="cardHeader">Últimos estornos</h5>
+                        <h5 class="cardHeader">Últimos estornos - Hoje</h5>
                     </div>
                     <div class="widget-content">
                         <table class="table table-bordered">

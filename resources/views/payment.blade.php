@@ -48,6 +48,7 @@
                         <th>Valor</th>
                         <th>Nome Comprador</th>
                         <th>Documento</th>
+                        <th>Nº Pagamento</th>
                         <th>Nome Loja</th>
                         <th>Ponto de Venda</th>
                         <th>Data da Venda</th>
@@ -58,15 +59,16 @@
                     @foreach ($paymentData as $r)
                     <tr>
                         <td style="width:5%">{{ $r->id }}</td>
-                        <td style="width:5%">{{ $r->external_reference }}</td>
-                        <td style="width:5%">{{ $r->transaction_amount }}</td>
+                        <td style="width:5%">{{ $r->modulo }}</td>
+                        <td style="width:5%">{{ $r->valor }}</td>
                         <td style="width:15%">{{ $r->receipt->nome_remetente }}</td>
-                        <td style="width:15%">{{ $r->receipt->cpf_remetente }}</td>
+                        <td style="width:10%">{{ $r->receipt->cpf_remetente }}</td>
+                        <td style="width:10%">{{ $r->receipt->id_mercado_pago }}</td>
                         <td style="width:15%">{{ $r->store_name }}</td>
                         <td style="width:15%">{{ $r->pos_name }}</td>
                         <td style="width:15%">{{ $r->created_at }}</td>
 
-                        @if($r->status !== 'refunded')
+                        @if($r->status !== 'Estornado')
                         <td>
                             <a href="{{ '/pagamento/estorno/'. $r->id_payment }}" style="background-color:red;" class="btn tip-top" title="Reembolso">
                                 <i class="bx bx-wallet"></i>

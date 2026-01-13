@@ -2,7 +2,7 @@
 <html lang="pt-br">
 
 <head>
-    <title>Café da Fazenda</title>
+    <title>Connect Machines</title>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="shortcut icon" type="image/png" href="{{ asset('images/cafe-fazenda-logo-sistema.png') }}" />
@@ -246,7 +246,7 @@
     <div class="row-fluid">
         <div id="footer" class="span12">
             <a class="pecolor" href="https://github.com/SilvanMoura" target="_blank">
-                <?= date('Y'); ?> &copy; Silvan Moura - Café da Fazenda - Versão: 1.0
+                <?= date('Y'); ?> &copy; Silvan Moura - Connect Machines - Versão: 1.0
             </a>
         </div>
     </div>
