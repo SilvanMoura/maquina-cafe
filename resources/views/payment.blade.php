@@ -68,13 +68,13 @@
                         <td style="width:15%">{{ $r->pos_name }}</td>
                         <td style="width:15%">{{ $r->created_at }}</td>
 
-                        @if($r->status !== 'Estornado')
+                        <!--@if($r->status !== 'Estornado')
                         <td>
                             <a href="{{ '/pagamento/estorno/'. $r->id_payment }}" style="background-color:red;" class="btn tip-top" title="Reembolso">
                                 <i class="bx bx-wallet"></i>
                             </a>
                         </td>
-                        @endif
+                        @endif-->
                     </tr>
                     @endforeach
                     @else
