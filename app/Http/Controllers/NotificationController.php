@@ -121,7 +121,7 @@ class NotificationController extends Controller
     {
         sleep(1);
         $data = $request->all();
-        
+
         if (isset($data['action']) && $data['action'] === 'payment.created') {
 
             $idPagamento = $data['data']['id'];
@@ -182,9 +182,19 @@ class NotificationController extends Controller
                 $this->mqttService->disconnect();
 
                 Log::info("Mensagem MQTT publicada para $deviceID: $message");
-                
-                $data = $this->StoreService->getPixReceiptPdf($idPagamento);
-                Log::info("Recibo: ". $data);
+
+                //$data = $this->StoreService->getPixReceiptPdf($idPagamento);
+                //Log::info("Recibo: ". $data);
+                try {
+                    $data = $this->StoreService->getPixReceiptPdf($idPagamento);
+                    Log::info("Recibo processado com sucesso", ['data' => $data]);
+                } catch (\Throwable $e) {
+                    Log::warning("Falha ao processar recibo PIX", [
+                        'payment_id' => $idPagamento,
+                        'erro' => $e->getMessage()
+                    ]);
+                    // segue o fluxo normalmente
+                }
                 $transaction = PixReceipt::create([
                     'external_reference'  => $posData['external_reference'] ?? null,
                     'pos_id'              => $posData['pos_id'] ?? null,
@@ -216,7 +226,7 @@ class NotificationController extends Controller
         }
 
         //return response()->json(['message' => 'Tipo de notificação não suportado.'], 200);
-	return response()->noContent(200);
+        return response()->noContent(200);
     }
 
     public function isDeviceOnlineViaMQTT($deviceID)
@@ -232,7 +242,7 @@ class NotificationController extends Controller
             'ping' => true,
             'timestamp' => now()->toDateTimeString()
         ]));
-        
+
         // Escuta somente a resposta deste módulo
         $mqttService->subscribe("status/pong/mccf{$deviceID}", function ($topic, $message) use (&$respostaRecebida, $deviceID) {
             $data = json_decode($message, true);
@@ -247,7 +257,7 @@ class NotificationController extends Controller
 
         return $respostaRecebida;
     }
-/* 
+    /* 
     public function inter(Request $request)
     {
         Log::warning("notificação: " . $request);

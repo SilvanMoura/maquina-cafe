@@ -209,7 +209,7 @@ class StoreService
     }
 
 
-    public function getPixReceiptPdf($paymentId)
+    /* public function getPixReceiptPdf($paymentId)
     {
         $client = new Client();
 
@@ -301,6 +301,133 @@ class StoreService
             'id_pix' => $data['id_pix'],
             'pos_id' => $responseBody['pos_id'],
             'store_id' => $responseBody['store_id'],
+            'status' => $statusNome
+        ]);
+
+        return response()->json([
+            'status' => 'ok',
+            'message' => 'Recibo salvo com sucesso',
+            'path' => $pdfPath
+        ]);
+    } */
+
+    public function getPixReceiptPdf($paymentId)
+    {
+        $client = new Client();
+
+        $response = $client->get(
+            "https://www.mercadopago.com.br/money-out/transfer/api/receipt/pix_pdf/{$paymentId}/pix_account/pix_payment.pdf",
+            [
+                'headers' => [
+                    'cookie' => 'ftid=lfgV8PvFoGSSWOpBvcFMRn24tFTxXK1c-1748716757421; ...',
+                    'User-Agent' => 'Mozilla/5.0 (iPhone; CPU iPhone OS 16_6 like Mac OS X)',
+                    'Accept' => 'application/pdf',
+                    'Authorization' => "Bearer {$this->token}",
+                    'referer' => 'https://www.mercadopago.com.br/',
+                    'cache-control' => 'max-age=0',
+                    'accept-language' => 'pt-BR,pt;q=0.9,en-US;q=0.8,en;q=0.7',
+                    'Content-Type' => 'application/json'
+                ],
+                'stream' => false
+            ]
+        );
+
+        $directory = storage_path("logs/recibos");
+        if (!file_exists($directory)) {
+            mkdir($directory, 0777, true);
+        }
+
+        $pdfPath = $directory . "/recibo_{$paymentId}.pdf";
+        file_put_contents($pdfPath, $response->getBody());
+
+        $parser = new Parser();
+        $pdf = $parser->parseFile($pdfPath);
+        $text = $pdf->getText();
+
+        $lines = explode("\n", $text);
+        $data = [
+            'cpf_remetente' => null,
+            'cnpj_remetente' => null,
+        ];
+
+        foreach ($lines as $index => $line) {
+            $line = trim($line);
+
+            if (Str::contains($line, 'às') && Str::contains($line, 'de')) {
+                if (preg_match('/(\d{2}) de (\w+) de (\d{4}), às (\d{2}:\d{2}:\d{2})/', $line, $m)) {
+                    $meses = [
+                        'janeiro' => '01',
+                        'fevereiro' => '02',
+                        'março' => '03',
+                        'abril' => '04',
+                        'maio' => '05',
+                        'junho' => '06',
+                        'julho' => '07',
+                        'agosto' => '08',
+                        'setembro' => '09',
+                        'outubro' => '10',
+                        'novembro' => '11',
+                        'dezembro' => '12'
+                    ];
+                    $mes = $meses[strtolower($m[2])] ?? '00';
+                    $data['data_transferencia'] = "{$m[1]}/{$mes}/{$m[3]} {$m[4]}";
+                }
+            }
+
+            if (Str::startsWith($line, 'R$')) {
+                $valor = str_replace(',', '.', preg_replace('/[^\d,]/', '', $line));
+                $data['valor'] = (float) $valor;
+            }
+
+            if ($line === 'De') {
+                $data['nome_remetente'] = trim($lines[$index + 1] ?? '');
+            }
+
+            if (Str::startsWith($line, 'Número da transação do Mercado Pago')) {
+                $data['id_mercado_pago'] = trim($lines[$index + 1] ?? '');
+            }
+
+            if (Str::startsWith($line, 'ID de transação PIX')) {
+                $data['id_pix'] = trim($lines[$index + 1] ?? '');
+            }
+        }
+
+        // Extração robusta de CPF ou CNPJ do texto inteiro
+        if (preg_match('/\b\d{3}\.?\d{3}\.?\d{3}-?\d{2}\b/', $text, $m)) {
+            $data['cpf_remetente'] = preg_replace('/\D/', '', $m[0]);
+        } elseif (preg_match('/\b\d{2}\.?\d{3}\.?\d{3}\/?\d{4}-?\d{2}\b/', $text, $m)) {
+            $data['cnpj_remetente'] = preg_replace('/\D/', '', $m[0]);
+        }
+
+        $response = $client->get(
+            "https://api.mercadopago.com/v1/payments/{$data['id_mercado_pago']}",
+            [
+                'headers' => [
+                    'Content-Type' => 'application/json',
+                    'Authorization' => "Bearer {$this->token}",
+                ]
+            ]
+        );
+
+        $responseBody = json_decode($response->getBody(), true);
+        $statusNome = ($responseBody['status'] ?? '') === 'approved' ? 'Sucesso' : 'Pendente';
+
+        $documento = null;
+
+        if (!empty($data['cpf_remetente'])) {
+            $documento = $data['cpf_remetente'];
+        } elseif (!empty($data['cnpj_remetente'])) {
+            $documento = $data['cnpj_remetente'];
+        }
+
+        TransferPix::create([
+            'valor' => $data['valor'] ?? null,
+            'nome_remetente' => $data['nome_remetente'] ?? null,
+            'cpf_remetente' => $documento, // CPF ou CNPJ vai aqui
+            'id_mercado_pago' => $data['id_mercado_pago'] ?? null,
+            'id_pix' => $data['id_pix'] ?? null,
+            'pos_id' => $responseBody['pos_id'] ?? null,
+            'store_id' => $responseBody['store_id'] ?? null,
             'status' => $statusNome
         ]);
 
