@@ -216,6 +216,7 @@ class NotificationController extends Controller
         }
 
         //return response()->json(['message' => 'Tipo de notificação não suportado.'], 200);
+	return response()->noContent(200);
     }
 
     public function isDeviceOnlineViaMQTT($deviceID)
