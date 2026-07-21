@@ -81,7 +81,7 @@
                         @endforeach
                         @else
                         <tr>
-                            <td colspan="6">Nenhum Módulo Cadastrado</td>
+                            <td colspan="6">Nenhum Cupom Cadastrado</td>
                         </tr>
                         @endif
 

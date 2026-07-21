@@ -48,6 +48,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.0/dist/chart.min.js"></script>
 
@@ -143,8 +144,8 @@
                                 } ?>">
                         <a class="tip-bottom" title="Controle Remoto" href="/controle">
                             <i class='bx bx-wrench iconX'></i>
-                            <span class="title">Controle Remoto</span>
-                            <span class="title-tooltip">Controle Remoto</span>
+                            <span class="title">Controle</span>
+                            <span class="title-tooltip">Controle</span>
                         </a>
 
                     </li>

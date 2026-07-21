@@ -4,7 +4,7 @@ namespace App\Services;
 
 use GuzzleHttp\Client;
 use App\Models\Module;
-use App\Models\Coupon;
+use App\Models\Cupoms;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
@@ -57,7 +57,7 @@ class ModuleService
 
     public function newCoupon($name, $value, $telefone)
     {
-        $response = Coupon::create([
+        $response = Cupoms::create([
             'name'   => $name,
             'value'  => $value,
             'telefone'  => $telefone,
@@ -72,17 +72,17 @@ class ModuleService
 
     public function getCoupons()
     {
-        return Coupon::get();
+        return Cupoms::get();
     }
 
     public function getCouponsById($couponId)
     {
-        return Coupon::where('id', $couponId)->get();
+        return Cupoms::where('id', $couponId)->get();
     }
 
     public function deactivatingCoupon($couponId)
     {
-        $response = Coupon::where('id', $couponId)->update([
+        $response = Cupoms::where('id', $couponId)->update([
             'Status' => "Inativo"
         ]);
 
@@ -100,7 +100,7 @@ class ModuleService
         $payload = json_encode([
             'message' => 'pulsos de crédito',
             'pulsos' => intval($valor),
-            'deviceID' => $moduloId
+            'deviceID' => "mccf{$moduloId}"
         ]);
 
         // Publica no tópico
@@ -123,15 +123,12 @@ class ModuleService
 
         // Define os tópicos
         $topicComando = "comandos/botao";
-        $topicResposta = "resposta/comandos/mccf0002";
-        //return $moduloId;
-        // Prepara o payload com ID padrão "mccf-{$moduloId}"
-        Log::warning("Notificação com intval: " . intval($button));
-        Log::warning("Notificação sem intval: " . $button);
+        $topicResposta = "resposta/comandos/mccf{$moduloId}";
+        
         $payload = json_encode([
             'message' => 'Acionar botão',
             'botao' => intval($button),
-            'deviceID' => "mccf0002"
+            'deviceID' => "mccf{$moduloId}"
         ]);
 
         // Envia o comando

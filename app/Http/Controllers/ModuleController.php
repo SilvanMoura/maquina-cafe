@@ -27,7 +27,7 @@ class ModuleController extends Controller
 
         if ($userData->level == '3') {
             $modulesData = $moduleService->getModulesUseById($userId);
-        }else{
+        } else {
             $modulesData = $moduleService->getModulesUse();
         }
 
@@ -107,10 +107,31 @@ class ModuleController extends Controller
         $couponStatus = $coupon->deactivatingCoupon($couponData[0]['id']);
 
         $coupon->sendCredits($idModulo, $couponData['value']);
-        
+
         return response()->json([
             'status' => 'Cupom enviado com sucesso!',
             'success' => true
+        ]);
+    }
+
+    public function sendPulses(Request $request)
+    {
+        $request->validate([
+            'modulo'   => 'required',
+            'creditos' => 'required|integer|min:1',
+        ]);
+
+        $module = new ModuleService();
+
+        $idModulo = $request->modulo;
+        $pulses = $request->creditos;
+
+        // Aqui você envia para o MQTT
+        $module->sendCredits($idModulo, $pulses);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Créditos enviados com sucesso.'
         ]);
     }
 
@@ -124,7 +145,7 @@ class ModuleController extends Controller
 
         if ($userData->level == '3') {
             $modulesData = $modulesUse->getModulesUseById($userId);
-        }else{
+        } else {
             $modulesData = $modulesUse->getModulesUse();
         }
         //return $modulesData;

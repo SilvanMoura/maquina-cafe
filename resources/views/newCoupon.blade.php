@@ -177,7 +177,7 @@
                 // Requisição AJAX
                 $.ajax({
                     type: "POST",
-                    url: "http://191.252.38.29/cupons/adicionar",
+                    url: "https://srv981758.hstgr.cloud/cupons/adicionar",
                     data: dados,
                     dataType: 'json',
                     headers: {
@@ -191,7 +191,7 @@
                                 text: 'Cupom criado com sucesso!',
                             }).then(() => {
                                 window.open(data.registro, '_blank');
-                                window.location.href = "http://191.252.38.29/dashboard";
+                                window.location.href = "https://srv981758.hstgr.cloud/dashboard";
                             });
                         } else {
                             $('#error-message').text(data.message || 'Erro no cadastro. Por favor, tente novamente.');

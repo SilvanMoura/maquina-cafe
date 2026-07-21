@@ -57,6 +57,7 @@ Route::get('/readCode', [ModuleController::class, 'readCodeView'])->middleware([
 Route::post('/readCode', [ModuleController::class, 'depositCoupon'])->middleware(['auth', 'verified']);
 Route::get('/controle', [ModuleController::class, 'controlRemoteView'])->middleware(['auth', 'verified']);
 Route::post('/sendCommand', [ModuleController::class, 'sendCommandModule'])->middleware(['auth', 'verified']);
+Route::post('/creditos/enviar', [ModuleController::class, 'sendPulses']);
 
 //envia o credito do cupom para o modulo 
 

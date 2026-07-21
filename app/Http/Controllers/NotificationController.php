@@ -166,7 +166,8 @@ class NotificationController extends Controller
                     'id_user_internal'    => $storeData['user'],
                 ]);
 
-                return response()->json(['message' => 'Chargeback realizado por módulo offline.'], 200);
+                //return response()->json(['message' => 'Chargeback realizado por módulo offline.'], 200);
+                return response()->noContent(200);
             }
             $this->StoreService->physicalOrder($posData['store_id'], $deviceID);
             // Dados a serem enviados ao dispositivo
