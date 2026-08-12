@@ -69,10 +69,6 @@ class DashboardController extends Controller
 
         // 3. Envia ping para todos os dispositivos
         $mqttService->connect();
-        $mqttService->publish("status/ping", json_encode([
-            'ping' => true,
-            'timestamp' => now()->toDateTimeString()
-        ]));
 
         // 4. Coleta respostas dos dispositivos
         $onlineDevices = [];
@@ -87,6 +83,11 @@ class DashboardController extends Controller
                 ];
             }
         });
+
+        $mqttService->publish("status/ping", json_encode([
+            'ping' => true,
+            'timestamp' => now()->toDateTimeString()
+        ]));
 
         // 5. Processa respostas por até 2 segundos
         $mqttService->loopFor(5);
