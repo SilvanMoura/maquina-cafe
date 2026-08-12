@@ -101,13 +101,13 @@ class ModuleController extends Controller
 
         $couponData = $coupon->getCouponsById($request->input('cupom_id'));
 
-        $posData = $store->getPosById($request->input('pos_id'));
-        $idModulo = $posData['external_id'];
+        $idModulo = $store->getModuloByMercadoPagoId($request->input('pos_id'));
+        $idModulo = $coupon->getModuloById($idModulo);
 
         $couponStatus = $coupon->deactivatingCoupon($couponData[0]['id']);
 
         $module = new ModuleService();
-        $idModulo = $module->getModuloById($idModulo);
+        //$idModulo = $module->getModuloById($idModulo);
 
         $coupon->sendCredits($idModulo, $couponData['value']);
 

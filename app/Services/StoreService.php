@@ -932,4 +932,10 @@ class StoreService
             return false;
         }
     }
+
+    public function getModuloByMercadoPagoId($pos_id)
+    {
+        return Store::where('idStoreMercadoPago', $pos_id)
+            ->value('modulo');
+    }
 }
