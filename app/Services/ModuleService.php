@@ -96,9 +96,6 @@ class ModuleService
         $mqtt = new \App\Services\MQTTService();
         $mqtt->connect();
 
-        $module = new ModuleService();
-        $module->getModuloById($moduloId);
-        
         // Monta o payload
         $payload = json_encode([
             'message' => 'pulsos de crédito',

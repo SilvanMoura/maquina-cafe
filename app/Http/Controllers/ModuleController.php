@@ -106,6 +106,9 @@ class ModuleController extends Controller
 
         $couponStatus = $coupon->deactivatingCoupon($couponData[0]['id']);
 
+        $module = new ModuleService();
+        $idModulo = $module->getModuloById($idModulo);
+
         $coupon->sendCredits($idModulo, $couponData['value']);
 
         return response()->json([
