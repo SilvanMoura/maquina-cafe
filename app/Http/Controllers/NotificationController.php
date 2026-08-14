@@ -47,14 +47,14 @@ class NotificationController extends Controller
             $storeData = $this->StoreService->getStoreInternalId($posData['pos_id']);
             $deviceID = $posData['external_reference'];
 
-            $alreadyProcessed = PixReceipt::where('id_payment', $posData['id'])->exists();
+            /* $alreadyProcessed = PixReceipt::where('id_payment', $posData['id'])->exists();
             if ($alreadyProcessed) {
                 Log::warning('Pagamento já processado. Ignorando webhook duplicado.', [
                     'payment_id' => $posData['id'],
                 ]);
                 $this->StoreService->physicalOrder($posData['store_id'], $deviceID);
                 return response()->noContent(200);
-            }
+            } */
 
             $valueModule = $module->getModuloById($posData['external_reference']);
             $storeData = $this->StoreService->getStoreInternalId($posData['pos_id']);
