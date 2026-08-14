@@ -171,9 +171,7 @@
 
                     </li>
 
-                    <li class="<?php if (isset($menuGarantia)) {
-                                    echo 'active';
-                                } ?>">
+                    <!-- <li class="">
                         <a class="tip-bottom" title="Cupons" href="/cupons">
                             <i class='bx bx-receipt iconX'></i>
                             <span class="title">Cupons</span>
@@ -181,7 +179,7 @@
                         </a>
 
 
-                    </li>
+                    </li> -->
 
 
 
