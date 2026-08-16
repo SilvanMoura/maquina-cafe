@@ -47,14 +47,14 @@ class NotificationController extends Controller
             $storeData = $this->StoreService->getStoreInternalId($posData['pos_id']);
             $deviceID = $posData['external_reference'];
 
-            /* $alreadyProcessed = PixReceipt::where('id_payment', $posData['id'])->exists();
+            $alreadyProcessed = PixReceipt::where('id_payment', $posData['id'])->exists();
             if ($alreadyProcessed) {
                 Log::warning('Pagamento já processado. Ignorando webhook duplicado.', [
                     'payment_id' => $posData['id'],
                 ]);
                 $this->StoreService->physicalOrder($posData['store_id'], $deviceID);
                 return response()->noContent(200);
-            } */
+            }
 
             $valueModule = $module->getModuloById($posData['external_reference']);
             $storeData = $this->StoreService->getStoreInternalId($posData['pos_id']);
@@ -85,51 +85,51 @@ class NotificationController extends Controller
 
                 //return response()->json(['message' => 'Chargeback realizado por módulo offline.'], 200);
                 return response()->noContent(200);
-            } else {
-                $this->StoreService->physicalOrder($posData['store_id'], $deviceID);
-                // Dados a serem enviados ao dispositivo
-                $message = json_encode([
-                    'pulsos' => $pulsos,
-                    'deviceID' => "mccf{$valueModule}",
-                    'message' => "pulsos de crédito"
-                ]);
+            }
+
+            $this->StoreService->physicalOrder($posData['store_id'], $deviceID);
+            // Dados a serem enviados ao dispositivo
+            $message = json_encode([
+                'pulsos' => $pulsos,
+                'deviceID' => "mccf{$valueModule}",
+                'message' => "pulsos de crédito"
+            ]);
+
+            try {
+                $this->mqttService->connect();
+                $this->mqttService->publish("creditos/", $message);
+                $this->mqttService->disconnect();
+
+                Log::info("Mensagem MQTT publicada para $deviceID: $message");
 
                 try {
-                    $this->mqttService->connect();
-                    $this->mqttService->publish("creditos/", $message);
-                    $this->mqttService->disconnect();
-
-                    Log::info("Mensagem MQTT publicada para $deviceID: $message");
-
-                    try {
-                        $data = $this->StoreService->getPixReceiptPdf($idPagamento);
-                        Log::info("Recibo processado com sucesso", ['data' => $data]);
-                    } catch (\Throwable $e) {
-                        Log::warning("Falha ao processar recibo PIX", [
-                            'payment_id' => $idPagamento,
-                            'erro' => $e->getMessage()
-                        ]);
-                    }
-                    $transaction = PixReceipt::create([
-                        'external_reference'  => $posData['external_reference'] ?? null,
-                        'pos_id'              => $posData['pos_id'] ?? null,
-                        //'status'              => $posData['status'] ?? null,
-                        'store_id'            => $posData['store_id'] ?? null,
-                        'valor'  => isset($posData['transaction_amount']) ? floor($posData['transaction_amount']) : null,
-                        'id_payment'          => $posData['id'] ?? null,
-                        'transaction_id'      => $posData['transaction_id'],
-                        'status'          => 'Recebido',
-                        'module'            => $deviceID,
-                        'id_store_internal' => $storeData['id'],
-                        'id_user_internal' => $storeData['user'],
+                    $data = $this->StoreService->getPixReceiptPdf($idPagamento);
+                    Log::info("Recibo processado com sucesso", ['data' => $data]);
+                } catch (\Throwable $e) {
+                    Log::warning("Falha ao processar recibo PIX", [
+                        'payment_id' => $idPagamento,
+                        'erro' => $e->getMessage()
                     ]);
-                    Log::info('Transação salva com sucesso', ['transaction' => $transaction]);
-                    //return response()->json(['message' => 'Notificação processada com sucesso.'], 200);
-                    return response()->noContent(200);
-                } catch (\Exception $e) {
-                    Log::error("Erro ao processar notificação: " . $e->getMessage());
-                    return response()->json(['message' => 'Erro ao processar a notificação.'], 500);
                 }
+                $transaction = PixReceipt::create([
+                    'external_reference'  => $posData['external_reference'] ?? null,
+                    'pos_id'              => $posData['pos_id'] ?? null,
+                    //'status'              => $posData['status'] ?? null,
+                    'store_id'            => $posData['store_id'] ?? null,
+                    'valor'  => isset($posData['transaction_amount']) ? floor($posData['transaction_amount']) : null,
+                    'id_payment'          => $posData['id'] ?? null,
+                    'transaction_id'      => $posData['transaction_id'],
+                    'status'          => 'Recebido',
+                    'module'            => $deviceID,
+                    'id_store_internal' => $storeData['id'],
+                    'id_user_internal' => $storeData['user'],
+                ]);
+                Log::info('Transação salva com sucesso', ['transaction' => $transaction]);
+                //return response()->json(['message' => 'Notificação processada com sucesso.'], 200);
+                return response()->noContent(200);
+            } catch (\Exception $e) {
+                Log::error("Erro ao processar notificação: " . $e->getMessage());
+                return response()->json(['message' => 'Erro ao processar a notificação.'], 500);
             }
         }
         return response()->noContent(200);
