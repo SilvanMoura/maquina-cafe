@@ -41,7 +41,7 @@ class DashboardController extends Controller
             $storesCount = count($this->storeService->getStoresByIdUser($userId));
             //return $this->storeService->getStoresByIdUser($userId);
             $allPix = $this->storeService->getAllPixById($userId);
-            
+
             $allPixRefunded = $this->storeService->getAllPixRefundedById($userId);
 
             $todaySales = $this->storeService->getPaymentsTodayByID($userId);
@@ -53,7 +53,7 @@ class DashboardController extends Controller
             $storesCount = count($this->storeService->getStores());
             //$posCount = count($this->storeService->getPos());
             $allPix = $this->storeService->getAllPix();
-            
+
             $allPixRefunded = $this->storeService->getAllPixRefunded();
 
             $todaySales = $this->storeService->getPagamentosHoje();
@@ -63,7 +63,7 @@ class DashboardController extends Controller
             $todaySales = $this->storeService->valueTotalMaster($todaySales['results']);
         }
 
-        // --- VERIFICAÇÃO DE MÓDULOS ONLINE VIA MQTT ---
+        /* // --- VERIFICAÇÃO DE MÓDULOS ONLINE VIA MQTT ---
         $mqttService = app(MQTTService::class);
         Cache::forget('online_devices');
 
@@ -91,6 +91,48 @@ class DashboardController extends Controller
 
         // 5. Processa respostas por até 2 segundos
         $mqttService->loopFor(5);
+        $mqttService->disconnect(); */
+        // --- VERIFICAÇÃO DE MÓDULOS ONLINE VIA MQTT ---
+        $mqttService = app(MQTTService::class);
+        Cache::forget('online_devices');
+
+        // Conecta ao MQTT
+        $mqttService->connect();
+
+        // Coleta respostas dos dispositivos
+        $onlineDevices = [];
+
+        $mqttService->subscribe('status/pong/#', function ($topic, $message) use (&$onlineDevices) {
+
+            $data = json_decode($message, true);
+
+            if (isset($data['deviceID'])) {
+
+                // Se já respondeu em alguma rodada, apenas atualiza os dados
+                $onlineDevices[$data['deviceID']] = [
+                    'idData' => $data['deviceID'],
+                    'mac' => $data['mac'] ?? null,
+                    'sinal' => $data['rssi'] ?? null,
+                    'timestamp' => now()->toDateTimeString()
+                ];
+            }
+        });
+
+
+        // --- 3 RODADAS DE PING ---
+        for ($tentativa = 1; $tentativa <= 3; $tentativa++) {
+
+            $mqttService->publish("status/ping", json_encode([
+                'ping' => true,
+                'timestamp' => now()->toDateTimeString()
+            ]));
+
+            // Aguarda/processa respostas por 2 segundos
+            $mqttService->loopFor(2);
+        }
+
+
+        // Desconecta somente depois das 3 rodadas
         $mqttService->disconnect();
 
         // 6. Armazena dispositivos online no cache por 10 segundos
@@ -154,7 +196,7 @@ class DashboardController extends Controller
         } else {
             $allUsers = $this->storeService->getUsers();
         }
-        
+
         return view('users', compact('allUsers'));
     }
 
