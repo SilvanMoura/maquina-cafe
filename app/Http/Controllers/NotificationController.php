@@ -63,9 +63,9 @@ class NotificationController extends Controller
 
             $isOnline = $this->isDeviceOnlineViaMQTT($valueModule);
 
-            if ($valueModule == "0001"){
+            /* if ($valueModule == "0001"){
                 $isOnline = true;
-            }
+            } */
 
             if (!$isOnline) {
                 Log::warning("Módulo $valueModule está offline. Iniciando chargeback...");
